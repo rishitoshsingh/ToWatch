@@ -5,28 +5,28 @@ package com.example.rishi.towatch
  */
 class Movie {
     var mTitle: String? = null
-    var mYear: String? = null
+    var mReleaseDate: String? = null
     var mLanguage: String? = null
     var mImdbId: Int? = null
     var mOverview: String? = null
     var mAdult: Boolean = false
-    var mGenreIds: Array<Int>? = null
+    var mGenreIds: ArrayList<Int>? = null
     var mPosterPath: String? = null
     var mBackdropPath: String? = null
 
     constructor(
             title: String,
-            year: String,
+            releaseDate: String,
             language: String,
             imdbId: Int,
             overview: String,
             adult: Boolean,
-            genreIds: Array<Int>,
+            genreIds: ArrayList<Int>,
             posterPath: String,
             backdropPath: String
     ) {
         this.mTitle = title
-        this.mYear = year
+        this.mReleaseDate = releaseDate
         this.mLanguage = language
         this.mPosterPath = posterPath
         this.mImdbId = imdbId
@@ -40,16 +40,12 @@ class Movie {
         return this.mTitle
     }
 
-    fun getYear(): String? {
-        return this.mYear
+    fun getReleaseDate(): String? {
+        return this.mReleaseDate
     }
 
     fun getLanguage(): String? {
         return this.mLanguage
-    }
-
-    fun getPosterPath(): String? {
-        return this.mPosterPath
     }
 
     fun getImdbId(): Int? {
@@ -60,8 +56,12 @@ class Movie {
         return this.mAdult
     }
 
-    fun getGenreIds(): Array<Int>? {
+    fun getGenreIds(): ArrayList<Int>? {
         return this.mGenreIds
+    }
+
+    fun getPosterPath(): String? {
+        return this.mPosterPath
     }
 
     fun getBackdropPath(): String? {
