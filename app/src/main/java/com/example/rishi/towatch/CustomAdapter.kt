@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import java.util.*
 
+@Suppress("DEPRECATION")
 /**
  * Created by rishi on 25/2/18.
  */
@@ -23,9 +25,12 @@ class CustomAdapter(context: Context, movies: ArrayList<Movie>) : ArrayAdapter<M
         val movieReleaseDate = listItemView?.findViewById<TextView>(R.id.movieReleaseDate)
 
         val currentMovie = getItem(position)
+        val dateString = currentMovie.getReleaseDate()?.split("-")
+        val date = Date(dateString?.get(0)?.toInt()!!,dateString[1]?.toInt(),dateString[2]?.toInt())
+
 
         movieTitleText?.text = currentMovie.getTitle()
-        movieReleaseDate?.text = currentMovie.getReleaseDate()
+        movieReleaseDate?.text = date.year.toString()
 
         return listItemView
     }

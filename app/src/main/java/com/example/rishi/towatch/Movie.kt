@@ -36,36 +36,20 @@ class Movie {
         this.mBackdropPath = backdropPath
     }
 
-    fun getTitle(): String? {
-        return this.mTitle
-    }
+    fun getTitle(): String? = this.mTitle
 
-    fun getReleaseDate(): String? {
-        return this.mReleaseDate
-    }
+    fun getReleaseDate(): String? = this.mReleaseDate
 
-    fun getLanguage(): String? {
-        return this.mLanguage
-    }
+    fun getLanguage(): String? = this.mLanguage
 
-    fun getImdbId(): Int? {
-        return this.mImdbId
-    }
+    fun getImdbId(): Int? = this.mImdbId
 
-    fun getAdult(): Boolean {
-        return this.mAdult
-    }
+    fun getAdult(): Boolean = this.mAdult
 
-    fun getGenreIds(): ArrayList<Int>? {
-        return this.mGenreIds
-    }
+    fun getGenreIds(): ArrayList<Int>? = this.mGenreIds
 
-    fun getPosterPath(): String? {
-        return this.mPosterPath
-    }
+    fun getPosterPath(): String? = this.mPosterPath
 
-    fun getBackdropPath(): String? {
-        return this.mBackdropPath
-    }
+    fun getBackdropPath(): String? = this.mBackdropPath
 
 }
