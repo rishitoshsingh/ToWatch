@@ -22,8 +22,7 @@ tmdb api 3 : https://developers.themoviedb.org/3
 ![alt text](screenshots/currentStatus.png "25 February, 2018")
 
 ## Current Status 
+For more info press 'g' + 'b'
 
 ![alt text](screenshots/currentStatus1.png "26 February, 2018")
-
-For more info press 'g' + 'b'
 
