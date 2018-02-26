@@ -7,7 +7,7 @@
 From this app you can also search for movies, TV Shows
 
 
-## Librarie(s) used
+## Library used
 
 Picasso : https://square.github.io/picasso/
 
@@ -24,4 +24,6 @@ tmdb api 3 : https://developers.themoviedb.org/3
 ## Current Status 
 
 ![alt text](screenshots/currentStatus1.png "26 February, 2018")
+
+For more info press 'g' + 'p'
 
