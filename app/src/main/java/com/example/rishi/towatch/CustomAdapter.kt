@@ -1,11 +1,15 @@
 package com.example.rishi.towatch
 
 import android.content.Context
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.ImageView
 import android.widget.TextView
+import com.squareup.picasso.Picasso
+import java.net.URL
 import java.util.*
 
 @Suppress("DEPRECATION")
@@ -14,6 +18,7 @@ import java.util.*
  */
 class CustomAdapter(context: Context, movies: ArrayList<Movie>) : ArrayAdapter<Movie>(context, 0, movies) {
 
+    val IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500/"
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
         var listItemView: View? = convertView
@@ -23,12 +28,15 @@ class CustomAdapter(context: Context, movies: ArrayList<Movie>) : ArrayAdapter<M
 
         val movieTitleText = listItemView?.findViewById<TextView>(R.id.movieTile)
         val movieReleaseDate = listItemView?.findViewById<TextView>(R.id.movieReleaseDate)
+        val moviePoster = listItemView?.findViewById<ImageView>(R.id.moviePoster)
 
         val currentMovie = getItem(position)
         val dateString = currentMovie.getReleaseDate()?.split("-")
-        val date = Date(dateString?.get(0)?.toInt()!!,dateString[1]?.toInt(),dateString[2]?.toInt())
+        val date = Date(dateString?.get(0)?.toInt()!!,dateString[1].toInt(),dateString[2].toInt())
 
+        val posterUri = Uri.parse(IMAGE_BASE_URL+currentMovie.getPosterPath())
 
+        Picasso.with(context).load(posterUri).into(moviePoster)
         movieTitleText?.text = currentMovie.getTitle()
         movieReleaseDate?.text = date.year.toString()
 

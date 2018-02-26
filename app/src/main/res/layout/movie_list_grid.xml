@@ -10,6 +10,7 @@
         android:layout_width="104dp"
         android:layout_height="160dp"
         android:scaleType="centerCrop"
+        android:id="@+id/moviePoster"
         android:src="@drawable/tempposter" />
 
     <LinearLayout

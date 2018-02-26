@@ -8,7 +8,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 val BASE_URL = "https://api.themoviedb.org/3/discover/movie?api_key="
 val API_KEY = "cc4b67c52acb514bdf4931f7cedfd12b"
-val PAGE = 1
+var PAGE = 1
 val RELEASE_YEAR = 2018
 val LANGUAGE = "en-US"
 val API_URL = BASE_URL+API_KEY+"&language="+LANGUAGE+"&sort_by=popularity.desc&include_adult=true&include_video=true&page="+PAGE.toString()+"&primary_release_year="+RELEASE_YEAR.toString()
@@ -25,7 +25,6 @@ class MainActivity : AppCompatActivity() {
         movieAsyncTask().execute(API_URL)
 
     }
-
 
     class movieAsyncTask : AsyncTask<String, Void, ArrayList<Movie>>() {
         override fun doInBackground(vararg params: String?): ArrayList<Movie> {
