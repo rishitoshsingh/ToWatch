@@ -13,3 +13,9 @@ YouTube Data API v3 : https://developers.google.com/youtube/v3/docs/videos/list
 
 tmdb api 3 : https://developers.themoviedb.org/3
 
+
+## Current Status 
+
+![alt text](screenshots/currentStatus.png "GridView Activity")
+
+
