@@ -16,16 +16,16 @@ class CustomAdapter(context: Context, movies: ArrayList<Movie>) : ArrayAdapter<M
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
         var listItemView: View? = convertView
         if (listItemView == null) {
-            listItemView = LayoutInflater.from(context).inflate(R.layout.movie_list,parent,false)
+            listItemView = LayoutInflater.from(context).inflate(R.layout.movie_list_grid,parent,false)
         }
 
-        val titleText = listItemView?.findViewById<TextView>(R.id.title)
-        val releaseDate = listItemView?.findViewById<TextView>(R.id.releaseDate)
+        val movieTitleText = listItemView?.findViewById<TextView>(R.id.movieTile)
+        val movieReleaseDate = listItemView?.findViewById<TextView>(R.id.movieReleaseDate)
 
         val currentMovie = getItem(position)
 
-        titleText?.text = currentMovie.getTitle()
-        releaseDate?.text = currentMovie.getReleaseDate()
+        movieTitleText?.text = currentMovie.getTitle()
+        movieReleaseDate?.text = currentMovie.getReleaseDate()
 
         return listItemView
     }

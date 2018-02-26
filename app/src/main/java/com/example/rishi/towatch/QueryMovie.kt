@@ -18,7 +18,7 @@ class QueryMovie {
         try {
             val root = JSONObject(SAMPLE_JSON_RESPONSE)
             val results = root.getJSONArray("results")
-            for (index in 0..results.length()) {
+            for (index in 0 until results.length()) {
                 val movieObject = results.getJSONObject(index)
                 val title = movieObject.getString("title")
                 val releaseDate = movieObject.getString("release_date")
@@ -28,7 +28,7 @@ class QueryMovie {
                 val adult = movieObject.getBoolean("adult")
                 val genreIdsJson = movieObject.getJSONArray("genre_ids")
                 var genreIds = ArrayList<Int>()
-                for (id in 0..genreIdsJson.length()) {
+                for (id in 0 until genreIdsJson.length()) {
                     genreIds.add(genreIdsJson.getInt(id))
                 }
                 val posterPath = movieObject.getString("poster_path")
