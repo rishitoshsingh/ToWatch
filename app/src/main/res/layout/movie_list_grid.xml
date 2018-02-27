@@ -1,62 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/movieListGrid"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="256dp"
     android:orientation="vertical">
-<!--104dp width-->
+    <!--104dp width-->
+    <!--248dp image-->
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="248dp"
-        android:elevation="8dp"
-        android:scaleType="centerCrop"
         android:id="@+id/moviePoster"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
         android:src="@drawable/tempposter" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="@color/colorPrimaryLight"
-        android:orientation="horizontal"
+        android:layout_height="36dp"
+        android:layout_alignParentBottom="true"
+        android:background="#80000000"
+        android:elevation="4dp"
+        android:orientation="vertical"
         android:paddingBottom="4dp"
         android:paddingStart="4dp"
         android:paddingTop="4dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/movieTile"
-                android:layout_width="wrap_content"
+                android:layout_width="152dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
+                android:layout_gravity="bottom"
                 android:ellipsize="end"
+                android:maxLines="1"
                 android:gravity="center_vertical"
-                android:maxLines="2"
-                android:textColor="@color/primary_text"
-                android:textSize="15sp"
+                android:textColor="@android:color/white"
+                android:textSize="13sp"
                 tools:text="Ghost in Shell" />
 
             <TextView
+                android:layout_gravity="top"
                 android:id="@+id/movieReleaseDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:textColor="@color/secondary_text"
+                android:textColor="@android:color/white"
                 android:textSize="10sp"
                 tools:text="2018-01-14" />
-        </RelativeLayout>
+        </LinearLayout>
 
         <ImageView
+            android:layout_alignParentEnd="true"
             android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:src="@drawable/ic_more" />
-    </LinearLayout>
+    </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>
