@@ -19,10 +19,11 @@ tmdb api 3 : https://developers.themoviedb.org/3
 
 ## Past Build(s)
 
-![alt text](screenshots/currentStatus.png "25 February, 2018")
+![alt text](screenshots/pastBuild1.png "1") ![alt text](screenshots/pastBuild2.png "2")
 
 ## Current Status 
 For more info press 'g' + 'b'
 
-![alt text](screenshots/currentStatus1.png "26 February, 2018")
+![alt text](screenshots/currentStatus1.png "1") ![alt text](screenshots/currentStatus2.png "2")
+
 
