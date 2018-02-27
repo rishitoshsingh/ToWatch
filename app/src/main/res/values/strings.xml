@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ToWatch</string>
+    <string name="searchMovieEditText">Search</string>
 </resources>

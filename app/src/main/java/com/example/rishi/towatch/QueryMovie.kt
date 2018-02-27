@@ -26,6 +26,7 @@ class QueryMovie {
         } catch (ex: IOException) {
             Log.v("getMovieResponse", "Error in making request", ex)
         }
+        Log.i("SearchHttp",jsonResponse)
         return extractMoviesFromJson(jsonResponse)
     }
 
