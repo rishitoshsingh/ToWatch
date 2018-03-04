@@ -36,7 +36,11 @@ class CustomAdapter(context: Context, movies: ArrayList<Movie>) : ArrayAdapter<M
 
         val posterUri = Uri.parse(IMAGE_BASE_URL+currentMovie.getPosterPath())
 
-        Picasso.with(context).load(posterUri).into(moviePoster)
+        Picasso.with(context)
+                .load(posterUri)
+                .placeholder(R.drawable.poster_placeholder)
+                .into(moviePoster)
+
         movieTitleText?.text = currentMovie.getTitle()
         movieReleaseDate?.text = date.year.toString()
 

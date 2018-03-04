@@ -28,7 +28,21 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
+        setSupportActionBar(my_search_toolbar)
+
+
         searchView = searchMovie
+
+
+        tempSearch.setOnQueryTextFocusChangeListener { v, hasFocus ->
+
+            val query = createQuerystring(tempSearch.query.toString())
+            val URL = TMDB_SEARCH_BASE_URL+TMDB_KEY+"&language="+LANGUAGE+"&query="+query+"&page="+PAGE.toString()+"&include_adult=true"
+            mSearchAdapter = CustomAdapter(this, ArrayList())
+            searchGridView.adapter = mSearchAdapter
+            movieSearchAsyncTask().execute(URL)
+        }
+
 
         val extras = intent.extras
         val value1 = extras!!.getString(Intent.EXTRA_TEXT)
@@ -45,6 +59,9 @@ class SearchActivity : AppCompatActivity() {
         }
 
     }
+
+
+
 
     fun createQuerystring(string: String?): String {
         var query:String =""

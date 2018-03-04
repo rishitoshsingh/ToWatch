@@ -18,15 +18,28 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SearchActivity">
+        <activity
+            android:name=".SearchActivity"
+            android:parentActivityName=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data
                     android:host="www.youtube.com"
                     android:mimeType="text/*" />
             </intent-filter>
         </activity>
+        <!-- <activity -->
+        <!-- android:name=".ScrollingActivity" -->
+        <!-- android:label="@string/title_activity_scrolling" -->
+        <!-- android:parentActivityName=".MainActivity" -->
+        <!-- android:theme="@style/AppTheme.NoActionBar"> -->
+        <!-- <meta-data -->
+        <!-- android:name="android.support.PARENT_ACTIVITY" -->
+        <!-- android:value="com.example.rishi.towatch.MainActivity" /> -->
+        <!-- </activity> -->
     </application>
 
 </manifest>

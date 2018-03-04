@@ -7,9 +7,19 @@
     android:orientation="vertical"
     tools:context="com.example.rishi.towatch.SearchActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_search_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:background="@color/colorPrimary"
         android:orientation="horizontal"
         android:paddingEnd="8dp"
@@ -31,6 +41,14 @@
             android:layout_height="48dp"
             android:src="@drawable/ic_search_white" />
     </LinearLayout>
+
+    <SearchView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tempSearch">
+
+    </SearchView>
+
 
     <GridView
         android:id="@+id/searchGridView"
