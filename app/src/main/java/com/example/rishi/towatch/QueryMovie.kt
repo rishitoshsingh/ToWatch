@@ -87,20 +87,25 @@ class QueryMovie {
             val results = root.getJSONArray("results")
             for (index in 0 until results.length()) {
                 val movieObject = results.getJSONObject(index)
-                val title = movieObject.getString("title")
-                val releaseDate = movieObject.getString("release_date")
-                val language = movieObject.getString("original_language")
+                val voteCount = movieObject.getInt("vote_count")
                 val imdbId = movieObject.getInt("id")
-                val overview = movieObject.getString("overview")
-                val adult = movieObject.getBoolean("adult")
+                val video = movieObject.getBoolean("video")
+                val voteAverage = movieObject.getDouble("vote_average")
+                val title = movieObject.getString("title")
+                val popularity = movieObject.getDouble("popularity")
+                val posterPath = movieObject.getString("poster_path")
+                val language = movieObject.getString("original_language")
+                val originalTitle = movieObject.getString("original_title")
                 val genreIdsJson = movieObject.getJSONArray("genre_ids")
                 val genreIds = ArrayList<Int>()
                 for (id in 0 until genreIdsJson.length()) {
                     genreIds.add(genreIdsJson.getInt(id))
                 }
-                val posterPath = movieObject.getString("poster_path")
                 val backdropPath = movieObject.getString("backdrop_path")
-                movies.add(Movie(title, releaseDate, language, imdbId, overview, adult, genreIds, posterPath, backdropPath))
+                val adult = movieObject.getBoolean("adult")
+                val overview = movieObject.getString("overview")
+                val releaseDate = movieObject.getString("release_date")
+                movies.add(Movie(title,originalTitle,releaseDate,language,imdbId,overview,adult,genreIds,posterPath,backdropPath,video,voteAverage,popularity,voteCount))
             }
         } catch (ex: JSONException) {
             Log.v("Movie Extractor", ex.toString())
