@@ -17,7 +17,7 @@ import java.util.*
  */
 class CustomAdapter(context: Context, movies: ArrayList<Movie>) : ArrayAdapter<Movie>(context, 0, movies) {
 
-    val IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500/"
+    private val IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500/"
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
         var listItemView: View? = convertView

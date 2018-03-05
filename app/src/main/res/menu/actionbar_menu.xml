@@ -4,9 +4,16 @@
 
     <item
         android:id="@+id/app_bar_search"
-        android:icon="@drawable/ic_search_white_48dp"
+        android:icon="@drawable/ic_search_black_48dp"
         android:title="@string/search"
         app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="always"/>
+
+
+    <item
+        android:id="@+id/app_bar_profile"
+        android:icon="@drawable/ic_account_circle_black_48dp"
+        android:title="@string/profile"
         app:showAsAction="always"/>
 
 </menu>

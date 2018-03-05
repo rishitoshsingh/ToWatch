@@ -15,6 +15,7 @@ import android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
 import android.widget.AdapterView
 import android.widget.SearchView
 import android.widget.TextView
+import com.example.rishi.towatch.firebase.SignUpActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -40,6 +41,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         setSupportActionBar(my_toolbar)
+        val toolbar = supportActionBar
 
         val window: Window = window
 
@@ -105,9 +107,16 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?) = when (item?.itemId) {
-        R.id.app_bar_search -> true
-        else -> false
+    override fun onOptionsItemSelected(item: MenuItem?):Boolean{
+        when (item?.itemId) {
+//            R.id.app_bar_search ->
+            R.id.app_bar_profile -> {
+                val intent = Intent(this,SignUpActivity::class.java)
+                startActivity(intent)
+            }
+            else -> return super.onOptionsItemSelected(item);
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     class YoutubeAsyncTask : AsyncTask<String, Void, String>() {

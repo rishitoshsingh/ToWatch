@@ -40,17 +40,18 @@
         <!-- android:name="android.support.PARENT_ACTIVITY" -->
         <!-- android:value="com.example.rishi.towatch.MainActivity" /> -->
         <!-- </activity> -->
-        <activity android:name=".MovieDetailsActivity"
-            android:parentActivityName="com.example.rishi.towatch.MainActivity">
+        <activity
+            android:name=".MovieDetailsActivity"
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.rishi.towatch.MainActivity" />
-
         </activity>
         <activity
             android:name=".ScrollingActivity"
             android:label="@string/title_activity_scrolling"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
+        <activity android:name=".firebase.SignUpActivity"></activity>
     </application>
 
 </manifest>
