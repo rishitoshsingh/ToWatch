@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/movie_details_layout"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/movie_details_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -31,24 +31,47 @@
                 android:layout_height="match_parent"
                 android:background="@color/secondary_text">
 
-                <ImageView
-                    android:id="@+id/backdrop"
+                <android.support.v7.widget.CardView
+                    android:id="@+id/backdropCard"
                     android:layout_width="match_parent"
-                    android:layout_height="240dp"
-                    android:elevation="4dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/temp_backdrop" />
+                    android:layout_height="240dp">
+                    <ProgressBar
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center"
+                        android:id="@+id/backdropProgressBar"/>
 
-                <ImageView
-                    android:id="@+id/movie_poster"
+                    <ImageView
+                        android:id="@+id/backdrop"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:elevation="4dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/temp_backdrop" />
+
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/movie_posterCard"
                     android:layout_width="100dp"
                     android:layout_height="152dp"
                     android:layout_alignParentBottom="true"
                     android:layout_marginBottom="32dp"
-                    android:layout_marginStart="16dp"
                     android:elevation="6dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/tempposter" />
+                    android:layout_marginStart="16dp">
+                    <ProgressBar
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center"
+                        android:id="@+id/posterProgressBar"/>
+                    <ImageView
+                        android:id="@+id/movie_poster"
+                        android:layout_width="100dp"
+                        android:layout_height="152dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/tempposter" />
+
+                </android.support.v7.widget.CardView>
 
                 <!--<TextView-->
                 <!--android:id="@+id/movie_title"-->
@@ -69,9 +92,9 @@
                     android:id="@+id/genre"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/backdrop"
+                    android:layout_below="@id/backdropCard"
                     android:layout_marginTop="40dp"
-                    android:layout_toRightOf="@id/movie_poster"
+                    android:layout_toRightOf="@id/movie_posterCard"
                     android:maxLines="2"
                     android:paddingStart="16dp"
                     android:text="Action,Adventure,Horror"
@@ -153,10 +176,10 @@
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"
-            android:background="?attr/selectableItemBackground"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/fab_margin"
+            android:background="?attr/selectableItemBackground"
             app:srcCompat="@drawable/ic_playlist_add_white_48dp" />
 
     </LinearLayout>
