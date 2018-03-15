@@ -1,9 +1,11 @@
-package com.example.rishi.towatch
+package com.example.rishi.towatch.Activities
 
 import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
+import com.example.rishi.towatch.POJOs.TmdbDiscover.Result
+import com.example.rishi.towatch.R
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_movie_details.*
 
@@ -21,7 +23,7 @@ class MovieDetailsActivity : AppCompatActivity() {
         toolbar?.setDisplayHomeAsUpEnabled(true)
 
         val intent = intent
-        val movie:Movie = intent.getSerializableExtra("movie") as Movie
+        val movie: Result = intent.getSerializableExtra("movie") as Result
         val posterUri = Uri.parse(POSTER_BASE_URL+movie.getPosterPath())
         val backdropUri = Uri.parse(BACKDROP_BASE_URL+movie.getBackdropPath())
 
@@ -49,7 +51,7 @@ class MovieDetailsActivity : AppCompatActivity() {
 
     }
 
-    private fun extractGenre(genreIds: ArrayList<Int>): String {
+    private fun extractGenre(genreIds: List<Long>): String {
         var genre = ""
         if(genreIds.contains(28)) genre += "Action, "
         if(genreIds.contains(12)) genre += "Adventure, "
