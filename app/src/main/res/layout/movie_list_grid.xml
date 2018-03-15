@@ -17,6 +17,14 @@
         android:orientation="vertical">
         <!--104dp width-->
         <!--248dp image-->
+
+        <ProgressBar
+            android:id="@+id/posterProgressBar"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_centerInParent="true" />
+
+
         <ImageView
             android:id="@+id/moviePoster"
             android:layout_width="match_parent"

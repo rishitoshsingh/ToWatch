@@ -22,15 +22,4 @@
         android:layout_height="match_parent"
         android:background="@color/colorPrimaryDark" />
 
-    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/gridview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignBottom="@id/my_toolbar"
-        android:background="@color/colorPrimaryDark"
-        android:horizontalSpacing="1dp"
-        android:numColumns="2"
-        android:verticalSpacing="1dp" />
-
-
 </LinearLayout>

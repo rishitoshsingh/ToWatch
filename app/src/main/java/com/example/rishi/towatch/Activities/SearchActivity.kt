@@ -11,6 +11,7 @@ import com.example.rishi.towatch.*
 import com.example.rishi.towatch.Api.Clients.YouTubeClient
 import com.example.rishi.towatch.Api.ServiceGenerator
 import com.example.rishi.towatch.POJOs.TmdbDiscover.DiscoverMovie
+import com.example.rishi.towatch.POJOs.TmdbDiscover.Result
 import com.example.rishi.towatch.POJOs.YouTube.YouTubeVideo
 import com.example.rishi.towatch.TmdbApi.TmdbApiClient
 import kotlinx.android.synthetic.main.activity_search.*
@@ -20,11 +21,13 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-var searchView: EditText? = null
+
 var mSearchAdapter: CustomAdapter? = null
 
 
 class SearchActivity : AppCompatActivity() {
+    var movies: ArrayList<Result> = ArrayList<Result>()
+
     val YOUTUBE_API_KEY = "AIzaSyB17fukV4yjmWIizZ-Gei9wi51AICGov1g"
     val YOUTUBE_BASE_URL = "https://www.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&id="
 
@@ -32,6 +35,8 @@ class SearchActivity : AppCompatActivity() {
     val TMDB_KEY = "cc4b67c52acb514bdf4931f7cedfd12b"
     val LANGUAGE = "en-US"
     val PAGE = 1
+
+    var searchView: EditText? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,9 +60,9 @@ class SearchActivity : AppCompatActivity() {
                     val discoverMovie: DiscoverMovie = response?.body()!!
                     movies.clear()
                     for (item in discoverMovie.results) movies.add(item)
-                    mAdapter?.clear()
-                    mAdapter?.addAll(movies)
-                    searchGridView.adapter = mAdapter
+                    mSearchAdapter?.clear()
+                    mSearchAdapter?.addAll(movies)
+                    searchGridView.adapter = mSearchAdapter
                 }
 
             })
@@ -122,7 +127,7 @@ class SearchActivity : AppCompatActivity() {
         return query
     }
 
-    class YoutubeAsyncTask : AsyncTask<String, Void, String>() {
+    inner class YoutubeAsyncTask : AsyncTask<String, Void, String>() {
         override fun doInBackground(vararg params: String?): String {
             return QueryYoutube().getYoutubeResponse(params[0])
         }
@@ -133,7 +138,7 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    class movieSearchAsyncTask : AsyncTask<String, Void, ArrayList<Movie>>() {
+    inner class movieSearchAsyncTask : AsyncTask<String, Void, ArrayList<Movie>>() {
         override fun doInBackground(vararg params: String?): ArrayList<Movie> {
             return QueryMovie().getMovieResponse(params[0])
         }
