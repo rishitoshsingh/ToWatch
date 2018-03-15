@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "154054471279",
+    "firebase_url": "https://towatch-196218.firebaseio.com",
+    "project_id": "towatch-196218",
+    "storage_bucket": "towatch-196218.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:154054471279:android:e2d42b5c0f583889",
+        "android_client_info": {
+          "package_name": "com.example.rishi.towatch"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "154054471279-v9sukng7fb6g2jpurvgo1aq256kaooip.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.rishi.towatch",
+            "certificate_hash": "cc467f666f22210328b1a7e24ff026a887c9dfd3"
+          }
+        },
+        {
+          "client_id": "154054471279-a8hvp38npkmhkq0a13cgthubi8kb0699.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASS346H5L6CjBmT3Qn0l3X3Jt7FDa2kuo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "154054471279-a8hvp38npkmhkq0a13cgthubi8kb0699.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

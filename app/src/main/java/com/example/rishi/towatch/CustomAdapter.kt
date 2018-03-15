@@ -8,16 +8,17 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import com.example.rishi.towatch.POJOs.TmdbDiscover.Result
 import com.squareup.picasso.Picasso
 import java.util.*
 
-@Suppress("DEPRECATION")
 /**
- * Created by rishi on 25/2/18.
+ * Created by rishi on 13/3/18.
  */
-class CustomAdapter(context: Context, movies: ArrayList<Movie>) : ArrayAdapter<Movie>(context, 0, movies) {
+class CustomAdapter(context: Context, movies: ArrayList<Result>) : ArrayAdapter<Result>(context, 0, movies) {
 
-    val IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500/"
+
+    private val IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500/"
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
         var listItemView: View? = convertView
@@ -30,6 +31,7 @@ class CustomAdapter(context: Context, movies: ArrayList<Movie>) : ArrayAdapter<M
         val moviePoster = listItemView?.findViewById<ImageView>(R.id.moviePoster)
 
         val currentMovie = getItem(position)
+
         val dateString = currentMovie.getReleaseDate()?.split("-")
         val date = Date(dateString?.get(0)?.toInt()!!,dateString[1].toInt(),dateString[2].toInt())
 

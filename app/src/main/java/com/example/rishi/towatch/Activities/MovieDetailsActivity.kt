@@ -1,28 +1,29 @@
-package com.example.rishi.towatch
+package com.example.rishi.towatch.Activities
 
 import android.net.Uri
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
+import com.example.rishi.towatch.POJOs.TmdbDiscover.Result
+import com.example.rishi.towatch.R
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_movie_details.*
 
 class MovieDetailsActivity : AppCompatActivity() {
 
-    val POSTER_BASE_URL = "https://image.tmdb.org/t/p/w500/"
-    val BACKDROP_BASE_URL = "https://image.tmdb.org/t/p/w1280/"
+    private val POSTER_BASE_URL = "https://image.tmdb.org/t/p/w500/"
+    private val BACKDROP_BASE_URL = "https://image.tmdb.org/t/p/w1280/"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_details)
+
         setSupportActionBar(toolbar)
         val toolbar = supportActionBar
         toolbar?.setDisplayHomeAsUpEnabled(true)
 
-
-
-
-        val intent = getIntent()
-        val movie:Movie = intent.getSerializableExtra("movie") as Movie
+        val intent = intent
+        val movie: Result = intent.getSerializableExtra("movie") as Result
         val posterUri = Uri.parse(POSTER_BASE_URL+movie.getPosterPath())
         val backdropUri = Uri.parse(BACKDROP_BASE_URL+movie.getBackdropPath())
 
@@ -35,18 +36,23 @@ class MovieDetailsActivity : AppCompatActivity() {
                 .placeholder(R.drawable.poster_placeholder)
                 .into(backdrop)
 
-        toolbar?.setTitle(movie.getTitle())
-        if(movie.getTitle()!=movie.getOriginalTitle()) toolbar?.setSubtitle(movie.getOriginalTitle())
+        toolbar?.title = movie.getTitle()
+        if(movie.getTitle()!=movie.getOriginalTitle()) toolbar?.subtitle = movie.getOriginalTitle()
 
         val genre:String = extractGenre(movie.getGenreIds())
 
         movie_genre.text = genre
         movie_overview.text = movie.getOverview()
 
+        fab.setOnClickListener {
+            Snackbar.make(movie_details_layout,"Added to Playlist",Snackbar.LENGTH_SHORT).show()
+        }
+
+
     }
 
-    private fun extractGenre(genreIds: ArrayList<Int>): String {
-        var genre:String = ""
+    private fun extractGenre(genreIds: List<Long>): String {
+        var genre = ""
         if(genreIds.contains(28)) genre += "Action, "
         if(genreIds.contains(12)) genre += "Adventure, "
         if(genreIds.contains(16)) genre += "Animation, "

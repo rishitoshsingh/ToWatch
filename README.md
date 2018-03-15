@@ -24,6 +24,6 @@ tmdb api 3 : https://developers.themoviedb.org/3
 ## Current Status 
 For more info press 'g' + 'b'
 
-![alt text](screenshots/currentStatus1.png "1") ![alt text](screenshots/currentStatus2.png "2") ![alt text](screenshots/currentStatus3.png "3")
+![alt text](screenshots/currentStatus1.png "1") ![alt text](screenshots/currentStatus2.png "2") ![alt text](screenshots/currentStatus3.png "3") ![alt text](screenshots/currentStatus4.png "4")
 
 
