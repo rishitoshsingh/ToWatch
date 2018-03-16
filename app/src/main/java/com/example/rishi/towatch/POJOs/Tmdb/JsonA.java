@@ -1,12 +1,12 @@
 
-package com.example.rishi.towatch.POJOs.TmdbDiscover;
-
-import java.util.List;
+package com.example.rishi.towatch.POJOs.Tmdb;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 @SuppressWarnings("unused")
-public class DiscoverMovie {
+public class JsonA {
 
     @SerializedName("page")
     private Long mPage;

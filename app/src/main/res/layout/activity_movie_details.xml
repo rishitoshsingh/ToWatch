@@ -34,6 +34,7 @@
                 <android.support.v7.widget.CardView
                     android:id="@+id/backdropCard"
                     android:layout_width="match_parent"
+                    android:elevation="4dp"
                     android:layout_height="240dp">
                     <ProgressBar
                         android:layout_width="32dp"

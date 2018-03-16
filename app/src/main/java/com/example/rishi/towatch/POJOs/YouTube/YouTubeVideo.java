@@ -1,8 +1,9 @@
 
 package com.example.rishi.towatch.POJOs.YouTube;
 
-import java.util.List;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 public class YouTubeVideo {
 
     @SerializedName("kind")

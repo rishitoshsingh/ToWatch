@@ -10,8 +10,8 @@ import android.widget.TextView
 import com.example.rishi.towatch.*
 import com.example.rishi.towatch.Api.Clients.YouTubeClient
 import com.example.rishi.towatch.Api.ServiceGenerator
-import com.example.rishi.towatch.POJOs.TmdbDiscover.DiscoverMovie
-import com.example.rishi.towatch.POJOs.TmdbDiscover.Result
+import com.example.rishi.towatch.POJOs.Tmdb.JsonA
+import com.example.rishi.towatch.POJOs.Tmdb.Result
 import com.example.rishi.towatch.POJOs.YouTube.YouTubeVideo
 import com.example.rishi.towatch.TmdbApi.TmdbApiClient
 import kotlinx.android.synthetic.main.activity_search.*
@@ -50,23 +50,26 @@ class SearchActivity : AppCompatActivity() {
 
             val query = createQuerystring(tempSearch.query.toString())
             val client = ServiceGenerator.createService(TmdbApiClient::class.java)
-            val call = client.search(query)
-            call.enqueue(object :retrofit2.Callback<DiscoverMovie>{
-                override fun onFailure(call: Call<DiscoverMovie>?, t: Throwable?) {
+            val call = client.search(resources.getString(R.string.tmdb_key),
+                    "en-US",
+                    true,
+                    1,
+                    query)
+            call.enqueue(object :retrofit2.Callback<JsonA>{
+                override fun onFailure(call: Call<JsonA>?, t: Throwable?) {
 //                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 }
 
-                override fun onResponse(call: Call<DiscoverMovie>?, response: Response<DiscoverMovie>?) {
-                    val discoverMovie: DiscoverMovie = response?.body()!!
+                override fun onResponse(call: Call<JsonA>?, response: Response<JsonA>?) {
+                    val jsonA: JsonA = response?.body()!!
                     movies.clear()
-                    for (item in discoverMovie.results) movies.add(item)
+                    for (item in jsonA.results) movies.add(item)
                     mSearchAdapter?.clear()
                     mSearchAdapter?.addAll(movies)
                     searchGridView.adapter = mSearchAdapter
                 }
 
             })
-//
 //            val URL = TMDB_SEARCH_BASE_URL+TMDB_KEY+"&language="+LANGUAGE+"&query="+query+"&page="+PAGE.toString()+"&include_adult=true"
 //            mSearchAdapter = CustomAdapter(this, ArrayList())
 //            searchGridView.adapter = mSearchAdapter
