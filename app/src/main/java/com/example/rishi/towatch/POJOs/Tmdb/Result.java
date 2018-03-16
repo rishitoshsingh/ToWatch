@@ -1,11 +1,12 @@
 
-package com.example.rishi.towatch.POJOs.TmdbDiscover;
+package com.example.rishi.towatch.POJOs.Tmdb;
+
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.List;
-import com.google.gson.annotations.SerializedName;
 
-public class    Result implements Serializable {
+public class Result implements Serializable {
 
     @SerializedName("adult")
     private Boolean mAdult;

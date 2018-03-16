@@ -101,4 +101,12 @@
     <string name="profile">Profile</string>
     <string name="intro">Create your Movie Playlist</string>
     <string name="forgot_your_password">Forgot your Password?</string>
+    <string name="tmdb_key">e0169a0a1bed5f2a11dabb81ca070013</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="now_playing">Now Playing</string>
+    <string name="popular">Popular</string>
+    <string name="top_rated">Top Rated</string>
+    <string name="upcoming">Upcoming</string>
 </resources>

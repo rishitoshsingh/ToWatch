@@ -1,6 +1,5 @@
 package com.example.rishi.towatch.Api
 
-import com.example.rishi.towatch.TmdbApi.TmdbApiClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

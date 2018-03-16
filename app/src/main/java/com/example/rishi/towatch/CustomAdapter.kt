@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
-import com.example.rishi.towatch.POJOs.TmdbDiscover.Result
+import com.example.rishi.towatch.POJOs.Tmdb.Result
 import com.squareup.picasso.Picasso
 import java.util.*
 
