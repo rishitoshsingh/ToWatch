@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         val searchItem = menu?.findItem(R.id.app_bar_search)
         actionSearchView = searchItem?.actionView as SearchView
 
-//
+
 //        actionSearchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 //            override fun onQueryTextChange(newText: String?): Boolean {
 //                return false

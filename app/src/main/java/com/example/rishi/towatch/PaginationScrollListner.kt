@@ -19,7 +19,7 @@ abstract class PaginationScrollListner(layoutManager: GridLayoutManager): Recycl
         if (!isLoading() && !isLastPage()) {
             if (visibleItemCount + firstVisibleItemPosition >= totalItemCount
                     && firstVisibleItemPosition >= 0
-                    && getCurrentPage() < getTotalPageCount()) {
+                    && getCurrentPage() <    getTotalPageCount()) {
                 loadMoreItems()
             }
         }

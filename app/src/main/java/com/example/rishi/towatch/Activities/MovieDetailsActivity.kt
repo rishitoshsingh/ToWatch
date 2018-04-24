@@ -1,36 +1,155 @@
 package com.example.rishi.towatch.Activities
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
+import android.support.design.widget.AppBarLayout
 import android.support.design.widget.Snackbar
+import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.GlideDrawable
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.example.rishi.towatch.Api.ServiceGenerator
+import com.example.rishi.towatch.AppBarStateChangeListener
 import com.example.rishi.towatch.POJOs.Tmdb.Result
+import com.example.rishi.towatch.POJOs.TmdbMovie.Details
+import com.example.rishi.towatch.POJOs.TmdbMovie.MovieImage
+import com.example.rishi.towatch.POJOs.TmdbMovie.VideoResults
 import com.example.rishi.towatch.R
+import com.example.rishi.towatch.TmdbApi.TmdbApiClient
 import kotlinx.android.synthetic.main.activity_movie_details.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.lang.Exception
 
 class MovieDetailsActivity : AppCompatActivity() {
 
     private val POSTER_BASE_URL = "https://image.tmdb.org/t/p/w500/"
     private val BACKDROP_BASE_URL = "https://image.tmdb.org/t/p/w1280/"
+    private var mToolbar: ActionBar? = null
+    private lateinit var movie: Result
+    private lateinit var posterUri: Uri
+    private lateinit var backdropUri: Uri
+    private var movieId: Long = 0
+    private lateinit var client: TmdbApiClient
+    private var appBarCollapsed: Boolean = false
 
+    @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_details)
 
         setSupportActionBar(toolbar)
-        val toolbar = supportActionBar
-        toolbar?.setDisplayHomeAsUpEnabled(true)
+        mToolbar = supportActionBar
+        mToolbar?.setDisplayHomeAsUpEnabled(true)
+
+        app_bar_layout.addOnOffsetChangedListener(object : AppBarStateChangeListener() {
+            override fun onStateChanged(appBarLayout: AppBarLayout, state: State) {
+                if (state == State.COLLAPSED && !appBarCollapsed) {
+                    fabSecond.visibility = View.VISIBLE
+                    appBarCollapsed = true
+                    Log.v("stateChanged", "collasped triggered")
+                } else if (state == State.EXPANDED && appBarCollapsed) {
+                    fabSecond.visibility = View.GONE
+                    Log.v("stateChanged", "expanded triggered")
+                    appBarCollapsed = false
+                }
+            }
+        })
+
+//        window.decorView.
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 
         val intent = intent
-        val movie: Result = intent.getSerializableExtra("movie") as Result
-        val posterUri = Uri.parse(POSTER_BASE_URL + movie.posterPath)
-        val backdropUri = Uri.parse(BACKDROP_BASE_URL + movie.backdropPath)
+        movie = intent.getSerializableExtra("movie") as Result
+        posterUri = Uri.parse(POSTER_BASE_URL + movie.posterPath)
+        backdropUri = Uri.parse(BACKDROP_BASE_URL + movie.backdropPath)
+        movieId = movie.id
+        client = ServiceGenerator.createService(TmdbApiClient::class.java)
+        getMovieDetails()
+        getMovieImages()
+        getMovieVideos()
+
+        UpdateUI()
+
+    }
+
+    private fun getMovieVideos() {
+        val call = callMovieVideos()
+        call.enqueue(object : Callback<VideoResults> {
+            override fun onFailure(call: Call<VideoResults>?, t: Throwable?) {
+//                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun onResponse(call: Call<VideoResults>?, response: Response<VideoResults>?) {
+//                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+        })
+
+    }
+
+    private fun callMovieVideos(): Call<VideoResults> {
+        val call = client.getMovieVideos(
+                movieId.toInt(),
+                resources.getString(R.string.tmdb_key),
+                "en-US"
+        )
+        return call
+    }
+
+    private fun getMovieImages() {
+        val call = callMovieImages()
+        call.enqueue(object : Callback<MovieImage> {
+            override fun onFailure(call: Call<MovieImage>?, t: Throwable?) {
+//                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun onResponse(call: Call<MovieImage>?, response: Response<MovieImage>?) {
+//                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+        })
+    }
+
+    private fun callMovieImages(): Call<MovieImage> {
+        val call = client.getMovieImages(
+                movieId.toInt(),
+                resources.getString(R.string.tmdb_key)
+        )
+        return call
+    }
+
+    private fun getMovieDetails() {
+        val call = callMovieDetails()
+        call.enqueue(object : Callback<Details> {
+            override fun onResponse(call: Call<Details>?, response: Response<Details>?) {
+//                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun onFailure(call: Call<Details>?, t: Throwable?) {
+//                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+        })
+    }
+
+    private fun callMovieDetails(): Call<Details> {
+        val call = client.getMovieDetails(
+                movieId.toInt(),
+                resources.getString(R.string.tmdb_key),
+                "en-US"
+        )
+        return call
+    }
+
+
+    private fun UpdateUI() {
         Glide.with(this)
                 .load(posterUri)
                 .listener(object : RequestListener<Uri, GlideDrawable> {
@@ -68,16 +187,14 @@ class MovieDetailsActivity : AppCompatActivity() {
         toolbar?.title = movie.title
         if (movie.title != movie.originalTitle) toolbar?.subtitle = movie.originalTitle
 
-        val genre: String = extractGenre(movie.getGenreIds())
+        val genre: String = extractGenre(movie.genreIds)
 
         movie_genre.text = genre
-        movie_overview.text = movie.getOverview()
+        movie_overview.text = movie.overview
 
         fab.setOnClickListener {
             Snackbar.make(movie_details_layout, "Added to Playlist", Snackbar.LENGTH_SHORT).show()
         }
-
-
     }
 
     private fun extractGenre(genreIds: List<Long>): String {
@@ -93,7 +210,6 @@ class MovieDetailsActivity : AppCompatActivity() {
         if (genreIds.contains(14)) genre += "Fantasy, "
         if (genreIds.contains(36)) genre += "History, "
         if (genreIds.contains(27)) genre += "Horror, "
-        if (genreIds.contains(80)) genre += "Crime, "
         if (genreIds.contains(10402)) genre += "Music, "
         if (genreIds.contains(9648)) genre += "Mystery, "
         if (genreIds.contains(10759)) genre += "Romance, "
