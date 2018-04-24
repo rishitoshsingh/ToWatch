@@ -46,13 +46,10 @@ class DiscoverFragment : Fragment() {
             return DiscoverFragment()
         }
     }
-
-
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater!!.inflate(R.layout.recycler_view, container, false)
     }
-
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -94,8 +91,6 @@ class DiscoverFragment : Fragment() {
         loadFirstPage()
 
     }
-
-
     private fun loadFirstPage() {
         val call = callDiscoverMovie()
         call.enqueue(object : retrofit2.Callback<JsonA> {
@@ -116,7 +111,6 @@ class DiscoverFragment : Fragment() {
             }
         })
     }
-
     private fun loadNextPage() {
 
         val call = callDiscoverMovie()
@@ -134,7 +128,6 @@ class DiscoverFragment : Fragment() {
         })
 
     }
-
     private fun callDiscoverMovie(): Call<JsonA> {
         val call = client.getDiscoverMovie(
                 resources.getString(R.string.tmdb_key),
@@ -146,5 +139,4 @@ class DiscoverFragment : Fragment() {
         )
         return call
     }
-
 }
