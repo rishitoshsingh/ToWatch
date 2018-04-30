@@ -1,18 +1,16 @@
 package com.example.rishi.towatch.Database
 
-import android.provider.BaseColumns
+import android.arch.persistence.room.ColumnInfo
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
 
 /**
- * Created by rishi on 8/4/18.
+ * Created by rishi on 1/5/18.
  */
-object WatchList {
+@Entity (tableName = "watch_list")
+data class WatchList (@PrimaryKey(autoGenerate = true) var id: Int?,
+                      @ColumnInfo(name = "movie_name") var movieName:String,
+                      @ColumnInfo(name = "movie_Id") var movieId:Long){
 
-    object WatchListEntry : BaseColumns {
-        const val TABLE_NAME = "watch_list"
-        const val COLUMN_NAME_ID = "id"
-        const val COLUMN_NAME_TITLE = "title"
-        const val COLUMN_NAME_YEAR = "year"
-        const val COLUMN_NAME_POSTER = "poster"
-    }
-
+    constructor():this(null,"",0)
 }

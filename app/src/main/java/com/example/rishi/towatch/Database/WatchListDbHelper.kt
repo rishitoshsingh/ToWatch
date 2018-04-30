@@ -15,7 +15,7 @@ class WatchListDbHelper(context:Context):SQLiteOpenHelper(context,DATABASE_NAME,
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
-        val SQL_CREATE_TOWATCH_TABLE = "CREATE TABLE " + WatchList.WatchListEntry.TABLE_NAME + "(" + WatchList.WatchListEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + WatchList.WatchListEntry.COLUMN_NAME_TITLE + "TEXT NOT NULL, " + WatchList.WatchListEntry.COLUMN_NAME_YEAR + "INTEGER NOT NULL, " + WatchList.WatchListEntry.COLUMN_NAME_POSTER + "TEXT NOT NULL);"
+        val SQL_CREATE_TOWATCH_TABLE = "CREATE TABLE " + WatchTemp.WatchListEntry.TABLE_NAME + "(" + WatchTemp.WatchListEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + WatchTemp.WatchListEntry.COLUMN_NAME_TITLE + "TEXT NOT NULL, " + WatchTemp.WatchListEntry.COLUMN_NAME_YEAR + "INTEGER NOT NULL, " + WatchTemp.WatchListEntry.COLUMN_NAME_POSTER + "TEXT NOT NULL);"
         db?.execSQL(SQL_CREATE_TOWATCH_TABLE)
     }
 
