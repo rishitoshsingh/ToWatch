@@ -1,8 +1,9 @@
 
 package com.example.rishi.towatch.POJOs.Tmdb;
 
-import java.util.List;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 public class JsonB {
 

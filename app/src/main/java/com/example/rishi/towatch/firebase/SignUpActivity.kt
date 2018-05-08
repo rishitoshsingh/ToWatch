@@ -38,6 +38,7 @@ class SignUpActivity : AppCompatActivity() {
                             Log.d("CreateUser", "createUserWithEmail:success")
                             val user = mAuth?.getCurrentUser()
                             Snackbar.make(new_linear_layout,"Registered",Snackbar.LENGTH_SHORT).show()
+                            finish()
                         }else{
                             Log.w("CreateUser", "createUserWithEmail:failure", task.getException())
                             Snackbar.make(new_linear_layout,"Registration Unsuccessful",Snackbar.LENGTH_SHORT).show()
@@ -66,6 +67,7 @@ class SignUpActivity : AppCompatActivity() {
                             Log.d("onCompleteListner", "signInWithEmail:success")
                             val user = mAuth?.getCurrentUser()
                             Snackbar.make(new_linear_layout,"Login Successful",Snackbar.LENGTH_SHORT).show()
+                            finish()
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("onCompleteListner", "signInWithEmail:failure", task.exception)
