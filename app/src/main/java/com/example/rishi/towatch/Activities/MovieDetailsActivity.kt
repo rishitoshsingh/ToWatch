@@ -2,14 +2,12 @@ package com.example.rishi.towatch.Activities
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import android.os.AsyncTask
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.FloatingActionButton.OnVisibilityChangedListener
 import android.support.design.widget.Snackbar
 import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.View
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.GlideDrawable
@@ -17,6 +15,8 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.rishi.towatch.Api.ServiceGenerator
 import com.example.rishi.towatch.AppBarStateChangeListener
+import com.example.rishi.towatch.Database.WatchDatabase
+import com.example.rishi.towatch.Database.WatchList
 import com.example.rishi.towatch.POJOs.Tmdb.Result
 import com.example.rishi.towatch.POJOs.TmdbMovie.Details
 import com.example.rishi.towatch.POJOs.TmdbMovie.MovieImage
@@ -29,6 +29,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.lang.Exception
 
+
 class MovieDetailsActivity : AppCompatActivity() {
 
     private val POSTER_BASE_URL = "https://image.tmdb.org/t/p/w500/"
@@ -40,6 +41,10 @@ class MovieDetailsActivity : AppCompatActivity() {
     private var movieId: Long = 0
     private lateinit var client: TmdbApiClient
     private var appBarCollapsed: Boolean = false
+    private lateinit var watchDatabase: WatchDatabase
+    private var presentInList:Boolean = false
+
+    data class MovieData(var movieName: String, var movieId: Long, var moviePoster: String, var movieReleaseDate: String)
 
     @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,18 +55,18 @@ class MovieDetailsActivity : AppCompatActivity() {
         mToolbar = supportActionBar
         mToolbar?.setDisplayHomeAsUpEnabled(true)
 
+        watchDatabase = WatchDatabase.getInstance(this)!!
+
         app_bar_layout.addOnOffsetChangedListener(object : AppBarStateChangeListener() {
             override fun onStateChanged(appBarLayout: AppBarLayout, state: State) {
                 if (state == State.COLLAPSED && !appBarCollapsed) {
                     fabSecond.show()
                     appBarCollapsed = true
-                    Log.v("stateChanged", "collasped triggered")
                 } else if (state == State.EXPANDED && appBarCollapsed) {
                     fabSecond.hide()
-                    Log.v("stateChanged", "expanded triggered")
                     appBarCollapsed = false
                 } else {
-                  fabSecond.hide()
+                    fabSecond.hide()
                 }
             }
         })
@@ -83,9 +88,6 @@ class MovieDetailsActivity : AppCompatActivity() {
 
 
     }
-
-
-
 
 
     private fun getMovieVideos() {
@@ -201,9 +203,23 @@ class MovieDetailsActivity : AppCompatActivity() {
         movie_genre.text = genre
         movie_overview.text = movie.overview
 
+
+        FindMovie().execute(movie.id)
         fab.setOnClickListener {
-            Snackbar.make(movie_details_layout, "Added to Playlist", Snackbar.LENGTH_SHORT).show()
+            if(!presentInList){
+                val data = MovieData(movie.originalTitle, movie.id, movie.posterPath, movie.releaseDate)
+                InsertMovie().execute(data)
+            }
+
         }
+
+        fabSecond.setOnClickListener {
+            if(!presentInList){
+                val data = MovieData(movie.originalTitle, movie.id, movie.posterPath, movie.releaseDate)
+                InsertMovie().execute(data)
+            }
+        }
+
     }
 
     private fun extractGenre(genreIds: List<Long>): String {
@@ -233,4 +249,56 @@ class MovieDetailsActivity : AppCompatActivity() {
 
         return genre
     }
+
+    override fun onDestroy() {
+        WatchDatabase.destroyInstance()
+        super.onDestroy()
+    }
+
+    private inner class InsertMovie : AsyncTask<MovieData, Void, Void?>() {
+        override fun doInBackground(vararg movieData: MovieData): Void? {
+            val data = movieData[0]
+            watchDatabase.daoAccess().insertMovie(WatchList(null, data.movieName, data.movieId, data.moviePoster, data.movieReleaseDate));
+            return null
+        }
+
+        override fun onProgressUpdate(vararg progress: Void) {
+
+        }
+
+        override fun onPostExecute(result: Void?) {
+            presentInList = true
+            Snackbar.make(movie_details_layout, "Added to Playlist", Snackbar.LENGTH_SHORT).show()
+            fab.setImageDrawable(resources.getDrawable(R.drawable.ic_playlist_add_check_white_48dp))
+            fabSecond.setImageDrawable(resources.getDrawable(R.drawable.ic_playlist_add_check_white_48dp))
+        }
+    }
+
+    private inner class FindMovie : AsyncTask<Long, Void, Boolean>() {
+        override fun doInBackground(vararg params: Long?): Boolean {
+            val movieId = params[0]
+            val movieList = watchDatabase.daoAccess().fetchMovie(movieId!!)
+            return !movieList.isEmpty()
+
+        }
+
+
+        override fun onProgressUpdate(vararg progress: Void) {
+
+        }
+
+        override fun onPostExecute(result: Boolean) {
+            if (result) {
+                presentInList = true
+                fab.setImageDrawable(resources.getDrawable(R.drawable.ic_playlist_add_check_white_48dp))
+                fabSecond.setImageDrawable(resources.getDrawable(R.drawable.ic_playlist_add_check_white_48dp))
+            } else {
+                presentInList = false
+                fab.setImageDrawable(resources.getDrawable(R.drawable.ic_playlist_add_white_48dp))
+                fabSecond.setImageDrawable(resources.getDrawable(R.drawable.ic_playlist_add_white_48dp))
+            }
+        }
+    }
+
+
 }
