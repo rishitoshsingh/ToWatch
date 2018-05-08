@@ -5,12 +5,10 @@ import android.content.Intent
 import android.net.Uri
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.RelativeLayout
-import android.widget.TextView
+import android.widget.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.GlideDrawable
 import com.bumptech.glide.request.RequestListener
@@ -66,6 +64,30 @@ class MovieAdapter(context: Context, moviesPassed: ArrayList<Result>) : Recycler
             mContext.startActivity(intent)
         }
 
+        holder.threeDotMenu.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View?) {
+                val popup = PopupMenu(mContext,holder.threeDotMenu)
+                popup.inflate(R.menu.card_menu)
+                popup.setOnMenuItemClickListener(object :PopupMenu.OnMenuItemClickListener{
+                    override fun onMenuItemClick(item: MenuItem?): Boolean {
+                        when (item!!.itemId){
+                            R.id.addMovie -> {
+                                return false
+                            }
+                            R.id.removeMovie -> {
+                                return false
+                            }
+                        }
+                        return false
+                    }
+
+                })
+                popup.show()
+            }
+
+        })
+
+
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -75,6 +97,7 @@ class MovieAdapter(context: Context, moviesPassed: ArrayList<Result>) : Recycler
         var moviePoster: ImageView
         var itemLayout: RelativeLayout
         var posterProgressBar: ProgressBar
+        var threeDotMenu: ImageView
 
         init {
             movieTitleText = view.findViewById<TextView>(R.id.movieTile)
@@ -82,6 +105,7 @@ class MovieAdapter(context: Context, moviesPassed: ArrayList<Result>) : Recycler
             moviePoster = view.findViewById<ImageView>(R.id.moviePoster)
             itemLayout = view.findViewById<RelativeLayout>(R.id.movieListGrid)
             posterProgressBar = view.findViewById<ProgressBar>(R.id.posterProgressBar)
+            threeDotMenu = view.findViewById<ImageView>(R.id.threeDotMenu)
         }
     }
 
