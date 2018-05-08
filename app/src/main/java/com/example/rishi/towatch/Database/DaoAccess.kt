@@ -12,6 +12,7 @@ interface DaoAccess {
 
     @Insert
     fun insertMovie(movie:WatchList)
+
     @Query ("SELECT * FROM WatchList WHERE id = :id")
     fun fetchMovie(id:Int)
 

@@ -8,7 +8,7 @@ import android.arch.persistence.room.RoomDatabase
 /**
  * Created by rishi on 1/5/18.
  */
-@Database (entities = arrayof(WatchList::class), version = 1 )
+@Database (entities = arrayOf(WatchList::class), version = 1 )
 abstract class WatchDatabase: RoomDatabase() {
     abstract fun daoAccess():DaoAccess
 }

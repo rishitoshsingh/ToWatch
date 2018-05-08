@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
+import android.support.design.widget.FloatingActionButton
+import android.support.design.widget.FloatingActionButton.OnVisibilityChangedListener
 import android.support.design.widget.Snackbar
 import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
@@ -51,13 +53,15 @@ class MovieDetailsActivity : AppCompatActivity() {
         app_bar_layout.addOnOffsetChangedListener(object : AppBarStateChangeListener() {
             override fun onStateChanged(appBarLayout: AppBarLayout, state: State) {
                 if (state == State.COLLAPSED && !appBarCollapsed) {
-                    fabSecond.visibility = View.VISIBLE
+                    fabSecond.show()
                     appBarCollapsed = true
                     Log.v("stateChanged", "collasped triggered")
                 } else if (state == State.EXPANDED && appBarCollapsed) {
-                    fabSecond.visibility = View.GONE
+                    fabSecond.hide()
                     Log.v("stateChanged", "expanded triggered")
                     appBarCollapsed = false
+                } else {
+                  fabSecond.hide()
                 }
             }
         })
@@ -77,7 +81,12 @@ class MovieDetailsActivity : AppCompatActivity() {
 
         UpdateUI()
 
+
     }
+
+
+
+
 
     private fun getMovieVideos() {
         val call = callMovieVideos()
