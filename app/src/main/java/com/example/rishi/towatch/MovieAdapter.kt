@@ -21,7 +21,7 @@ import java.util.*
 /**
  * Created by rishi on 14/3/18.
  */
-class MovieAdapter(context: Context, moviesPassed: ArrayList<Result>) : RecyclerView.Adapter<MovieAdapter.ViewHolder>() {
+abstract class MovieAdapter(context: Context, moviesPassed: ArrayList<Result>) : RecyclerView.Adapter<MovieAdapter.ViewHolder>() {
     private val IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500/"
     private val mContext = context
     var movies: ArrayList<Result> = moviesPassed
@@ -72,10 +72,10 @@ class MovieAdapter(context: Context, moviesPassed: ArrayList<Result>) : Recycler
                     override fun onMenuItemClick(item: MenuItem?): Boolean {
                         when (item!!.itemId){
                             R.id.addMovie -> {
-                                return false
+                                addMovie(movie)
                             }
                             R.id.removeMovie -> {
-                                return false
+                                removeMovie(movie)
                             }
                         }
                         return false
@@ -87,8 +87,11 @@ class MovieAdapter(context: Context, moviesPassed: ArrayList<Result>) : Recycler
 
         })
 
-
     }
+
+    abstract fun addMovie(movie:Result)
+    abstract fun removeMovie(movie:Result)
+
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 

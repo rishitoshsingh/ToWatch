@@ -1,7 +1,9 @@
 package com.example.rishi.towatch.Fragments
 
 
+import android.os.AsyncTask
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
@@ -11,11 +13,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.rishi.towatch.Api.ServiceGenerator
+import com.example.rishi.towatch.Database.WatchDatabase
+import com.example.rishi.towatch.Database.WatchList
 import com.example.rishi.towatch.MovieAdapter
 import com.example.rishi.towatch.POJOs.Tmdb.JsonB
 import com.example.rishi.towatch.POJOs.Tmdb.Result
 import com.example.rishi.towatch.PaginationScrollListner
-
 import com.example.rishi.towatch.R
 import com.example.rishi.towatch.TmdbApi.TmdbApiClient
 import kotlinx.android.synthetic.main.recycler_view.*
@@ -36,6 +39,9 @@ class UpcomingFragment : Fragment() {
     private var currentPage = PAGE_START
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
+    private lateinit var watchDatabase: WatchDatabase
+    private var task:Int = 1
+    private lateinit var data:WatchList
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -47,8 +53,23 @@ class UpcomingFragment : Fragment() {
 
         client = ServiceGenerator.createService(TmdbApiClient::class.java)
 
+        watchDatabase = WatchDatabase.getInstance(context)!!
+
         viewManager = GridLayoutManager(context, 2)
-        viewAdapter = MovieAdapter(context, upcomingMovies)
+        viewAdapter = object : MovieAdapter(context, upcomingMovies) {
+            override fun addMovie(movie: Result) {
+                task = 1
+                data = WatchList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
+                FindMovie().execute(data.movieId)
+            }
+
+            override fun removeMovie(movie: Result) {
+                task = 2
+                data = WatchList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
+                FindMovie().execute(data.movieId)
+            }
+
+        }
         recyclerView.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
@@ -128,6 +149,54 @@ class UpcomingFragment : Fragment() {
                 null
         )
         return call
+    }
+
+    private inner class InsertMovie : AsyncTask<WatchList, Void, Void>() {
+        override fun doInBackground(vararg params: WatchList?): Void? {
+            val movie = params[0]
+            watchDatabase.daoAccess().insertMovie(movie!!)
+            return null
+        }
+
+        override fun onPostExecute(result: Void?) {
+            Snackbar.make(recyclerView, "Added to Playlist", Snackbar.LENGTH_SHORT).show()
+        }
+    }
+
+    private inner class RemoveMovie : AsyncTask<WatchList, Void, Void>() {
+        override fun doInBackground(vararg params: WatchList?): Void? {
+            val movie = params[0]
+            watchDatabase.daoAccess().deleteMovie(movie!!)
+            return null
+        }
+
+        override fun onPostExecute(result: Void?) {
+            Snackbar.make(recyclerView, "Removed from Playlist", Snackbar.LENGTH_SHORT).show()
+        }
+    }
+
+    private inner class FindMovie : AsyncTask<Long, Void, Boolean>() {
+        override fun doInBackground(vararg params: Long?): Boolean {
+            val movieId = params[0]
+            val movieList = watchDatabase.daoAccess().fetchMovie(movieId!!)
+            return !movieList.isEmpty()
+        }
+
+        override fun onPostExecute(result: Boolean) {
+            if(task == 1){
+                if(!result){
+                    InsertMovie().execute(data)
+                } else {
+                    Snackbar.make(recyclerView,"Movie Already in Watch List",Snackbar.LENGTH_SHORT).show()
+                }
+            } else {
+                if(result){
+                    RemoveMovie().execute(data)
+                } else {
+                    Snackbar.make(recyclerView,"Movie not found in Watch List",Snackbar.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
 

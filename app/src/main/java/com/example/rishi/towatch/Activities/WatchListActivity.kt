@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -15,6 +16,7 @@ import com.example.rishi.towatch.R
 import com.example.rishi.towatch.WatchListAdapter
 import com.example.rishi.towatch.firebase.SignUpActivity
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.activity_movie_details.*
 import kotlinx.android.synthetic.main.activity_watch_list.*
 
 
@@ -55,7 +57,13 @@ class WatchListActivity : AppCompatActivity() {
         watchDatabase = WatchDatabase.getInstance(this)!!
         ReadFromDatabase().execute()
         viewManager = GridLayoutManager(this, 2)
-        viewAdapter = WatchListAdapter(this, watchList)
+        viewAdapter = object : WatchListAdapter(this, watchList){
+            override fun removeMovie(movie: WatchList) {
+                watchList.remove(movie)
+                RemoveMovie().execute(movie)
+            }
+
+        }
         watchListRecyclerView.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
@@ -63,6 +71,19 @@ class WatchListActivity : AppCompatActivity() {
             itemAnimator = DefaultItemAnimator()
         }
 
+    }
+
+    private inner class RemoveMovie : AsyncTask<WatchList, Void, Void>() {
+        override fun doInBackground(vararg params: WatchList?): Void? {
+            val movie = params[0]
+            watchDatabase.daoAccess().deleteMovie(movie!!)
+            return null
+        }
+
+        override fun onPostExecute(result: Void?) {
+            Snackbar.make(watchListLayout, "Removed from Playlist", Snackbar.LENGTH_SHORT).show()
+            viewAdapter.notifyDataSetChanged()
+        }
     }
 
     private inner class ReadFromDatabase : AsyncTask<Void,Void,List<WatchList>>(){
