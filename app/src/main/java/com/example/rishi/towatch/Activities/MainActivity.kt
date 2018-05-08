@@ -101,8 +101,12 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
 //            R.id.app_bar_search ->
+//            R.id.app_bar_profile -> {
+//                val intent = Intent(this, SignUpActivity::class.java)
+//                startActivity(intent)
+//            }
             R.id.app_bar_profile -> {
-                val intent = Intent(this, SignUpActivity::class.java)
+                val intent = Intent(this, WatchListActivity::class.java)
                 startActivity(intent)
             }
             else -> return super.onOptionsItemSelected(item);

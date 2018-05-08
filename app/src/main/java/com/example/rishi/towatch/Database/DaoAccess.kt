@@ -16,4 +16,7 @@ interface DaoAccess {
     @Query ("SELECT * FROM watch_list WHERE movie_Id = :movieId")
     fun fetchMovie(movieId:Long) : List<WatchList>
 
+    @Query ("SELECT * FROM watch_list")
+    fun fetchAllMovies() : List<WatchList>
+
 }
