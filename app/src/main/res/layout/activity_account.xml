@@ -2,13 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/watchListLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.rishi.towatch.Activities.WatchListActivity">
+    tools:context="com.example.rishi.towatch.Activities.AccountActivity">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/my_watch_list_toolbar"
+        android:id="@+id/account_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
@@ -16,14 +17,17 @@
         android:theme="@style/ThemeOverlay.AppCompat.Light"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/watchListRecyclerView"
+    <android.support.design.widget.TabLayout
+        android:id="@+id/account_tab_Layout"
+        android:elevation="4dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/colorPrimaryDark">
+        android:layout_height="wrap_content"
+        style="@style/CategoryTab"
+        app:tabMode="fixed"/>
 
-    </android.support.v7.widget.RecyclerView>
-
+    <android.support.v4.view.ViewPager
+        android:id="@+id/accountViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </LinearLayout>

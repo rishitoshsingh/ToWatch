@@ -14,7 +14,7 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.rishi.towatch.Api.ServiceGenerator
-import com.example.rishi.towatch.AppBarStateChangeListener
+import com.example.rishi.towatch.Listners.AppBarStateChangeListener
 import com.example.rishi.towatch.Database.WatchDatabase
 import com.example.rishi.towatch.Database.WatchList
 import com.example.rishi.towatch.POJOs.Tmdb.Result
@@ -43,8 +43,6 @@ class MovieDetailsActivity : AppCompatActivity() {
     private var appBarCollapsed: Boolean = false
     private lateinit var watchDatabase: WatchDatabase
     private var presentInList:Boolean = false
-
-    data class MovieData(var movieName: String, var movieId: Long, var moviePoster: String, var movieReleaseDate: String)
 
     @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -207,16 +205,21 @@ class MovieDetailsActivity : AppCompatActivity() {
         FindMovie().execute(movie.id)
         fab.setOnClickListener {
             if(!presentInList){
-                val data = MovieData(movie.originalTitle, movie.id, movie.posterPath, movie.releaseDate)
+                val data = WatchList(movie.title,movie.id,movie.posterPath,movie.releaseDate)
                 InsertMovie().execute(data)
+            } else {
+                val data = WatchList(movie.title,movie.id,movie.posterPath,movie.releaseDate)
+                RemoveMovie().execute(data)
             }
-
         }
 
         fabSecond.setOnClickListener {
             if(!presentInList){
-                val data = MovieData(movie.originalTitle, movie.id, movie.posterPath, movie.releaseDate)
+                val data = WatchList(movie.title,movie.id,movie.posterPath,movie.releaseDate)
                 InsertMovie().execute(data)
+            } else {
+                val data = WatchList(movie.title,movie.id,movie.posterPath,movie.releaseDate)
+                RemoveMovie().execute(data)
             }
         }
 
@@ -255,15 +258,11 @@ class MovieDetailsActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    private inner class InsertMovie : AsyncTask<MovieData, Void, Void?>() {
-        override fun doInBackground(vararg movieData: MovieData): Void? {
+    private inner class InsertMovie : AsyncTask<WatchList, Void, Void?>() {
+        override fun doInBackground(vararg movieData: WatchList): Void? {
             val data = movieData[0]
-            watchDatabase.daoAccess().insertMovie(WatchList(null, data.movieName, data.movieId, data.moviePoster, data.movieReleaseDate));
+            watchDatabase.watchDaoAccess().insertMovie(data);
             return null
-        }
-
-        override fun onProgressUpdate(vararg progress: Void) {
-
         }
 
         override fun onPostExecute(result: Void?) {
@@ -274,16 +273,26 @@ class MovieDetailsActivity : AppCompatActivity() {
         }
     }
 
+    private inner class RemoveMovie : AsyncTask<WatchList, Void, Void>() {
+        override fun doInBackground(vararg params: WatchList?): Void? {
+            val movie = params[0]
+            watchDatabase.watchDaoAccess().deleteMovie(movie!!)
+            return null
+        }
+
+        override fun onPostExecute(result: Void?) {
+            presentInList = false
+            Snackbar.make(movie_details_layout, "Removed from Playlist", Snackbar.LENGTH_SHORT).show()
+            fab.setImageDrawable(resources.getDrawable(R.drawable.ic_playlist_add_white_48dp))
+            fabSecond.setImageDrawable(resources.getDrawable(R.drawable.ic_playlist_add_white_48dp))
+        }
+    }
+
     private inner class FindMovie : AsyncTask<Long, Void, Boolean>() {
         override fun doInBackground(vararg params: Long?): Boolean {
             val movieId = params[0]
-            val movieList = watchDatabase.daoAccess().fetchMovie(movieId!!)
+            val movieList = watchDatabase.watchDaoAccess().fetchMovie(movieId!!)
             return !movieList.isEmpty()
-
-        }
-
-
-        override fun onProgressUpdate(vararg progress: Void) {
 
         }
 
@@ -299,6 +308,4 @@ class MovieDetailsActivity : AppCompatActivity() {
             }
         }
     }
-
-
 }

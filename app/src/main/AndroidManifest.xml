@@ -52,7 +52,7 @@
             android:label="@string/title_activity_scrolling"
             android:theme="@style/AppTheme" />
         <activity android:name=".firebase.SignUpActivity" />
-        <activity android:name=".Activities.WatchListActivity"></activity>
+        <activity android:name=".Activities.AccountActivity"></activity>
     </application>
 
 </manifest>

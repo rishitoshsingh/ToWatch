@@ -108,4 +108,7 @@
     <string name="popular">Popular</string>
     <string name="top_rated">Top Rated</string>
     <string name="upcoming">Upcoming</string>
+    <string name="watch_list">To Watch Movies</string>
+    <string name="watched_list">Watched Movies</string>
+    <string name="sign_out">Sign Out</string>
 </resources>

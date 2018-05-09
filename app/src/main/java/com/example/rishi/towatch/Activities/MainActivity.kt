@@ -11,9 +11,8 @@ import android.view.Window
 import android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
 import android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
 import android.widget.SearchView
-import com.example.rishi.towatch.HomeAdapter
+import com.example.rishi.towatch.Adapters.HomeAdapter
 import com.example.rishi.towatch.R
-import com.example.rishi.towatch.firebase.SignUpActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -34,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         window.clearFlags(FLAG_TRANSLUCENT_STATUS)
         window.addFlags(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
 
-        viewPager.adapter = HomeAdapter(this,supportFragmentManager)
+        viewPager.adapter = HomeAdapter(this, supportFragmentManager)
         tabLayout.setupWithViewPager(viewPager)
 
     }
@@ -106,7 +105,7 @@ class MainActivity : AppCompatActivity() {
 //                startActivity(intent)
 //            }
             R.id.app_bar_profile -> {
-                val intent = Intent(this, WatchListActivity::class.java)
+                val intent = Intent(this, AccountActivity::class.java)
                 startActivity(intent)
             }
             else -> return super.onOptionsItemSelected(item);

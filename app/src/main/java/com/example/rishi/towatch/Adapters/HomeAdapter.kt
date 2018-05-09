@@ -1,4 +1,4 @@
-package com.example.rishi.towatch
+package com.example.rishi.towatch.Adapters
 
 import android.content.Context
 import android.support.v4.app.Fragment
@@ -8,6 +8,7 @@ import com.example.rishi.towatch.Fragments.NowPlayingFragment
 import com.example.rishi.towatch.Fragments.PopularFragment
 import com.example.rishi.towatch.Fragments.TopRatedFragment
 import com.example.rishi.towatch.Fragments.UpcomingFragment
+import com.example.rishi.towatch.R
 
 /**
  * Created by rishi on 16/3/18.

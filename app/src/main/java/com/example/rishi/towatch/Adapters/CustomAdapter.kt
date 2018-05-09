@@ -1,4 +1,4 @@
-package com.example.rishi.towatch
+package com.example.rishi.towatch.Adapters
 
 import android.content.Context
 import android.net.Uri
@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import com.example.rishi.towatch.POJOs.Tmdb.Result
+import com.example.rishi.towatch.R
 import com.squareup.picasso.Picasso
 import java.util.*
 
