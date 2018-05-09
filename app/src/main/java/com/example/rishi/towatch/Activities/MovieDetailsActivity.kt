@@ -14,7 +14,7 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.rishi.towatch.Api.ServiceGenerator
-import com.example.rishi.towatch.AppBarStateChangeListener
+import com.example.rishi.towatch.Listners.AppBarStateChangeListener
 import com.example.rishi.towatch.Database.WatchDatabase
 import com.example.rishi.towatch.Database.WatchList
 import com.example.rishi.towatch.POJOs.Tmdb.Result
@@ -24,7 +24,6 @@ import com.example.rishi.towatch.POJOs.TmdbMovie.VideoResults
 import com.example.rishi.towatch.R
 import com.example.rishi.towatch.TmdbApi.TmdbApiClient
 import kotlinx.android.synthetic.main.activity_movie_details.*
-import kotlinx.android.synthetic.main.recycler_view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -262,7 +261,7 @@ class MovieDetailsActivity : AppCompatActivity() {
     private inner class InsertMovie : AsyncTask<WatchList, Void, Void?>() {
         override fun doInBackground(vararg movieData: WatchList): Void? {
             val data = movieData[0]
-            watchDatabase.daoAccess().insertMovie(data);
+            watchDatabase.watchDaoAccess().insertMovie(data);
             return null
         }
 
@@ -277,7 +276,7 @@ class MovieDetailsActivity : AppCompatActivity() {
     private inner class RemoveMovie : AsyncTask<WatchList, Void, Void>() {
         override fun doInBackground(vararg params: WatchList?): Void? {
             val movie = params[0]
-            watchDatabase.daoAccess().deleteMovie(movie!!)
+            watchDatabase.watchDaoAccess().deleteMovie(movie!!)
             return null
         }
 
@@ -292,7 +291,7 @@ class MovieDetailsActivity : AppCompatActivity() {
     private inner class FindMovie : AsyncTask<Long, Void, Boolean>() {
         override fun doInBackground(vararg params: Long?): Boolean {
             val movieId = params[0]
-            val movieList = watchDatabase.daoAccess().fetchMovie(movieId!!)
+            val movieList = watchDatabase.watchDaoAccess().fetchMovie(movieId!!)
             return !movieList.isEmpty()
 
         }

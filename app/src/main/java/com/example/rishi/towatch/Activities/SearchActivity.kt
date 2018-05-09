@@ -8,6 +8,7 @@ import android.util.Log
 import android.widget.EditText
 import android.widget.TextView
 import com.example.rishi.towatch.*
+import com.example.rishi.towatch.Adapters.CustomAdapter
 import com.example.rishi.towatch.Api.Clients.YouTubeClient
 import com.example.rishi.towatch.Api.ServiceGenerator
 import com.example.rishi.towatch.POJOs.Tmdb.JsonA

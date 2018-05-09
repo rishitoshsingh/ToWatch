@@ -3,9 +3,6 @@
 
     <item
         android:id="@+id/removeMovie"
-        android:title="Remove" />
-    <item
-        android:id="@+id/watchedMovie"
-        android:title="Watched" />
+        android:title="Remove from Watched" />
 
 </menu>

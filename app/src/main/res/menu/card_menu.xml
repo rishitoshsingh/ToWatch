@@ -9,4 +9,8 @@
         android:id="@+id/removeMovie"
         android:title="Remove" />
 
+    <item
+        android:id="@+id/watchedMovie"
+        android:title="Watched" />
+
 </menu>

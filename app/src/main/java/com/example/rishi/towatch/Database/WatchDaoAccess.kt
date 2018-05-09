@@ -9,7 +9,7 @@ import android.arch.persistence.room.Query
  * Created by rishi on 1/5/18.
  */
 @Dao
-interface DaoAccess {
+interface WatchDaoAccess {
 
     @Insert
     fun insertMovie(movie: WatchList)
