@@ -66,14 +66,18 @@ class TopRatedFragment : Fragment() {
             override fun addMovie(movie: Result) {
                 task = 1
                 data = WatchList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
-                refresh_layout.isRefreshing = true
+                if(refresh_layout != null){
+                    refresh_layout.isRefreshing = true
+                }
                 FindMovie().execute(data.movieId)
             }
 
             override fun removeMovie(movie: Result) {
                 task = 2
                 data = WatchList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
-                refresh_layout.isRefreshing = true
+                if(refresh_layout != null){
+                    refresh_layout.isRefreshing = true
+                }
                 FindMovie().execute(data.movieId)
             }
 
@@ -81,7 +85,9 @@ class TopRatedFragment : Fragment() {
                 task = 3
                 data = WatchList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
                 watchedData = WatchedList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
-                refresh_layout.isRefreshing = true
+                if(refresh_layout != null){
+                    refresh_layout.isRefreshing = true
+                }
                 FindMovie().execute(data.movieId)
             }
         }
@@ -99,7 +105,9 @@ class TopRatedFragment : Fragment() {
             override fun loadMoreItems() {
                 isLoading = true
                 currentPage += 1
-                refresh_layout.isRefreshing = true
+                if(refresh_layout != null){
+                    refresh_layout.isRefreshing = true
+                }
                 loadNextPage()
             }
 
@@ -117,7 +125,9 @@ class TopRatedFragment : Fragment() {
 
         })
 
-        refresh_layout.isRefreshing = true
+        if(refresh_layout != null){
+            refresh_layout.isRefreshing = true
+        }
         loadFirstPage()
 
 
@@ -150,7 +160,9 @@ class TopRatedFragment : Fragment() {
                 for (item in jsonA.results) topRatedMovies.add(item)
                 viewAdapter.notifyDataSetChanged()
                 isLoading = false
-                refresh_layout.isRefreshing = false
+                if(refresh_layout != null){
+                    refresh_layout.isRefreshing = false
+                }
             }
         })
     }
@@ -168,7 +180,9 @@ class TopRatedFragment : Fragment() {
                 for (item in jsonA.results) topRatedMovies.add(item)
                 viewAdapter.notifyDataSetChanged()
                 isLoading = false
-                refresh_layout.isRefreshing = false
+                if(refresh_layout != null){
+                    refresh_layout.isRefreshing = false
+                }
             }
         })
 
@@ -195,7 +209,9 @@ class TopRatedFragment : Fragment() {
         }
 
         override fun onPostExecute(result: Void?) {
-            refresh_layout.isRefreshing = false
+            if(refresh_layout != null){
+                refresh_layout.isRefreshing = false
+            }
             Snackbar.make(recyclerView, "Added to Watched Movies", Snackbar.LENGTH_SHORT).show()
         }
     }
@@ -208,7 +224,9 @@ class TopRatedFragment : Fragment() {
         }
 
         override fun onPostExecute(result: Void?) {
-            refresh_layout.isRefreshing = false
+            if(refresh_layout != null){
+                refresh_layout.isRefreshing = false
+            }
             Snackbar.make(recyclerView, "Added to Playlist", Snackbar.LENGTH_SHORT).show()
         }
     }
@@ -221,7 +239,9 @@ class TopRatedFragment : Fragment() {
         }
 
         override fun onPostExecute(result: Void?) {
-            refresh_layout.isRefreshing = false
+            if(refresh_layout != null){
+                refresh_layout.isRefreshing = false
+            }
             Snackbar.make(recyclerView, "Removed from Playlist", Snackbar.LENGTH_SHORT).show()
         }
     }
@@ -251,7 +271,9 @@ class TopRatedFragment : Fragment() {
                     if (result) {
                         InsertMovie().execute(data)
                     } else {
-                        refresh_layout.isRefreshing = false
+                        if(refresh_layout != null){
+                            refresh_layout.isRefreshing = false
+                        }
                         Snackbar.make(recyclerView, "Movie Already in Watch List", Snackbar.LENGTH_SHORT).show()
                     }
                 }
@@ -259,7 +281,9 @@ class TopRatedFragment : Fragment() {
                     if (!result) {
                         RemoveMovie().execute(data)
                     } else {
-                        refresh_layout.isRefreshing = false
+                        if(refresh_layout != null){
+                            refresh_layout.isRefreshing = false
+                        }
                         Snackbar.make(recyclerView, "Movie not found in Watch List", Snackbar.LENGTH_SHORT).show()
                     }
                 }
@@ -271,7 +295,9 @@ class TopRatedFragment : Fragment() {
                             RemoveMovie().execute(data)
                             InsertWatchedMovie().execute(watchedData)
                         } else {
-                            refresh_layout.isRefreshing = false
+                            if(refresh_layout != null){
+                                refresh_layout.isRefreshing = false
+                            }
                             Snackbar.make(recyclerView, "Movie Already in Watched List", Snackbar.LENGTH_SHORT).show()
                         }
                     }

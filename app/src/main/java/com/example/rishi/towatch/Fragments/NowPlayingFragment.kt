@@ -22,6 +22,7 @@ import com.example.rishi.towatch.POJOs.Tmdb.JsonB
 import com.example.rishi.towatch.POJOs.Tmdb.Result
 import com.example.rishi.towatch.R
 import com.example.rishi.towatch.TmdbApi.TmdbApiClient
+import kotlinx.android.synthetic.main.activity_scrolling.*
 import kotlinx.android.synthetic.main.recycler_view.*
 import retrofit2.Call
 import retrofit2.Response
@@ -67,14 +68,18 @@ class NowPlayingFragment : Fragment() {
             override fun addMovie(movie: Result) {
                 task = 1
                 data = WatchList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
-                refresh_layout.isRefreshing = true
+                if (refresh_layout != null) {
+                    refresh_layout.isRefreshing = true
+                }
                 FindMovie().execute(data.movieId)
             }
 
             override fun removeMovie(movie: Result) {
                 task = 2
                 data = WatchList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
-                refresh_layout.isRefreshing = true
+                if (refresh_layout != null) {
+                    refresh_layout.isRefreshing = true
+                }
                 FindMovie().execute(data.movieId)
             }
 
@@ -82,7 +87,9 @@ class NowPlayingFragment : Fragment() {
                 task = 3
                 data = WatchList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
                 watchedData = WatchedList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
-                refresh_layout.isRefreshing = true
+                if (refresh_layout != null) {
+                    refresh_layout.isRefreshing = true
+                }
                 FindMovie().execute(data.movieId)
             }
         }
@@ -117,7 +124,9 @@ class NowPlayingFragment : Fragment() {
             }
         })
 
-        refresh_layout.isRefreshing = true
+        if (refresh_layout != null) {
+            refresh_layout.isRefreshing = true
+        }
         loadFirstPage()
 
         refresh_layout.setOnRefreshListener {
@@ -147,8 +156,9 @@ class NowPlayingFragment : Fragment() {
                 for (item in jsonB.results) nowPlayingMovies.add(item)
                 viewAdapter.notifyDataSetChanged()
                 isLoading = false
-                refresh_layout.isRefreshing = false
-
+                if (refresh_layout != null) {
+                    refresh_layout.isRefreshing = false
+                }
             }
         })
     }
@@ -166,7 +176,9 @@ class NowPlayingFragment : Fragment() {
                 for (item in jsonB.results) nowPlayingMovies.add(item)
                 viewAdapter.notifyDataSetChanged()
                 isLoading = false
-                refresh_layout.isRefreshing = false
+                if (refresh_layout != null) {
+                    refresh_layout.isRefreshing = false
+                }
             }
         })
 
@@ -195,7 +207,9 @@ class NowPlayingFragment : Fragment() {
         }
 
         override fun onPostExecute(result: Void?) {
-            refresh_layout.isRefreshing = false
+            if (refresh_layout != null) {
+                refresh_layout.isRefreshing = false
+            }
             Snackbar.make(recyclerView, "Added to Watched Movies", Snackbar.LENGTH_SHORT).show()
         }
     }
@@ -208,7 +222,9 @@ class NowPlayingFragment : Fragment() {
         }
 
         override fun onPostExecute(result: Void?) {
-            refresh_layout.isRefreshing = false
+            if(refresh_layout != null){
+                refresh_layout.isRefreshing = false
+            }
             Snackbar.make(recyclerView, "Added to Playlist", Snackbar.LENGTH_SHORT).show()
         }
     }
@@ -221,7 +237,9 @@ class NowPlayingFragment : Fragment() {
         }
 
         override fun onPostExecute(result: Void?) {
-            refresh_layout.isRefreshing = false
+            if(refresh_layout != null){
+                refresh_layout.isRefreshing = false
+            }
             Snackbar.make(recyclerView, "Removed from Playlist", Snackbar.LENGTH_SHORT).show()
         }
     }
@@ -230,7 +248,7 @@ class NowPlayingFragment : Fragment() {
         override fun doInBackground(vararg params: Long?): Boolean {
             val movieId = params[0]
             when (task) {
-                1,3 -> {
+                1, 3 -> {
                     val movieList = watchDatabase.watchDaoAccess().fetchMovie(movieId!!)
                     presentInWatch = !movieList.isEmpty()
                     val watchedList = watchDatabase.watchedDaoAccess().fetchMovie(movieId)
@@ -251,7 +269,9 @@ class NowPlayingFragment : Fragment() {
                     if (result) {
                         InsertMovie().execute(data)
                     } else {
-                        refresh_layout.isRefreshing = false
+                        if(refresh_layout != null){
+                            refresh_layout.isRefreshing = false
+                        }
                         Snackbar.make(recyclerView, "Movie Already in Watch List", Snackbar.LENGTH_SHORT).show()
                     }
                 }
@@ -259,7 +279,9 @@ class NowPlayingFragment : Fragment() {
                     if (!result) {
                         RemoveMovie().execute(data)
                     } else {
-                        refresh_layout.isRefreshing = false
+                        if(refresh_layout != null){
+                            refresh_layout.isRefreshing = false
+                        }
                         Snackbar.make(recyclerView, "Movie not found in Watch List", Snackbar.LENGTH_SHORT).show()
                     }
                 }
@@ -267,11 +289,13 @@ class NowPlayingFragment : Fragment() {
                     if (result) {
                         InsertWatchedMovie().execute(watchedData)
                     } else {
-                        if (presentInWatch){
+                        if (presentInWatch) {
                             RemoveMovie().execute(data)
                             InsertWatchedMovie().execute(watchedData)
                         } else {
-                            refresh_layout.isRefreshing = false
+                            if(refresh_layout != null){
+                                refresh_layout.isRefreshing = false
+                            }
                             Snackbar.make(recyclerView, "Movie Already in Watched List", Snackbar.LENGTH_SHORT).show()
                         }
                     }
