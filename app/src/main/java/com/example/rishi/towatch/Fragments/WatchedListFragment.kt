@@ -40,7 +40,9 @@ class WatchedListFragment : Fragment() {
         viewAdapter = object : WatchedAdapter(context, watchedList){
             override fun removeMovie(movie: WatchedList) {
                 watchedList.remove(movie)
-                refresh_layout.isRefreshing = true
+                if(refresh_layout != null){
+                    refresh_layout.isRefreshing = true
+                }
                 RemoveMovie().execute(movie)
             }
 
@@ -51,8 +53,9 @@ class WatchedListFragment : Fragment() {
             adapter = viewAdapter
             itemAnimator = DefaultItemAnimator()
         }
-
-        refresh_layout.isRefreshing = true
+        if(refresh_layout != null){
+            refresh_layout.isRefreshing = true
+        }
         ReadFromDatabase().execute()
 
         refresh_layout.setOnRefreshListener {
@@ -75,7 +78,9 @@ class WatchedListFragment : Fragment() {
         }
 
         override fun onPostExecute(result: Void?) {
-            refresh_layout.isRefreshing = false
+            if(refresh_layout != null){
+                refresh_layout.isRefreshing = false
+            }
             Snackbar.make(recyclerView, "Removed from Playlist", Snackbar.LENGTH_SHORT).show()
             viewAdapter.notifyDataSetChanged()
         }
@@ -87,7 +92,9 @@ class WatchedListFragment : Fragment() {
         }
 
         override fun onPostExecute(result: List<WatchedList>?) {
-            refresh_layout.isRefreshing = false
+            if(refresh_layout != null){
+                refresh_layout.isRefreshing = false
+            }
             for (item in result!!) watchedList.add(item)
             viewAdapter.notifyDataSetChanged()
         }

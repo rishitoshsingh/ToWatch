@@ -22,6 +22,7 @@ import com.example.rishi.towatch.POJOs.Tmdb.Result
 import com.example.rishi.towatch.Listners.PaginationScrollListner
 import com.example.rishi.towatch.R
 import com.example.rishi.towatch.TmdbApi.TmdbApiClient
+import kotlinx.android.synthetic.main.activity_scrolling.*
 import kotlinx.android.synthetic.main.recycler_view.*
 import retrofit2.Call
 import retrofit2.Response
@@ -64,14 +65,18 @@ class UpcomingFragment : Fragment() {
             override fun addMovie(movie: Result) {
                 task = 1
                 data = WatchList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
-                refresh_layout.isRefreshing = true
+                if(refresh_layout != null){
+                    refresh_layout.isRefreshing = true
+                }
                 FindMovie().execute(data.movieId)
             }
 
             override fun removeMovie(movie: Result) {
                 task = 2
                 data = WatchList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
-                refresh_layout.isRefreshing = true
+                if(refresh_layout != null){
+                    refresh_layout.isRefreshing = true
+                }
                 FindMovie().execute(data.movieId)
             }
 
@@ -79,7 +84,9 @@ class UpcomingFragment : Fragment() {
                 task = 3
                 data = WatchList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
                 watchedData = WatchedList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
-                refresh_layout.isRefreshing = true
+                if(refresh_layout != null){
+                    refresh_layout.isRefreshing = true
+                }
                 FindMovie().execute(data.movieId)
             }
         }
@@ -97,7 +104,9 @@ class UpcomingFragment : Fragment() {
             override fun loadMoreItems() {
                 isLoading = true
                 currentPage += 1
-                refresh_layout.isRefreshing = true
+                if(refresh_layout != null){
+                    refresh_layout.isRefreshing = true
+                }
                 loadNextPage()
             }
 
@@ -113,8 +122,9 @@ class UpcomingFragment : Fragment() {
                 return isLoading
             }
         })
-
-        refresh_layout.isRefreshing = true
+        if(refresh_layout != null){
+            refresh_layout.isRefreshing = true
+        }
         loadFirstPage()
 
 
@@ -146,7 +156,9 @@ class UpcomingFragment : Fragment() {
                 for (item in jsonB.results) upcomingMovies.add(item)
                 viewAdapter.notifyDataSetChanged()
                 isLoading = false
-                refresh_layout.isRefreshing = false
+                if(refresh_layout != null){
+                    refresh_layout.isRefreshing = false
+                }
             }
         })
     }
@@ -164,7 +176,9 @@ class UpcomingFragment : Fragment() {
                 for (item in jsonB.results) upcomingMovies.add(item)
                 viewAdapter.notifyDataSetChanged()
                 isLoading = false
-                refresh_layout.isRefreshing = false
+                if(refresh_layout != null){
+                    refresh_layout.isRefreshing = false
+                }
             }
         })
 
@@ -192,7 +206,9 @@ class UpcomingFragment : Fragment() {
         }
 
         override fun onPostExecute(result: Void?) {
-            refresh_layout.isRefreshing = false
+            if(refresh_layout != null){
+                refresh_layout.isRefreshing = false
+            }
             Snackbar.make(recyclerView, "Added to Watched Movies", Snackbar.LENGTH_SHORT).show()
         }
     }
@@ -205,7 +221,9 @@ class UpcomingFragment : Fragment() {
         }
 
         override fun onPostExecute(result: Void?) {
-            refresh_layout.isRefreshing = false
+            if(refresh_layout != null){
+                refresh_layout.isRefreshing = false
+            }
             Snackbar.make(recyclerView, "Added to Playlist", Snackbar.LENGTH_SHORT).show()
         }
     }
@@ -218,7 +236,9 @@ class UpcomingFragment : Fragment() {
         }
 
         override fun onPostExecute(result: Void?) {
-            refresh_layout.isRefreshing = false
+            if(refresh_layout != null){
+                refresh_layout.isRefreshing = false
+            }
             Snackbar.make(recyclerView, "Removed from Playlist", Snackbar.LENGTH_SHORT).show()
         }
     }
@@ -248,7 +268,9 @@ class UpcomingFragment : Fragment() {
                     if (result) {
                         InsertMovie().execute(data)
                     } else {
-                        refresh_layout.isRefreshing = false
+                        if(refresh_layout != null){
+                            refresh_layout.isRefreshing = false
+                        }
                         Snackbar.make(recyclerView, "Movie Already in Watch List", Snackbar.LENGTH_SHORT).show()
                     }
                 }
@@ -256,7 +278,9 @@ class UpcomingFragment : Fragment() {
                     if (!result) {
                         RemoveMovie().execute(data)
                     } else {
-                        refresh_layout.isRefreshing = false
+                        if(refresh_layout != null){
+                            refresh_layout.isRefreshing = false
+                        }
                         Snackbar.make(recyclerView, "Movie not found in Watch List", Snackbar.LENGTH_SHORT).show()
                     }
                 }
@@ -268,7 +292,9 @@ class UpcomingFragment : Fragment() {
                             RemoveMovie().execute(data)
                             InsertWatchedMovie().execute(watchedData)
                         } else {
-                            refresh_layout.isRefreshing = false
+                            if(refresh_layout != null){
+                                refresh_layout.isRefreshing = false
+                            }
                             Snackbar.make(recyclerView, "Movie Already in Watched List", Snackbar.LENGTH_SHORT).show()
                         }
                     }
