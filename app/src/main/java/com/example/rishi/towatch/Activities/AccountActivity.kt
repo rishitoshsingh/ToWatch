@@ -27,6 +27,9 @@ class AccountActivity : AppCompatActivity() {
         if (mAuth?.currentUser == null) {
             val intent = Intent(this, SignUpActivity::class.java)
             startActivity(intent)
+            if(mAuth?.currentUser == null){
+                finish()
+            }
         }
 
         setSupportActionBar(account_toolbar)

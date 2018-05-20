@@ -28,16 +28,16 @@ class WatchedListFragment : Fragment() {
     private var watchedList: MutableList<WatchedList> = mutableListOf<WatchedList>()
     private lateinit var watchDatabase: WatchDatabase
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.recycler_view, container, false)
+        return inflater.inflate(R.layout.recycler_view, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        watchDatabase = WatchDatabase.getInstance(context)!!
+        watchDatabase = WatchDatabase.getInstance(context!!)!!
         viewManager = GridLayoutManager(context, 2)
-        viewAdapter = object : WatchedAdapter(context, watchedList){
+        viewAdapter = object : WatchedAdapter(context!!, watchedList){
             override fun removeMovie(movie: WatchedList) {
                 watchedList.remove(movie)
                 if(refresh_layout != null){

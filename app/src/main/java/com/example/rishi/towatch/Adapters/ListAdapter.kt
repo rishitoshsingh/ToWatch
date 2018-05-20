@@ -1,6 +1,7 @@
 package com.example.rishi.towatch.Adapters
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -9,8 +10,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.GlideDrawable
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.example.rishi.towatch.Database.WatchList
 import com.example.rishi.towatch.R
@@ -25,8 +28,8 @@ abstract class ListAdapter(context: Context, moviesPassed: List<WatchList>) : Re
     private val mContext = context
     var movies: List<WatchList> = moviesPassed
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): MovieViewHolder {
-        val itemView = LayoutInflater.from(parent?.context).inflate(R.layout.movie_list_grid, parent, false)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.movie_list_grid, parent, false)
         return MovieViewHolder(itemView)
     }
 
@@ -34,29 +37,30 @@ abstract class ListAdapter(context: Context, moviesPassed: List<WatchList>) : Re
         return movies.size
     }
 
-    override fun onBindViewHolder(holder: MovieViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         val movie = movies[position]
         val dateString = movie.movieReleaseDate.split("-")
         val date = Date(dateString[0].toInt(), dateString[1].toInt(), dateString[2].toInt())
         val posterUri = Uri.parse(IMAGE_BASE_URL + movie.moviePoster)
-        holder?.movieTitleText?.text = movie.movieName
-        holder?.movieReleaseDate?.text = date.year.toString()
+        holder.movieTitleText.text = movie.movieName
+        holder.movieReleaseDate.text = date.year.toString()
         Glide.with(mContext)
                 .load(posterUri)
-                .listener(object : RequestListener<Uri, GlideDrawable> {
-                    override fun onException(e: Exception?, model: Uri?, target: Target<GlideDrawable>?, isFirstResource: Boolean): Boolean {
-                        holder?.posterProgressBar?.visibility = View.GONE
+                .listener(object : RequestListener<Drawable> {
+                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                        holder.posterProgressBar.visibility = View.GONE
                         return false
                     }
 
-                    override fun onResourceReady(resource: GlideDrawable?, model: Uri?, target: Target<GlideDrawable>?, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
-                        holder?.posterProgressBar?.visibility = View.GONE
+                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                        holder.posterProgressBar.visibility = View.GONE
                         return false
                     }
                 })
-                .error(R.drawable.poster_placeholder)
-                .centerCrop()
-                .into(holder?.moviePoster!!)
+                .apply(RequestOptions()
+                        .centerCrop()
+                        .error(R.drawable.poster_placeholder))
+                .into(holder.moviePoster)
 //        holder.itemLayout.setOnClickListener {
 //            val intent = Intent(mContext, MovieDetailsActivity::class.java)
 //            intent.putExtra("movie", movies[position])

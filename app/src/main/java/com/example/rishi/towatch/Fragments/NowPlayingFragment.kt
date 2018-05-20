@@ -22,7 +22,6 @@ import com.example.rishi.towatch.POJOs.Tmdb.JsonB
 import com.example.rishi.towatch.POJOs.Tmdb.Result
 import com.example.rishi.towatch.R
 import com.example.rishi.towatch.TmdbApi.TmdbApiClient
-import kotlinx.android.synthetic.main.activity_scrolling.*
 import kotlinx.android.synthetic.main.recycler_view.*
 import retrofit2.Call
 import retrofit2.Response
@@ -51,20 +50,20 @@ class NowPlayingFragment : Fragment() {
     private var presentInWatched: Boolean = false
 
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.recycler_view, container, false)
+        return inflater.inflate(R.layout.recycler_view, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         client = ServiceGenerator.createService(TmdbApiClient::class.java)
 
-        watchDatabase = WatchDatabase.getInstance(context)!!
+        watchDatabase = WatchDatabase.getInstance(context!!)!!
 
         viewManager = GridLayoutManager(context, 2)
-        viewAdapter = object : MovieAdapter(context, nowPlayingMovies) {
+        viewAdapter = object : MovieAdapter(context!!, nowPlayingMovies) {
             override fun addMovie(movie: Result) {
                 task = 1
                 data = WatchList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
