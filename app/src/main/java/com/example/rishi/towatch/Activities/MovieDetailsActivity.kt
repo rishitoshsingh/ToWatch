@@ -1,17 +1,31 @@
 package com.example.rishi.towatch.Activities
 
 import android.annotation.SuppressLint
+import android.graphics.Color
+import android.graphics.drawable.Drawable
+import android.icu.text.MeasureFormat
+import android.icu.util.Measure
 import android.net.Uri
 import android.os.AsyncTask
+import android.os.Build
 import android.os.Bundle
+import android.support.annotation.RequiresApi
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.Snackbar
 import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.GridView
+import android.widget.ImageView
+import android.widget.TextView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.GlideDrawable
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.example.rishi.towatch.Api.ServiceGenerator
 import com.example.rishi.towatch.Listners.AppBarStateChangeListener
@@ -22,6 +36,7 @@ import com.example.rishi.towatch.POJOs.TmdbMovie.Details
 import com.example.rishi.towatch.POJOs.TmdbMovie.MovieImage
 import com.example.rishi.towatch.POJOs.TmdbMovie.VideoResults
 import com.example.rishi.towatch.R
+import com.example.rishi.towatch.R.color.white
 import com.example.rishi.towatch.TmdbApi.TmdbApiClient
 import kotlinx.android.synthetic.main.activity_movie_details.*
 import retrofit2.Call
@@ -34,6 +49,7 @@ class MovieDetailsActivity : AppCompatActivity() {
 
     private val POSTER_BASE_URL = "https://image.tmdb.org/t/p/w500/"
     private val BACKDROP_BASE_URL = "https://image.tmdb.org/t/p/w1280/"
+    private val LOGO_BASE_URL = "https://image.tmdb.org/t/p/w92/"
     private var mToolbar: ActionBar? = null
     private lateinit var movie: Result
     private lateinit var posterUri: Uri
@@ -52,6 +68,11 @@ class MovieDetailsActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         mToolbar = supportActionBar
         mToolbar?.setDisplayHomeAsUpEnabled(true)
+
+//        val window: Window = window
+//        window.clearFlags(FLAG_TRANSLUCENT_STATUS)
+//        window.addFlags(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+
 
         watchDatabase = WatchDatabase.getInstance(this)!!
 
@@ -138,7 +159,7 @@ class MovieDetailsActivity : AppCompatActivity() {
         val call = callMovieDetails()
         call.enqueue(object : Callback<Details> {
             override fun onResponse(call: Call<Details>?, response: Response<Details>?) {
-//                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                updateMoviesDetails(response?.body())
             }
 
             override fun onFailure(call: Call<Details>?, t: Throwable?) {
@@ -158,48 +179,81 @@ class MovieDetailsActivity : AppCompatActivity() {
     }
 
 
+    private fun updateMoviesDetails(details : Details?) {
+        mToolbar?.title = details?.originalTitle
+        tmdb_rating.text = details?.voteAverage.toString()
+        movie_tagline.text = details?.tagline
+        status.text = details?.status
+        release_date.text = details?.releaseDate
+        revenue.text = details?.revenue.toString()
+        runtime.text = details?.runtime.toString()
+        movie_overview.text = details?.overview
+
+        val genreString: String = extractGenre(movie.genreIds)
+        var genreArray = genreString.split(",")
+        for(genre in genreArray){
+            val textView = TextView(this)
+            textView.text = genre
+            textView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            textView.setTextColor(resources.getColor(R.color.grey))
+            textView.gravity = Gravity.CENTER
+            movie_genre_list.addView(textView)
+        }
+
+        val viewGroup = findViewById<GridView>(R.id.production_company_grid)
+//        for(company in details?.productionCompanies!!){
+//            val imageView :ImageView = LayoutInflater.from(this).inflate(R.layout.production_company_image_layout,viewGroup,false) as ImageView
+//            val logoUri:Uri = Uri.parse(LOGO_BASE_URL + company.logoPath)
+//            viewGroup.parent.addView(imageView)
+//            Glide.with(this)
+//                    .load(logoUri)
+//                    .fitCenter()
+//                    .into(imageView)
+//        }
+
+    }
+
+
+
     private fun UpdateUI() {
         Glide.with(this)
                 .load(posterUri)
-                .listener(object : RequestListener<Uri, GlideDrawable> {
-                    override fun onException(e: Exception?, model: Uri?, target: Target<GlideDrawable>?, isFirstResource: Boolean): Boolean {
+                .listener(object : RequestListener<Drawable> {
+                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
                         posterProgressBar.visibility = View.GONE
                         return false
                     }
 
-                    override fun onResourceReady(resource: GlideDrawable?, model: Uri?, target: Target<GlideDrawable>?, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
+                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
                         posterProgressBar.visibility = View.GONE
                         return false
                     }
-
                 })
-                .centerCrop()
+                .apply(RequestOptions()
+                        .centerCrop())
                 .into(movie_poster)
 
         Glide.with(this)
                 .load(backdropUri)
-                .listener(object : RequestListener<Uri, GlideDrawable> {
-                    override fun onException(e: Exception?, model: Uri?, target: Target<GlideDrawable>?, isFirstResource: Boolean): Boolean {
+                .listener(object : RequestListener<Drawable> {
+                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
                         backdropProgressBar.visibility = View.GONE
                         return false
                     }
 
-                    override fun onResourceReady(resource: GlideDrawable?, model: Uri?, target: Target<GlideDrawable>?, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
+                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
                         backdropProgressBar.visibility = View.GONE
                         return false
                     }
-
                 })
-                .centerCrop()
+                .apply(RequestOptions()
+                        .centerCrop())
                 .into(backdrop)
 
         toolbar?.title = movie.title
         if (movie.title != movie.originalTitle) toolbar?.subtitle = movie.originalTitle
 
         val genre: String = extractGenre(movie.genreIds)
-
-        movie_genre.text = genre
-        movie_overview.text = movie.overview
 
 
         FindMovie().execute(movie.id)
