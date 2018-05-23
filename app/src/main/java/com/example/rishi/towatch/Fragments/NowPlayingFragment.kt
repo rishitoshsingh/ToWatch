@@ -22,6 +22,7 @@ import com.example.rishi.towatch.POJOs.Tmdb.JsonB
 import com.example.rishi.towatch.POJOs.Tmdb.Result
 import com.example.rishi.towatch.R
 import com.example.rishi.towatch.TmdbApi.TmdbApiClient
+import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.android.synthetic.main.recycler_view.*
 import retrofit2.Call
 import retrofit2.Response
@@ -49,10 +50,19 @@ class NowPlayingFragment : Fragment() {
     private var presentInWatch: Boolean = false
     private var presentInWatched: Boolean = false
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.recycler_view, container, false)
+    }
+
+    override fun onResume() {
+        shimmer_container.startShimmerAnimation()
+        super.onResume()
+    }
+
+    override fun onPause() {
+        shimmer_container.stopShimmerAnimation()
+        super.onPause()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -129,6 +139,8 @@ class NowPlayingFragment : Fragment() {
         loadFirstPage()
 
         refresh_layout.setOnRefreshListener {
+            shimmer_container.startShimmerAnimation()
+            shimmer_container.visibility = View.VISIBLE
             nowPlayingMovies.removeAll(nowPlayingMovies)
             isLoading = false
             isLastPage = false
@@ -147,6 +159,9 @@ class NowPlayingFragment : Fragment() {
             }
 
             override fun onResponse(p0: Call<JsonB>?, p1: Response<JsonB>?) {
+
+                shimmer_container.stopShimmerAnimation()
+                shimmer_container.visibility = View.GONE
 
                 val jsonB: JsonB? = p1?.body()!!
 

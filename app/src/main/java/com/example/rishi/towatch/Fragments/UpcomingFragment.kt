@@ -52,6 +52,16 @@ class UpcomingFragment : Fragment() {
         return inflater.inflate(R.layout.recycler_view, container, false)
     }
 
+    override fun onResume() {
+        shimmer_container.startShimmerAnimation()
+        super.onResume()
+    }
+
+    override fun onPause() {
+        shimmer_container.stopShimmerAnimation()
+        super.onPause()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -128,6 +138,8 @@ class UpcomingFragment : Fragment() {
 
 
         refresh_layout.setOnRefreshListener {
+            shimmer_container.startShimmerAnimation()
+            shimmer_container.visibility = View.VISIBLE
             upcomingMovies.removeAll(upcomingMovies)
             isLoading = false
             isLastPage = false
@@ -147,6 +159,9 @@ class UpcomingFragment : Fragment() {
             }
 
             override fun onResponse(p0: Call<JsonB>?, p1: Response<JsonB>?) {
+
+                shimmer_container.stopShimmerAnimation()
+                shimmer_container.visibility = View.GONE
 
                 val jsonB: JsonB? = p1?.body()!!
 

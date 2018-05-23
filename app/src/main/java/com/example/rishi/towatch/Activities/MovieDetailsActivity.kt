@@ -1,25 +1,18 @@
 package com.example.rishi.towatch.Activities
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.graphics.drawable.Drawable
-import android.icu.text.MeasureFormat
-import android.icu.util.Measure
 import android.net.Uri
 import android.os.AsyncTask
-import android.os.Build
 import android.os.Bundle
-import android.support.annotation.RequiresApi
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.Snackbar
 import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
-import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.GridView
-import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -27,29 +20,27 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.example.rishi.towatch.Adapters.CompaniesAdapter
 import com.example.rishi.towatch.Api.ServiceGenerator
-import com.example.rishi.towatch.Listners.AppBarStateChangeListener
 import com.example.rishi.towatch.Database.WatchDatabase
 import com.example.rishi.towatch.Database.WatchList
+import com.example.rishi.towatch.Listners.AppBarStateChangeListener
 import com.example.rishi.towatch.POJOs.Tmdb.Result
 import com.example.rishi.towatch.POJOs.TmdbMovie.Details
 import com.example.rishi.towatch.POJOs.TmdbMovie.MovieImage
 import com.example.rishi.towatch.POJOs.TmdbMovie.VideoResults
 import com.example.rishi.towatch.R
-import com.example.rishi.towatch.R.color.white
 import com.example.rishi.towatch.TmdbApi.TmdbApiClient
 import kotlinx.android.synthetic.main.activity_movie_details.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.lang.Exception
 
 
 class MovieDetailsActivity : AppCompatActivity() {
 
     private val POSTER_BASE_URL = "https://image.tmdb.org/t/p/w500/"
     private val BACKDROP_BASE_URL = "https://image.tmdb.org/t/p/w1280/"
-    private val LOGO_BASE_URL = "https://image.tmdb.org/t/p/w92/"
     private var mToolbar: ActionBar? = null
     private lateinit var movie: Result
     private lateinit var posterUri: Uri
@@ -58,9 +49,11 @@ class MovieDetailsActivity : AppCompatActivity() {
     private lateinit var client: TmdbApiClient
     private var appBarCollapsed: Boolean = false
     private lateinit var watchDatabase: WatchDatabase
-    private var presentInList:Boolean = false
+    private var presentInList: Boolean = false
 
     @SuppressLint("RestrictedApi")
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_details)
@@ -99,13 +92,14 @@ class MovieDetailsActivity : AppCompatActivity() {
         backdropUri = Uri.parse(BACKDROP_BASE_URL + movie.backdropPath)
         movieId = movie.id
         client = ServiceGenerator.createService(TmdbApiClient::class.java)
+//        getMovieDetails()
+//        UpdateUI()
+    }
+
+    override fun onStart() {
         getMovieDetails()
-        getMovieImages()
-        getMovieVideos()
-
         UpdateUI()
-
-
+        super.onStart()
     }
 
 
@@ -159,6 +153,8 @@ class MovieDetailsActivity : AppCompatActivity() {
         val call = callMovieDetails()
         call.enqueue(object : Callback<Details> {
             override fun onResponse(call: Call<Details>?, response: Response<Details>?) {
+                getMovieImages()
+                getMovieVideos()
                 updateMoviesDetails(response?.body())
             }
 
@@ -179,7 +175,7 @@ class MovieDetailsActivity : AppCompatActivity() {
     }
 
 
-    private fun updateMoviesDetails(details : Details?) {
+    private fun updateMoviesDetails(details: Details?) {
         mToolbar?.title = details?.originalTitle
         tmdb_rating.text = details?.voteAverage.toString()
         movie_tagline.text = details?.tagline
@@ -191,7 +187,7 @@ class MovieDetailsActivity : AppCompatActivity() {
 
         val genreString: String = extractGenre(movie.genreIds)
         var genreArray = genreString.split(",")
-        for(genre in genreArray){
+        for (genre in genreArray) {
             val textView = TextView(this)
             textView.text = genre
             textView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -200,20 +196,34 @@ class MovieDetailsActivity : AppCompatActivity() {
             movie_genre_list.addView(textView)
         }
 
-        val viewGroup = findViewById<GridView>(R.id.production_company_grid)
-//        for(company in details?.productionCompanies!!){
-//            val imageView :ImageView = LayoutInflater.from(this).inflate(R.layout.production_company_image_layout,viewGroup,false) as ImageView
-//            val logoUri:Uri = Uri.parse(LOGO_BASE_URL + company.logoPath)
-//            viewGroup.parent.addView(imageView)
-//            Glide.with(this)
-//                    .load(logoUri)
-//                    .fitCenter()
-//                    .into(imageView)
-//        }
+        val logoUrls: ArrayList<String> = ArrayList()
+        for (company in details?.productionCompanies!!) {
+            if (company.logoPath == null) {
+                continue
+            }
+            logoUrls.add(company.logoPath)
+        }
+
+        if (logoUrls.size != 0) {
+            val adapter = CompaniesAdapter(this, logoUrls)
+            production_company_grid.adapter = adapter
+        } else {
+            factsCompanyDivider.visibility = View.GONE
+            companyLayout.visibility = View.GONE
+        }
 
     }
 
-
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            android.R.id.home -> {
+                fab.visibility = View.GONE
+                supportFinishAfterTransition()
+                return true
+            }
+        }
+        return false
+    }
 
     private fun UpdateUI() {
         Glide.with(this)
@@ -258,21 +268,21 @@ class MovieDetailsActivity : AppCompatActivity() {
 
         FindMovie().execute(movie.id)
         fab.setOnClickListener {
-            if(!presentInList){
-                val data = WatchList(movie.title,movie.id,movie.posterPath,movie.releaseDate)
+            if (!presentInList) {
+                val data = WatchList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
                 InsertMovie().execute(data)
             } else {
-                val data = WatchList(movie.title,movie.id,movie.posterPath,movie.releaseDate)
+                val data = WatchList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
                 RemoveMovie().execute(data)
             }
         }
 
         fabSecond.setOnClickListener {
-            if(!presentInList){
-                val data = WatchList(movie.title,movie.id,movie.posterPath,movie.releaseDate)
+            if (!presentInList) {
+                val data = WatchList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
                 InsertMovie().execute(data)
             } else {
-                val data = WatchList(movie.title,movie.id,movie.posterPath,movie.releaseDate)
+                val data = WatchList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
                 RemoveMovie().execute(data)
             }
         }

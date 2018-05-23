@@ -33,6 +33,16 @@ class WatchedListFragment : Fragment() {
         return inflater.inflate(R.layout.recycler_view, container, false)
     }
 
+    override fun onResume() {
+        shimmer_container.startShimmerAnimation()
+        super.onResume()
+    }
+
+    override fun onPause() {
+        shimmer_container.stopShimmerAnimation()
+        super.onPause()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         watchDatabase = WatchDatabase.getInstance(context!!)!!
@@ -59,6 +69,8 @@ class WatchedListFragment : Fragment() {
         ReadFromDatabase().execute()
 
         refresh_layout.setOnRefreshListener {
+            shimmer_container.startShimmerAnimation()
+            shimmer_container.visibility = View.VISIBLE
             watchedList.removeAll(watchedList)
             ReadFromDatabase().execute()
         }
@@ -95,6 +107,8 @@ class WatchedListFragment : Fragment() {
             if(refresh_layout != null){
                 refresh_layout.isRefreshing = false
             }
+            shimmer_container.stopShimmerAnimation()
+            shimmer_container.visibility = View.GONE
             for (item in result!!) watchedList.add(item)
             viewAdapter.notifyDataSetChanged()
         }

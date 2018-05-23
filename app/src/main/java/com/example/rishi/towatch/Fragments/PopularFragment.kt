@@ -54,6 +54,16 @@ class PopularFragment : Fragment() {
         return inflater.inflate(R.layout.recycler_view, container, false)
     }
 
+    override fun onResume() {
+        shimmer_container.startShimmerAnimation()
+        super.onResume()
+    }
+
+    override fun onPause() {
+        shimmer_container.stopShimmerAnimation()
+        super.onPause()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         client = ServiceGenerator.createService(TmdbApiClient::class.java)
@@ -131,6 +141,8 @@ class PopularFragment : Fragment() {
 
 
         refresh_layout.setOnRefreshListener {
+            shimmer_container.startShimmerAnimation()
+            shimmer_container.visibility = View.VISIBLE
             popularMovies.removeAll(popularMovies)
             isLoading = false
             isLastPage = false
@@ -151,6 +163,9 @@ class PopularFragment : Fragment() {
             }
 
             override fun onResponse(p0: Call<JsonA>?, p1: Response<JsonA>?) {
+
+                shimmer_container.stopShimmerAnimation()
+                shimmer_container.visibility = View.GONE
 
                 val jsonA: JsonA? = p1?.body()!!
 

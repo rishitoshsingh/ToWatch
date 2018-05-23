@@ -15,4 +15,9 @@
     <color name="grey">#999999</color>
     <color name="icons">#FFFFFF</color>
     <color name="divider">#212121</color>
+
+    <color name="shimmer">#dddddd</color>
+    <color name="shimmer_dark">#aaaaaa</color>
+    <color name="shimmer_darker">#999999</color>
+
 </resources>
