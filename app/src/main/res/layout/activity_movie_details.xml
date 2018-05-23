@@ -71,7 +71,7 @@
                         android:layout_centerVertical="true"
                         android:layout_margin="8dp"
                         android:layout_marginBottom="8dp"
-                        android:elevation="6dp">
+                        android:elevation="2dp">
 
                         <ProgressBar
                             android:id="@+id/posterProgressBar"
@@ -84,7 +84,8 @@
                             android:layout_width="100dp"
                             android:layout_height="152dp"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/tempposter" />
+                            android:src="@drawable/tempposter"
+                            android:transitionName="moviePoster" />
 
                     </android.support.v7.widget.CardView>
 
@@ -243,7 +244,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="192dp"
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -281,9 +282,9 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
-                            android:gravity="end"
-                            android:layout_toEndOf="@id/status_key"
                             android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/status_key"
+                            android:gravity="end"
                             tools:text="Released" />
 
                     </RelativeLayout>
@@ -308,13 +309,13 @@
                             android:src="@drawable/calendar_released" />
 
                         <TextView
-                            android:layout_toEndOf="@id/yet_to_release_image"
-                            android:gravity="end"
                             android:id="@+id/release_date"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/yet_to_release_image"
+                            android:gravity="end"
                             tools:ignore="RelativeOverlap"
                             tools:text="2018-03-28" />
 
@@ -333,13 +334,13 @@
                             android:src="@drawable/revenue" />
 
                         <TextView
-                            android:gravity="end"
-                            android:layout_toEndOf="@id/revenue_image"
                             android:id="@+id/revenue"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/revenue_image"
+                            android:gravity="end"
                             tools:text="2018-03-28" />
 
                     </RelativeLayout>
@@ -357,13 +358,13 @@
                             android:src="@drawable/runtime" />
 
                         <TextView
-                            android:gravity="end"
-                            android:layout_toEndOf="@id/runtime_image"
                             android:id="@+id/runtime"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/runtime_image"
+                            android:gravity="end"
                             tools:text="2hr 20min" />
 
                     </RelativeLayout>
@@ -371,6 +372,7 @@
                 </LinearLayout>
 
                 <View
+                    android:id="@+id/factsCompanyDivider"
                     android:layout_width="2dp"
                     android:layout_height="match_parent"
                     android:layout_marginBottom="8dp"
@@ -378,9 +380,11 @@
                     android:background="@color/colorPrimaryLight" />
 
                 <LinearLayout
+                    android:id="@+id/companyLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_gravity="center"
                     android:orientation="vertical"
                     android:padding="8dp">
 
@@ -397,6 +401,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:gravity="center"
                         android:numColumns="2" />
 
                 </LinearLayout>

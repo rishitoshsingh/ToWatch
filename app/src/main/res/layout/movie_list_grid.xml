@@ -29,6 +29,7 @@
             android:id="@+id/moviePoster"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:transitionName="moviePoster"
             android:background="?attr/selectableItemBackground"
             android:scaleType="centerCrop" />
 
