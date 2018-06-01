@@ -1,6 +1,7 @@
 package com.example.rishi.towatch.Activities
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.AsyncTask
@@ -9,6 +10,7 @@ import android.support.design.widget.AppBarLayout
 import android.support.design.widget.Snackbar
 import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.graphics.Palette
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
@@ -226,6 +228,30 @@ class MovieDetailsActivity : AppCompatActivity() {
     }
 
     private fun UpdateUI() {
+//        Glide.with(this)
+//                .asBitmap()
+//                .load(posterUri)
+//                .listener(object : RequestListener<Bitmap> {
+//                    override fun onResourceReady(resource: Bitmap?, model: Any?, target: Target<Bitmap>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+//                        posterProgressBar.visibility = View.GONE
+//
+//                        if (resource != null) {
+//                            val palette: Palette = Palette.from(resource!!).generate()
+//                        }
+//                        return false
+//                    }
+//
+//                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean {
+//                        posterProgressBar.visibility = View.GONE
+//                        return false
+//
+//
+//                    }
+//                })
+//                .apply(RequestOptions()
+//                        .centerCrop())
+//                .into(movie_poster)
+//
         Glide.with(this)
                 .load(posterUri)
                 .listener(object : RequestListener<Drawable> {
