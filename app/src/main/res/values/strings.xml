@@ -124,4 +124,12 @@
     <string name="released">Released</string>
     <string name="runtime">Runtime</string>
     <string name="revenue">Revenue</string>
+
+    <string name="title_logo">NATIONAL GEOGRAPHIC</string>
+    <string name="btn_skip_intro">Skip Intro</string>
+    <string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
+    <string name="previous_video">Previous Video</string>
+    <string name="next_video">Next Video</string>
+
+
 </resources>

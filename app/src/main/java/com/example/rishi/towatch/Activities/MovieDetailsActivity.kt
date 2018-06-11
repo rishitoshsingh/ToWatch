@@ -1,7 +1,6 @@
 package com.example.rishi.towatch.Activities
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.AsyncTask
@@ -10,12 +9,13 @@ import android.support.design.widget.AppBarLayout
 import android.support.design.widget.Snackbar
 import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.graphics.Palette
+import android.util.Log
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -33,6 +33,9 @@ import com.example.rishi.towatch.POJOs.TmdbMovie.MovieImage
 import com.example.rishi.towatch.POJOs.TmdbMovie.VideoResults
 import com.example.rishi.towatch.R
 import com.example.rishi.towatch.TmdbApi.TmdbApiClient
+import com.google.android.youtube.player.YouTubeInitializationResult
+import com.google.android.youtube.player.YouTubePlayer
+import com.google.android.youtube.player.YouTubePlayerFragment
 import kotlinx.android.synthetic.main.activity_movie_details.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -43,6 +46,7 @@ class MovieDetailsActivity : AppCompatActivity() {
 
     private val POSTER_BASE_URL = "https://image.tmdb.org/t/p/w500/"
     private val BACKDROP_BASE_URL = "https://image.tmdb.org/t/p/w1280/"
+    private val YOUTUBE_API_KEY = "AIzaSyB17fukV4yjmWIizZ-Gei9wi51AICGov1g"
     private var mToolbar: ActionBar? = null
     private lateinit var movie: Result
     private lateinit var posterUri: Uri
@@ -52,6 +56,10 @@ class MovieDetailsActivity : AppCompatActivity() {
     private var appBarCollapsed: Boolean = false
     private lateinit var watchDatabase: WatchDatabase
     private var presentInList: Boolean = false
+    private lateinit var youTubePlayerFragment: YouTubePlayerFragment
+    private var youTubePlayer: YouTubePlayer? = null
+    private var VideoResult: List<com.example.rishi.towatch.POJOs.TmdbMovie.Result>? = null
+    private var currentVideo:Int = 0
 
     @SuppressLint("RestrictedApi")
 
@@ -70,6 +78,21 @@ class MovieDetailsActivity : AppCompatActivity() {
 
 
         watchDatabase = WatchDatabase.getInstance(this)!!
+
+        youTubePlayerFragment = fragmentManager.findFragmentById(R.id.youtubeFragment) as YouTubePlayerFragment
+        youTubePlayerFragment.initialize(YOUTUBE_API_KEY, object : YouTubePlayer.OnInitializedListener {
+            override fun onInitializationSuccess(p0: YouTubePlayer.Provider?, p1: YouTubePlayer?, p2: Boolean) {
+                if (!p2) {
+                    if(youTubePlayer == null){
+                        youTubePlayer = p1
+                    }
+                }
+            }
+
+            override fun onInitializationFailure(p0: YouTubePlayer.Provider?, p1: YouTubeInitializationResult?) {
+                Toast.makeText(this@MovieDetailsActivity,p1.toString(),Toast.LENGTH_LONG).show()
+            }
+        })
 
         app_bar_layout.addOnOffsetChangedListener(object : AppBarStateChangeListener() {
             override fun onStateChanged(appBarLayout: AppBarLayout, state: State) {
@@ -96,6 +119,25 @@ class MovieDetailsActivity : AppCompatActivity() {
         client = ServiceGenerator.createService(TmdbApiClient::class.java)
 //        getMovieDetails()
 //        UpdateUI()
+
+
+        previousVideoButton.setOnClickListener {
+            if (currentVideo == 0)  currentVideo = VideoResult?.size!! - 1    else currentVideo--
+            val videoId:String = VideoResult?.get(currentVideo)!!.key
+            playVideo(videoId)
+        }
+
+        nextVideoButton.setOnClickListener {
+            if (currentVideo + 1 == VideoResult?.size)  currentVideo = 0    else currentVideo++
+            val videoId:String = VideoResult?.get(currentVideo)!!.key
+            playVideo(videoId)
+        }
+    }
+
+    private fun playVideo(videoId: String) {
+        if (youTubePlayer != null) {
+            youTubePlayer!!.loadVideo(videoId)
+        }
     }
 
     override fun onStart() {
@@ -109,11 +151,11 @@ class MovieDetailsActivity : AppCompatActivity() {
         val call = callMovieVideos()
         call.enqueue(object : Callback<VideoResults> {
             override fun onFailure(call: Call<VideoResults>?, t: Throwable?) {
-//                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                Log.v("Video Network Call", "Retrofit", t)
             }
 
             override fun onResponse(call: Call<VideoResults>?, response: Response<VideoResults>?) {
-//                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                VideoResult = response?.body()?.results
             }
 
         })

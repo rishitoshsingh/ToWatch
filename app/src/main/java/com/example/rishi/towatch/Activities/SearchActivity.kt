@@ -27,17 +27,17 @@ var mSearchAdapter: CustomAdapter? = null
 
 
 class SearchActivity : AppCompatActivity() {
-    var movies: ArrayList<Result> = ArrayList<Result>()
+    private var movies: ArrayList<Result> = ArrayList<Result>()
 
-    val YOUTUBE_API_KEY = "AIzaSyB17fukV4yjmWIizZ-Gei9wi51AICGov1g"
-    val YOUTUBE_BASE_URL = "https://www.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&id="
+    private val YOUTUBE_API_KEY = "AIzaSyB17fukV4yjmWIizZ-Gei9wi51AICGov1g"
+    private val YOUTUBE_BASE_URL = "https://www.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&id="
 
-    val TMDB_SEARCH_BASE_URL = "https://api.themoviedb.org/3/search/movie?api_key="
-    val TMDB_KEY = "cc4b67c52acb514bdf4931f7cedfd12b"
-    val LANGUAGE = "en-US"
-    val PAGE = 1
+    private val TMDB_SEARCH_BASE_URL = "https://api.themoviedb.org/3/search/movie?api_key="
+    private val TMDB_KEY = "cc4b67c52acb514bdf4931f7cedfd12b"
+    private val LANGUAGE = "en-US"
+    private val PAGE = 1
 
-    var searchView: EditText? = null
+    private var searchView: EditText? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
