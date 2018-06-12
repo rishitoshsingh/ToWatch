@@ -15,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.rishi.towatch.Adapters.MovieAdapter
 import com.example.rishi.towatch.Api.ServiceGenerator
+import com.example.rishi.towatch.BuildConfig
 import com.example.rishi.towatch.Database.WatchDatabase
 import com.example.rishi.towatch.Database.WatchList
 import com.example.rishi.towatch.Database.WatchedList
@@ -215,7 +216,7 @@ class DiscoverFragment : Fragment() {
 
     private fun callDiscoverMovie(): Call<JsonA> {
         val call = client.getDiscoverMovie(
-                resources.getString(R.string.tmdb_key),
+                BuildConfig.TmdbApiKey,
                 "en-US",
                 null,
                 true,

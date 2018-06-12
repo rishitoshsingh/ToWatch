@@ -29,11 +29,9 @@ var mSearchAdapter: CustomAdapter? = null
 class SearchActivity : AppCompatActivity() {
     private var movies: ArrayList<Result> = ArrayList<Result>()
 
-    private val YOUTUBE_API_KEY = "AIzaSyB17fukV4yjmWIizZ-Gei9wi51AICGov1g"
     private val YOUTUBE_BASE_URL = "https://www.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&id="
 
     private val TMDB_SEARCH_BASE_URL = "https://api.themoviedb.org/3/search/movie?api_key="
-    private val TMDB_KEY = "cc4b67c52acb514bdf4931f7cedfd12b"
     private val LANGUAGE = "en-US"
     private val PAGE = 1
 
@@ -51,7 +49,7 @@ class SearchActivity : AppCompatActivity() {
 
             val query = createQuerystring(tempSearch.query.toString())
             val client = ServiceGenerator.createService(TmdbApiClient::class.java)
-            val call = client.search(resources.getString(R.string.tmdb_key),
+            val call = client.search(BuildConfig.TmdbApiKey,
                     "en-US",
                     true,
                     1,
@@ -81,7 +79,7 @@ class SearchActivity : AppCompatActivity() {
         val extras = intent.extras
         val value1 = extras!!.getString(Intent.EXTRA_TEXT)
         var videoId = value1.substringAfter("https://youtu.be/")
-        val API_URL = YOUTUBE_BASE_URL + videoId + "&key=" + YOUTUBE_API_KEY
+        val API_URL = YOUTUBE_BASE_URL + videoId + "&key=" + BuildConfig.YoutubeApiKey
 
 
         val builder:Retrofit.Builder = Retrofit.Builder()
@@ -89,7 +87,7 @@ class SearchActivity : AppCompatActivity() {
                 .addConverterFactory(GsonConverterFactory.create())
         val retrofit:Retrofit = builder.build()
         val client:YouTubeClient = retrofit.create(YouTubeClient::class.java)
-        val call = client.getVideoTitle(videoId)
+        val call = client.getVideoTitle(videoId,BuildConfig.YoutubeApiKey)
         call.enqueue(object : Callback<YouTubeVideo>{
             override fun onFailure(call: Call<YouTubeVideo>?, t: Throwable?) {
 //                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -106,7 +104,7 @@ class SearchActivity : AppCompatActivity() {
 
         search.setOnClickListener {
             val query = createQuerystring(searchMovie.text.toString())
-            val URL = TMDB_SEARCH_BASE_URL+TMDB_KEY+"&language="+LANGUAGE+"&query="+query+"&page="+PAGE.toString()+"&include_adult=true"
+            val URL = TMDB_SEARCH_BASE_URL+BuildConfig.TmdbApiKey+"&language="+LANGUAGE+"&query="+query+"&page="+PAGE.toString()+"&include_adult=true"
             mSearchAdapter = CustomAdapter(this, ArrayList())
             searchGridView.adapter = mSearchAdapter
             movieSearchAsyncTask().execute(URL)

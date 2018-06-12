@@ -16,6 +16,7 @@ import com.example.rishi.towatch.Api.ServiceGenerator
 import com.example.rishi.towatch.Database.WatchDatabase
 import com.example.rishi.towatch.Database.WatchList
 import com.example.rishi.towatch.Adapters.MovieAdapter
+import com.example.rishi.towatch.BuildConfig
 import com.example.rishi.towatch.Database.WatchedList
 import com.example.rishi.towatch.POJOs.Tmdb.JsonA
 import com.example.rishi.towatch.POJOs.Tmdb.Result
@@ -204,7 +205,7 @@ class PopularFragment : Fragment() {
 
     private fun callPopularMovies(): Call<JsonA> {
         val call = client.getPopular(
-                resources.getString(R.string.tmdb_key),
+                BuildConfig.TmdbApiKey,
                 "en-US",
                 currentPage,
                 null)

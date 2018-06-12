@@ -12,6 +12,7 @@ import android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
 import android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
 import android.widget.SearchView
 import com.example.rishi.towatch.Adapters.HomeAdapter
+import com.example.rishi.towatch.BuildConfig
 import com.example.rishi.towatch.R
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -35,7 +36,6 @@ class MainActivity : AppCompatActivity() {
 
         viewPager.adapter = HomeAdapter(this, supportFragmentManager)
         tabLayout.setupWithViewPager(viewPager)
-
     }
 //actionBar Menu
 

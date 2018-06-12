@@ -24,6 +24,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.example.rishi.towatch.Adapters.CompaniesAdapter
 import com.example.rishi.towatch.Api.ServiceGenerator
+import com.example.rishi.towatch.BuildConfig
 import com.example.rishi.towatch.Database.WatchDatabase
 import com.example.rishi.towatch.Database.WatchList
 import com.example.rishi.towatch.Listners.AppBarStateChangeListener
@@ -46,7 +47,6 @@ class MovieDetailsActivity : AppCompatActivity() {
 
     private val POSTER_BASE_URL = "https://image.tmdb.org/t/p/w500/"
     private val BACKDROP_BASE_URL = "https://image.tmdb.org/t/p/w1280/"
-    private val YOUTUBE_API_KEY = "AIzaSyB17fukV4yjmWIizZ-Gei9wi51AICGov1g"
     private var mToolbar: ActionBar? = null
     private lateinit var movie: Result
     private lateinit var posterUri: Uri
@@ -80,7 +80,7 @@ class MovieDetailsActivity : AppCompatActivity() {
         watchDatabase = WatchDatabase.getInstance(this)!!
 
         youTubePlayerFragment = fragmentManager.findFragmentById(R.id.youtubeFragment) as YouTubePlayerFragment
-        youTubePlayerFragment.initialize(YOUTUBE_API_KEY, object : YouTubePlayer.OnInitializedListener {
+        youTubePlayerFragment.initialize( BuildConfig.YoutubeApiKey, object : YouTubePlayer.OnInitializedListener {
             override fun onInitializationSuccess(p0: YouTubePlayer.Provider?, p1: YouTubePlayer?, p2: Boolean) {
                 if (!p2) {
                     if(youTubePlayer == null){
@@ -136,7 +136,8 @@ class MovieDetailsActivity : AppCompatActivity() {
 
     private fun playVideo(videoId: String) {
         if (youTubePlayer != null) {
-            youTubePlayer!!.loadVideo(videoId)
+            youTubePlayer!!.cueVideo(videoId)
+            youTubePlayer!!.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT)
         }
     }
 
@@ -156,6 +157,7 @@ class MovieDetailsActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call<VideoResults>?, response: Response<VideoResults>?) {
                 VideoResult = response?.body()?.results
+                playVideo(VideoResult?.get(0)?.key!!)
             }
 
         })
@@ -165,7 +167,7 @@ class MovieDetailsActivity : AppCompatActivity() {
     private fun callMovieVideos(): Call<VideoResults> {
         val call = client.getMovieVideos(
                 movieId.toInt(),
-                resources.getString(R.string.tmdb_key),
+                BuildConfig.TmdbApiKey,
                 "en-US"
         )
         return call
@@ -188,7 +190,7 @@ class MovieDetailsActivity : AppCompatActivity() {
     private fun callMovieImages(): Call<MovieImage> {
         val call = client.getMovieImages(
                 movieId.toInt(),
-                resources.getString(R.string.tmdb_key)
+                BuildConfig.TmdbApiKey
         )
         return call
     }
@@ -212,7 +214,7 @@ class MovieDetailsActivity : AppCompatActivity() {
     private fun callMovieDetails(): Call<Details> {
         val call = client.getMovieDetails(
                 movieId.toInt(),
-                resources.getString(R.string.tmdb_key),
+                BuildConfig.TmdbApiKey,
                 "en-US"
         )
         return call

@@ -25,6 +25,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    buildTypes.each {
+        it.buildConfigField 'String', "TmdbApiKey", ToWatch_Tmdb
+        it.buildConfigField 'String', "YoutubeApiKey", ToWatch_YouTube
+    }
 }
 
 dependencies {

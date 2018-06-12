@@ -10,7 +10,8 @@ import retrofit2.http.Query
  */
 interface YouTubeClient {
 
-    @GET("videos?part=snippet%2CcontentDetails%2Cstatistics&key=AIzaSyB17fukV4yjmWIizZ-Gei9wi51AICGov1g&id=123345")
-    fun getVideoTitle(@Query("id") videoId:String):Call<YouTubeVideo>
+    @GET("videos?part=snippet%2CcontentDetails%2Cstatistics")
+    fun getVideoTitle(@Query("id") videoId:String,
+                      @Query("key") apiKey:String):Call<YouTubeVideo>
 
 }
