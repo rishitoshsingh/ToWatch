@@ -68,7 +68,9 @@ abstract class MovieAdapter(context: Context, moviesPassed: ArrayList<Result>) :
                 .into(holder.moviePoster)
         holder.itemLayout.setOnClickListener {
             val intent = Intent(mContext, MovieDetailsActivity::class.java)
-            intent.putExtra("movie", movies[position])
+//            intent.putExtra("movie", movies[position])
+            intent.putExtra("movieId", movies[position].id)
+            intent.putExtra("posterPath",movies[position].posterPath)
             val options = ActivityOptionsCompat.makeSceneTransitionAnimation(mContext as Activity,holder.moviePoster as View, "moviePoster")
             mContext.startActivity(intent,options.toBundle())
         }

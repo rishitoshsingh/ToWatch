@@ -54,7 +54,6 @@ class DiscoverFragment : Fragment() {
     private var presentInWatched: Boolean = false
 
 
-
     companion object {
 
         fun newInstance(): DiscoverFragment {

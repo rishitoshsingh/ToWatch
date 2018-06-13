@@ -28,7 +28,6 @@ import com.example.rishi.towatch.BuildConfig
 import com.example.rishi.towatch.Database.WatchDatabase
 import com.example.rishi.towatch.Database.WatchList
 import com.example.rishi.towatch.Listners.AppBarStateChangeListener
-import com.example.rishi.towatch.POJOs.Tmdb.Result
 import com.example.rishi.towatch.POJOs.TmdbMovie.Details
 import com.example.rishi.towatch.POJOs.TmdbMovie.MovieImage
 import com.example.rishi.towatch.POJOs.TmdbMovie.VideoResults
@@ -48,7 +47,7 @@ class MovieDetailsActivity : AppCompatActivity() {
     private val POSTER_BASE_URL = "https://image.tmdb.org/t/p/w500/"
     private val BACKDROP_BASE_URL = "https://image.tmdb.org/t/p/w1280/"
     private var mToolbar: ActionBar? = null
-    private lateinit var movie: Result
+    private lateinit var movie: Details
     private lateinit var posterUri: Uri
     private lateinit var backdropUri: Uri
     private var movieId: Long = 0
@@ -59,7 +58,7 @@ class MovieDetailsActivity : AppCompatActivity() {
     private lateinit var youTubePlayerFragment: YouTubePlayerFragment
     private var youTubePlayer: YouTubePlayer? = null
     private var VideoResult: List<com.example.rishi.towatch.POJOs.TmdbMovie.Result>? = null
-    private var currentVideo:Int = 0
+    private var currentVideo: Int = 0
 
     @SuppressLint("RestrictedApi")
 
@@ -80,17 +79,17 @@ class MovieDetailsActivity : AppCompatActivity() {
         watchDatabase = WatchDatabase.getInstance(this)!!
 
         youTubePlayerFragment = fragmentManager.findFragmentById(R.id.youtubeFragment) as YouTubePlayerFragment
-        youTubePlayerFragment.initialize( BuildConfig.YoutubeApiKey, object : YouTubePlayer.OnInitializedListener {
+        youTubePlayerFragment.initialize(BuildConfig.YoutubeApiKey, object : YouTubePlayer.OnInitializedListener {
             override fun onInitializationSuccess(p0: YouTubePlayer.Provider?, p1: YouTubePlayer?, p2: Boolean) {
                 if (!p2) {
-                    if(youTubePlayer == null){
+                    if (youTubePlayer == null) {
                         youTubePlayer = p1
                     }
                 }
             }
 
             override fun onInitializationFailure(p0: YouTubePlayer.Provider?, p1: YouTubeInitializationResult?) {
-                Toast.makeText(this@MovieDetailsActivity,p1.toString(),Toast.LENGTH_LONG).show()
+                Toast.makeText(this@MovieDetailsActivity, p1.toString(), Toast.LENGTH_LONG).show()
             }
         })
 
@@ -112,26 +111,47 @@ class MovieDetailsActivity : AppCompatActivity() {
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 
         val intent = intent
-        movie = intent.getSerializableExtra("movie") as Result
-        posterUri = Uri.parse(POSTER_BASE_URL + movie.posterPath)
-        backdropUri = Uri.parse(BACKDROP_BASE_URL + movie.backdropPath)
-        movieId = movie.id
+//        movie = intent.getSerializableExtra("movie") as Result
+
+        movieId = intent.getLongExtra("movieId", 0)
+
+        posterUri = Uri.parse(POSTER_BASE_URL + intent.getStringExtra("posterPath"))
+        Glide.with(this)
+                .load(posterUri)
+                .listener(object : RequestListener<Drawable> {
+                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                        posterProgressBar.visibility = View.GONE
+                        return false
+                    }
+
+                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                        posterProgressBar.visibility = View.GONE
+                        return false
+                    }
+                })
+                .apply(RequestOptions()
+                        .centerCrop())
+                .into(movie_poster)
+
+
+
         client = ServiceGenerator.createService(TmdbApiClient::class.java)
-//        getMovieDetails()
-//        UpdateUI()
+
 
 
         previousVideoButton.setOnClickListener {
-            if (currentVideo == 0)  currentVideo = VideoResult?.size!! - 1    else currentVideo--
-            val videoId:String = VideoResult?.get(currentVideo)!!.key
+            if (currentVideo == 0) currentVideo = VideoResult?.size!! - 1 else currentVideo--
+            val videoId: String = VideoResult?.get(currentVideo)!!.key
             playVideo(videoId)
         }
 
         nextVideoButton.setOnClickListener {
-            if (currentVideo + 1 == VideoResult?.size)  currentVideo = 0    else currentVideo++
-            val videoId:String = VideoResult?.get(currentVideo)!!.key
+            if (currentVideo + 1 == VideoResult?.size) currentVideo = 0 else currentVideo++
+            val videoId: String = VideoResult?.get(currentVideo)!!.key
             playVideo(videoId)
         }
+
+        getMovieDetails()
     }
 
     private fun playVideo(videoId: String) {
@@ -140,13 +160,6 @@ class MovieDetailsActivity : AppCompatActivity() {
             youTubePlayer!!.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT)
         }
     }
-
-    override fun onStart() {
-        getMovieDetails()
-        UpdateUI()
-        super.onStart()
-    }
-
 
     private fun getMovieVideos() {
         val call = callMovieVideos()
@@ -199,9 +212,11 @@ class MovieDetailsActivity : AppCompatActivity() {
         val call = callMovieDetails()
         call.enqueue(object : Callback<Details> {
             override fun onResponse(call: Call<Details>?, response: Response<Details>?) {
+                movie = response?.body()!!
                 getMovieImages()
                 getMovieVideos()
-                updateMoviesDetails(response?.body())
+//                UpdateUI()
+                updateMoviesDetails(movie)
             }
 
             override fun onFailure(call: Call<Details>?, t: Throwable?) {
@@ -231,11 +246,9 @@ class MovieDetailsActivity : AppCompatActivity() {
         runtime.text = details?.runtime.toString()
         movie_overview.text = details?.overview
 
-        val genreString: String = extractGenre(movie.genreIds)
-        var genreArray = genreString.split(",")
-        for (genre in genreArray) {
+        for (genre in details?.genres!!) {
             val textView = TextView(this)
-            textView.text = genre
+            textView.text = genre.name
             textView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             textView.setTextColor(resources.getColor(R.color.grey))
             textView.gravity = Gravity.CENTER
@@ -258,60 +271,7 @@ class MovieDetailsActivity : AppCompatActivity() {
             companyLayout.visibility = View.GONE
         }
 
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
-            android.R.id.home -> {
-                fab.visibility = View.GONE
-                supportFinishAfterTransition()
-                return true
-            }
-        }
-        return false
-    }
-
-    private fun UpdateUI() {
-//        Glide.with(this)
-//                .asBitmap()
-//                .load(posterUri)
-//                .listener(object : RequestListener<Bitmap> {
-//                    override fun onResourceReady(resource: Bitmap?, model: Any?, target: Target<Bitmap>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-//                        posterProgressBar.visibility = View.GONE
-//
-//                        if (resource != null) {
-//                            val palette: Palette = Palette.from(resource!!).generate()
-//                        }
-//                        return false
-//                    }
-//
-//                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean {
-//                        posterProgressBar.visibility = View.GONE
-//                        return false
-//
-//
-//                    }
-//                })
-//                .apply(RequestOptions()
-//                        .centerCrop())
-//                .into(movie_poster)
-//
-        Glide.with(this)
-                .load(posterUri)
-                .listener(object : RequestListener<Drawable> {
-                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                        posterProgressBar.visibility = View.GONE
-                        return false
-                    }
-
-                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                        posterProgressBar.visibility = View.GONE
-                        return false
-                    }
-                })
-                .apply(RequestOptions()
-                        .centerCrop())
-                .into(movie_poster)
+        backdropUri = Uri.parse(BACKDROP_BASE_URL + details.backdropPath)
 
         Glide.with(this)
                 .load(backdropUri)
@@ -332,9 +292,6 @@ class MovieDetailsActivity : AppCompatActivity() {
 
         toolbar?.title = movie.title
         if (movie.title != movie.originalTitle) toolbar?.subtitle = movie.originalTitle
-
-        val genre: String = extractGenre(movie.genreIds)
-
 
         FindMovie().execute(movie.id)
         fab.setOnClickListener {
@@ -359,32 +316,15 @@ class MovieDetailsActivity : AppCompatActivity() {
 
     }
 
-    private fun extractGenre(genreIds: List<Long>): String {
-        var genre = ""
-        if (genreIds.contains(28)) genre += "Action, "
-        if (genreIds.contains(12)) genre += "Adventure, "
-        if (genreIds.contains(16)) genre += "Animation, "
-        if (genreIds.contains(35)) genre += "Comedy, "
-        if (genreIds.contains(80)) genre += "Crime, "
-        if (genreIds.contains(99)) genre += "Documentary, "
-        if (genreIds.contains(18)) genre += "Drama, "
-        if (genreIds.contains(10751)) genre += "Family, "
-        if (genreIds.contains(14)) genre += "Fantasy, "
-        if (genreIds.contains(36)) genre += "History, "
-        if (genreIds.contains(27)) genre += "Horror, "
-        if (genreIds.contains(10402)) genre += "Music, "
-        if (genreIds.contains(9648)) genre += "Mystery, "
-        if (genreIds.contains(10759)) genre += "Romance, "
-        if (genreIds.contains(878)) genre += "Science Fiction, "
-        if (genreIds.contains(10770)) genre += "TV Movie, "
-        if (genreIds.contains(51)) genre += "Thriller, "
-        if (genreIds.contains(10752)) genre += "War, "
-        if (genreIds.contains(37)) genre += "Western, "
-
-        genre.trim()
-        genre = genre.substring(0, genre.length - 2)
-
-        return genre
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            android.R.id.home -> {
+                fab.visibility = View.GONE
+                supportFinishAfterTransition()
+                return true
+            }
+        }
+        return false
     }
 
     override fun onDestroy() {

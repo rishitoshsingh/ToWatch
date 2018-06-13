@@ -1,8 +1,11 @@
 package com.example.rishi.towatch.Adapters
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.support.v4.app.ActivityOptionsCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -15,6 +18,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.example.rishi.towatch.Activities.MovieDetailsActivity
 import com.example.rishi.towatch.Database.WatchedList
 import com.example.rishi.towatch.R
 import java.lang.Exception
@@ -65,6 +69,15 @@ abstract class WatchedAdapter(context: Context, moviesPassed: List<WatchedList>)
 //            val intent = Intent(mContext, MovieDetailsActivity::class.java)
 //            intent.putExtra("movie", movies[position])
 //            mContext.startActivity(intent)
+        holder.itemLayout.setOnClickListener {
+            val intent = Intent(mContext, MovieDetailsActivity::class.java)
+//            intent.putExtra("movie", movies[position])
+            intent.putExtra("movieId", movies[position].movieId)
+            intent.putExtra("posterPath",movies[position].moviePoster)
+            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(mContext as Activity,holder.moviePoster as View, "moviePoster")
+            mContext.startActivity(intent,options.toBundle())
+        }
+
         holder.threeDotMenu.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
                 val popup = PopupMenu(mContext, holder.threeDotMenu)
