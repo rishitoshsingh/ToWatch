@@ -53,12 +53,34 @@ class DiscoverFragment : Fragment() {
     private var presentInWatch: Boolean = false
     private var presentInWatched: Boolean = false
 
+    private var genreId: String? = null
+    private var year:Int? = null
+    private var vote:Int? = null
+    private var language:String? = null
+    private var sortBy:String? = null
+    private var adult:Boolean = false
 
     companion object {
 
         fun newInstance(): DiscoverFragment {
             return DiscoverFragment()
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        genreId = arguments?.getString("genreId",null)
+        year = arguments?.getInt("year")
+        if (year == 0){
+            year = null
+        }
+        vote = arguments?.getInt("vote")
+        if (vote == -1){
+            vote = null
+        }
+        language = arguments?.getString("language")
+        sortBy = arguments?.getString("sortBy")
+        adult = arguments?.getBoolean("adult")!!
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -149,6 +171,7 @@ class DiscoverFragment : Fragment() {
         if (refresh_layout != null) {
             refresh_layout.isRefreshing = true
         }
+
         loadFirstPage()
 
         refresh_layout.setOnRefreshListener {
@@ -214,29 +237,29 @@ class DiscoverFragment : Fragment() {
     }
 
     private fun callDiscoverMovie(): Call<JsonA> {
-        val call = client.getDiscoverMovie(
-                BuildConfig.TmdbApiKey,
-                null,
-                null,
-                null,
-                null,
-                null,
-                true,
-                currentPage
-        )
+//        val call = client.getDiscoverMovie(
+//                BuildConfig.TmdbApiKey,
+//                null,
+//                null,
+//                null,
+//                null,
+//                null,
+//                true,
+//                currentPage
+//        )
 //        Log.v("Fragment Data ", language)
 
 
-//        val call = client.getDiscoverMovie(
-//                BuildConfig.TmdbApiKey,
-//                genreId,
-//                year,
-//                vote,
-//                language,
-//                sortBy,
-//                adult,
-//                currentPage
-//        )
+        val call = client.getDiscoverMovie(
+                BuildConfig.TmdbApiKey,
+                genreId,
+                year,
+                vote,
+                language,
+                sortBy,
+                adult,
+                currentPage
+        )
         return call
     }
 

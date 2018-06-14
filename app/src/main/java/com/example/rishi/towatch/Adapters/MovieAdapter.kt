@@ -45,7 +45,12 @@ abstract class MovieAdapter(context: Context, moviesPassed: ArrayList<Result>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val movie = movies[position]
         val dateString = movie.releaseDate.split("-")
-        val date = Date(dateString[0].toInt(), dateString[1].toInt(), dateString[2].toInt())
+        var date:Date = Date(1912,1,1)
+        try {
+            date = Date(dateString[0].toInt(), dateString[1].toInt(), dateString[2].toInt())
+        }catch (ex:NumberFormatException){
+
+        }
         val posterUri = Uri.parse(IMAGE_BASE_URL + movie.posterPath)
         holder.movieTitleText.text = movie.title
         holder.movieReleaseDate.text = date.year.toString()
