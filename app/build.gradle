@@ -58,4 +58,6 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
     implementation 'com.facebook.shimmer:shimmer:0.1.0@aar'
     implementation files('libs/YouTubeAndroidPlayerApi.jar')
+
+    implementation 'jp.wasabeef:blurry:2.1.1'
 }

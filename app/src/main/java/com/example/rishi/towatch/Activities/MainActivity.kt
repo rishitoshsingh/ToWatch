@@ -105,8 +105,11 @@ class MainActivity : AppCompatActivity() {
 //                startActivity(intent)
 //            }
             R.id.app_bar_profile -> {
-                val intent = Intent(this, AccountActivity::class.java)
+//                val intent = Intent(this, AccountActivity::class.java)
+//                startActivity(intent)
+                val intent = Intent(this, DiscoverActivity::class.java)
                 startActivity(intent)
+
             }
             else -> return super.onOptionsItemSelected(item);
         }
