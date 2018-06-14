@@ -1,8 +1,8 @@
 package com.example.rishi.towatch.Activities
 
+import android.app.FragmentTransaction
 import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
-import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
@@ -11,7 +11,6 @@ import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
-import android.widget.Toast
 import com.example.rishi.towatch.Api.ServiceGenerator
 import com.example.rishi.towatch.BuildConfig
 import com.example.rishi.towatch.Fragments.DiscoverFragment
@@ -32,7 +31,7 @@ class DiscoverActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
     private lateinit var client: TmdbApiClient
     private lateinit var genres: List<Genre>
     private lateinit var languages: List<Language>
-    private lateinit var transaction:FragmentTransaction
+    private var currentFragment: DiscoverFragment? = null
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
 //        Toast.makeText(parent?.context, "Nothing Selected ", Toast.LENGTH_LONG).show()
@@ -165,92 +164,86 @@ class DiscoverActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
             }
 
         })
-//
-//        btn_bottom_sheet.setOnClickListener {
-//            if (sheetBehavior?.state != BottomSheetBehavior.STATE_EXPANDED) {
-//                sheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED;
-//                btn_bottom_sheet.text = "Close sheet";
-//            } else {
-//                sheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED;
-//                btn_bottom_sheet.text = "Expand sheet";
-//            }
-//        }
+
+        bottomSheetPeek.setOnClickListener {
+            sheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
+        }
 
         val initialBundle: Bundle = Bundle()
         initialBundle.putString("genreId", null)
         initialBundle.putInt("year", 0)
-        initialBundle.putInt("vote", 9)
-        initialBundle.putString("language", "hi")
+        initialBundle.putInt("vote", -1)
+        initialBundle.putString("language", null)
         initialBundle.putString("sortBy", null)
         initialBundle.putBoolean("adult", false)
 
-        val addedFragment = DiscoverFragment()
-        addedFragment.arguments = initialBundle
-        transaction = supportFragmentManager.beginTransaction()
+//        val addedFragment = DiscoverFragment()
+        currentFragment = DiscoverFragment()
+        currentFragment!!.arguments = initialBundle
 
-        transaction.replace(R.id.rootView, addedFragment)
-        transaction.disallowAddToBackStack()
-        transaction.commit()
+//        addedFragment.arguments = initialBundle
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.discoverActivityPlaceholder, currentFragment)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .disallowAddToBackStack()
+                .commit()
 
         discoverButton.setOnClickListener {
-//            transaction.remove(addedFragment).commitAllowingStateLoss()
-            supportFragmentManager.beginTransaction().remove(addedFragment).commit()
+            supportFragmentManager.beginTransaction().remove(currentFragment).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit()
+            currentFragment = null
             val newBundle: Bundle = Bundle()
             if (genreCheckBox.isChecked) {
-                val genreString:String = genreSpinner.selectedItem.toString()
-                var genreId:Long = 0
-                for(genre in genres){
+                val genreString: String = genreSpinner.selectedItem.toString()
+                var genreId: Long = 0
+                for (genre in genres) {
                     if (genre.name == genreString)
                         genreId = genre.id
                 }
-                Toast.makeText(this,genreId.toString(),Toast.LENGTH_LONG).show()
                 newBundle.putString("genreId", genreId.toString())
             } else {
                 newBundle.putString("genreId", null)
             }
             if (yearCheckBox.isChecked) {
-                val year:Int = yearSpinner.selectedItem.toString().toInt()
-                newBundle.putInt("year",year)
+                val year: Int = yearSpinner.selectedItem.toString().toInt()
+                newBundle.putInt("year", year)
             } else {
                 newBundle.putInt("year", 0)
             }
             if (voteAverageCheckBox.isChecked) {
-                val vote:Int = voteAverageSpinner.selectedItem.toString().substring(0,1).toInt()
-                newBundle.putInt("vote",vote)
+                val vote: Int = voteAverageSpinner.selectedItem.toString().substring(0, 1).toInt()
+                newBundle.putInt("vote", vote)
             } else {
                 newBundle.putInt("vote", 0)
             }
             if (originalLanguageCheckBox.isChecked) {
-                val languageString:String = originalLanguageSpinner.selectedItem.toString()
-                var languageCode:String = ""
-                for(language in languages){
-                    if(language.englishName == languageString)
+                val languageString: String = originalLanguageSpinner.selectedItem.toString()
+                var languageCode: String = ""
+                for (language in languages) {
+                    if (language.englishName == languageString)
                         languageCode = language.iso6391
                 }
-                Toast.makeText(this,languageCode,Toast.LENGTH_LONG).show()
                 newBundle.putString("language", languageCode)
             } else {
                 newBundle.putString("language", null)
             }
             if (sortCheckBox.isChecked) {
-                val sortString:String = sortSpinner.selectedItem.toString().decapitalize().replace(" ",".")
+                val sortString: String = sortSpinner.selectedItem.toString().decapitalize().replace(" ", ".")
                 newBundle.putString("sortBy", sortString)
             } else {
                 newBundle.putString("sortBy", null)
             }
-            if (adultSwitch.isEnabled) {
+            if (adultSwitch.isChecked) {
                 newBundle.putBoolean("adult", true)
             } else {
                 newBundle.putBoolean("adult", false)
             }
 
-            val newFragment = DiscoverFragment()
-            newFragment.arguments = newBundle
-            transaction = supportFragmentManager.beginTransaction()
-
-            transaction.replace(R.id.rootView,newFragment)
-            transaction.disallowAddToBackStack()
-            transaction.commit()
+            currentFragment = DiscoverFragment()
+            currentFragment!!.arguments = newBundle
+            supportFragmentManager.beginTransaction()
+                    .replace(R.id.discoverActivityPlaceholder, currentFragment)
+                    .disallowAddToBackStack()
+                    .commit()
             sheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
 
         }

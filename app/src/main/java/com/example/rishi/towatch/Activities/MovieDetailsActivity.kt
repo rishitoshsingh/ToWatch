@@ -170,11 +170,13 @@ class MovieDetailsActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call<VideoResults>?, response: Response<VideoResults>?) {
                 VideoResult = response?.body()?.results
-                playVideo(VideoResult?.get(0)?.key!!)
+                if (VideoResult?.isEmpty()!!) {
+                    Toast.makeText(this@MovieDetailsActivity, "No Trailer Found", Toast.LENGTH_LONG).show()
+                } else {
+                    playVideo(VideoResult?.get(0)?.key!!)
+                }
             }
-
         })
-
     }
 
     private fun callMovieVideos(): Call<VideoResults> {
