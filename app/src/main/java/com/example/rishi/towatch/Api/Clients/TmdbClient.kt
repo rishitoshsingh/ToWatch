@@ -1,5 +1,8 @@
 package com.example.rishi.towatch.TmdbApi
 
+import com.example.rishi.towatch.POJOs.Configrations.Country
+import com.example.rishi.towatch.POJOs.Configrations.Genres.GenreResult
+import com.example.rishi.towatch.POJOs.Configrations.Language
 import com.example.rishi.towatch.POJOs.Tmdb.JsonA
 import com.example.rishi.towatch.POJOs.Tmdb.JsonB
 import com.example.rishi.towatch.POJOs.TmdbMovie.Details
@@ -18,10 +21,12 @@ interface TmdbApiClient {
     @GET("discover/movie")
     fun getDiscoverMovie(
             @Query("api_key") apiKey: String,
-            @Query("language") language: String,
-            @Query("popularity") popularity: String?,
+            @Query("with_genres") genreId: String?,
+            @Query("year") year: Int?,
+            @Query("vote_average.gte") vote: Int?,
+            @Query("with_original_language") language: String?,
+            @Query("sort_by") sortBy: String?,
             @Query("include_adult") adult: Boolean,
-            @Query("include_video") video: Boolean,
             @Query("page") page: Int): Call<JsonA>
 
 
@@ -69,5 +74,14 @@ interface TmdbApiClient {
     fun getMovieVideos(@Path("movie_id") movieId: Int,
                        @Query("api_key") apiKey: String,
                        @Query("language") language: String): Call<VideoResults>
+
+    @GET("configuration/languages")
+    fun getLanguages(@Query("api_key") apiKey:String): Call<List<Language>>
+
+    @GET("configuration/countries")
+    fun getCountries(@Query("api_key") apiKey:String): Call<List<Country>>
+
+    @GET("genre/movie/list")
+    fun getGenres(@Query("api_key") apiKey:String): Call<GenreResult>
 
 }

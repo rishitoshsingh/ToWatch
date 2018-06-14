@@ -5,7 +5,6 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
-import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -13,6 +12,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.example.rishi.towatch.Adapters.MovieAdapter
 import com.example.rishi.towatch.Api.ServiceGenerator
 import com.example.rishi.towatch.BuildConfig
@@ -88,7 +88,7 @@ class DiscoverFragment : Fragment() {
             override fun addMovie(movie: Result) {
                 task = 1
                 data = WatchList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
-                if(refresh_layout != null){
+                if (refresh_layout != null) {
                     refresh_layout.isRefreshing = true
                 }
                 FindMovie().execute(data.movieId)
@@ -97,7 +97,7 @@ class DiscoverFragment : Fragment() {
             override fun removeMovie(movie: Result) {
                 task = 2
                 data = WatchList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
-                if(refresh_layout != null){
+                if (refresh_layout != null) {
                     refresh_layout.isRefreshing = true
                 }
                 FindMovie().execute(data.movieId)
@@ -107,7 +107,7 @@ class DiscoverFragment : Fragment() {
                 task = 3
                 data = WatchList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
                 watchedData = WatchedList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
-                if(refresh_layout != null){
+                if (refresh_layout != null) {
                     refresh_layout.isRefreshing = true
                 }
                 FindMovie().execute(data.movieId)
@@ -127,7 +127,7 @@ class DiscoverFragment : Fragment() {
             override fun loadMoreItems() {
                 isLoading = true
                 currentPage += 1
-                if(refresh_layout != null){
+                if (refresh_layout != null) {
                     refresh_layout.isRefreshing = true
                 }
                 loadNextPage()
@@ -146,7 +146,7 @@ class DiscoverFragment : Fragment() {
             }
 
         })
-        if(refresh_layout != null){
+        if (refresh_layout != null) {
             refresh_layout.isRefreshing = true
         }
         loadFirstPage()
@@ -185,7 +185,7 @@ class DiscoverFragment : Fragment() {
                 for (item in jsonA.results) discoverMovies.add(item)
                 viewAdapter.notifyDataSetChanged()
                 isLoading = false
-                if(refresh_layout != null){
+                if (refresh_layout != null) {
                     refresh_layout.isRefreshing = false
                 }
             }
@@ -205,7 +205,7 @@ class DiscoverFragment : Fragment() {
                 for (item in jsonA.results) discoverMovies.add(item)
                 viewAdapter.notifyDataSetChanged()
                 isLoading = false
-                if(refresh_layout != null){
+                if (refresh_layout != null) {
                     refresh_layout.isRefreshing = false
                 }
             }
@@ -216,12 +216,27 @@ class DiscoverFragment : Fragment() {
     private fun callDiscoverMovie(): Call<JsonA> {
         val call = client.getDiscoverMovie(
                 BuildConfig.TmdbApiKey,
-                "en-US",
                 null,
-                true,
+                null,
+                null,
+                null,
+                null,
                 true,
                 currentPage
         )
+//        Log.v("Fragment Data ", language)
+
+
+//        val call = client.getDiscoverMovie(
+//                BuildConfig.TmdbApiKey,
+//                genreId,
+//                year,
+//                vote,
+//                language,
+//                sortBy,
+//                adult,
+//                currentPage
+//        )
         return call
     }
 
@@ -238,7 +253,7 @@ class DiscoverFragment : Fragment() {
         }
 
         override fun onPostExecute(result: Void?) {
-            if(refresh_layout != null){
+            if (refresh_layout != null) {
                 refresh_layout.isRefreshing = false
             }
             Snackbar.make(recyclerView, "Added to Watched Movies", Snackbar.LENGTH_SHORT).show()
@@ -253,7 +268,7 @@ class DiscoverFragment : Fragment() {
         }
 
         override fun onPostExecute(result: Void?) {
-            if(refresh_layout != null){
+            if (refresh_layout != null) {
                 refresh_layout.isRefreshing = false
             }
             Snackbar.make(recyclerView, "Added to Playlist", Snackbar.LENGTH_SHORT).show()
@@ -268,7 +283,7 @@ class DiscoverFragment : Fragment() {
         }
 
         override fun onPostExecute(result: Void?) {
-            if(refresh_layout != null){
+            if (refresh_layout != null) {
                 refresh_layout.isRefreshing = false
             }
             Snackbar.make(recyclerView, "Removed from Playlist", Snackbar.LENGTH_SHORT).show()
@@ -279,7 +294,7 @@ class DiscoverFragment : Fragment() {
         override fun doInBackground(vararg params: Long?): Boolean {
             val movieId = params[0]
             when (task) {
-                1,3 -> {
+                1, 3 -> {
                     val movieList = watchDatabase.watchDaoAccess().fetchMovie(movieId!!)
                     presentInWatch = !movieList.isEmpty()
                     val watchedList = watchDatabase.watchedDaoAccess().fetchMovie(movieId)
@@ -300,7 +315,7 @@ class DiscoverFragment : Fragment() {
                     if (result) {
                         InsertMovie().execute(data)
                     } else {
-                        if(refresh_layout != null){
+                        if (refresh_layout != null) {
                             refresh_layout.isRefreshing = false
                         }
                         Snackbar.make(recyclerView, "Movie Already in Watch List", Snackbar.LENGTH_SHORT).show()
@@ -310,7 +325,7 @@ class DiscoverFragment : Fragment() {
                     if (!result) {
                         RemoveMovie().execute(data)
                     } else {
-                        if(refresh_layout != null){
+                        if (refresh_layout != null) {
                             refresh_layout.isRefreshing = false
                         }
                         Snackbar.make(recyclerView, "Movie not found in Watch List", Snackbar.LENGTH_SHORT).show()
@@ -320,11 +335,11 @@ class DiscoverFragment : Fragment() {
                     if (result) {
                         InsertWatchedMovie().execute(watchedData)
                     } else {
-                        if (presentInWatch){
+                        if (presentInWatch) {
                             RemoveMovie().execute(data)
                             InsertWatchedMovie().execute(watchedData)
                         } else {
-                            if(refresh_layout != null){
+                            if (refresh_layout != null) {
                                 refresh_layout.isRefreshing = false
                             }
                             Snackbar.make(recyclerView, "Movie Already in Watched List", Snackbar.LENGTH_SHORT).show()
