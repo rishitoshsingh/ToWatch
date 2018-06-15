@@ -15,10 +15,19 @@ class ServiceGenerator {
                 .addConverterFactory(GsonConverterFactory.create())
         private val retrofit:Retrofit = builder.build()
 
+        private val ytBuilder:Retrofit.Builder = Retrofit.Builder()
+                .baseUrl("https://www.googleapis.com/youtube/v3/")
+                .addConverterFactory(GsonConverterFactory.create())
+        private val ytRetrofit:Retrofit = ytBuilder.build()
+
+
         fun <S> createService(serviceClass: Class<S>):S {
             return retrofit.create(serviceClass)
         }
 
+        fun <S> createYtService(serviceClass: Class<S>):S {
+            return ytRetrofit.create(serviceClass)
+        }
 
     }
 

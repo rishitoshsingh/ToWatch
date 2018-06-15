@@ -18,11 +18,9 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
-import com.example.rishi.towatch.Activities.MainActivity
 import com.example.rishi.towatch.Activities.MovieDetailsActivity
 import com.example.rishi.towatch.POJOs.Tmdb.Result
 import com.example.rishi.towatch.R
-import java.lang.Exception
 import java.util.*
 
 /**

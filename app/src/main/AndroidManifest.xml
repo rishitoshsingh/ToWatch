@@ -17,10 +17,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".Activities.SearchActivity"
-            android:parentActivityName=".Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
 
@@ -31,15 +27,6 @@
                     android:mimeType="text/*" />
             </intent-filter>
         </activity>
-        <!-- <activity -->
-        <!-- android:name=".ScrollingActivity" -->
-        <!-- android:label="@string/title_activity_scrolling" -->
-        <!-- android:parentActivityName=".MainActivity" -->
-        <!-- android:theme="@style/AppTheme.NoActionBar"> -->
-        <!-- <meta-data -->
-        <!-- android:name="android.support.PARENT_ACTIVITY" -->
-        <!-- android:valcom.example.rishi.towatch.Activities.MainActivityvity" /> -->
-        <!-- </activity> -->
         <activity
             android:name=".Activities.MovieDetailsActivity"
             android:parentActivityName=".Activities.MainActivity">
@@ -47,8 +34,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.rishi.towatch.Activities.MainActivity" />
         </activity>
-        <activity android:name=".Activities.AccountActivity" />
-        <activity android:name=".Activities.DiscoverActivity"/>
+        <activity
+            android:name=".Activities.AccountActivity"
+            android:parentActivityName=".Activities.MainActivity">
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="com.example.rishi.towatch.Activities.MainActivity" />
+        </activity>
+        <activity android:name=".Activities.DiscoverActivity" />
     </application>
 
 </manifest>

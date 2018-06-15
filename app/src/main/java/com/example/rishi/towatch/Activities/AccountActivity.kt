@@ -12,7 +12,6 @@ import com.example.rishi.towatch.R
 import com.example.rishi.towatch.firebase.SignUpActivity
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_account.*
-import kotlinx.android.synthetic.main.activity_main.*
 
 
 class AccountActivity : AppCompatActivity() {

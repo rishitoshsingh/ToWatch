@@ -19,9 +19,7 @@ import com.example.rishi.towatch.POJOs.Configrations.Genres.GenreResult
 import com.example.rishi.towatch.POJOs.Configrations.Language
 import com.example.rishi.towatch.R
 import com.example.rishi.towatch.TmdbApi.TmdbApiClient
-import kotlinx.android.synthetic.main.activity_discover.*
 import kotlinx.android.synthetic.main.bottom_sheet.*
-import kotlinx.android.synthetic.main.recycler_view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

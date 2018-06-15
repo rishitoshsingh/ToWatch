@@ -21,7 +21,6 @@ import com.bumptech.glide.request.target.Target
 import com.example.rishi.towatch.Activities.MovieDetailsActivity
 import com.example.rishi.towatch.Database.WatchList
 import com.example.rishi.towatch.R
-import java.lang.Exception
 import java.util.*
 
 /**

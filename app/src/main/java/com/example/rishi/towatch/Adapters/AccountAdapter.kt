@@ -4,7 +4,9 @@ import android.content.Context
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-import com.example.rishi.towatch.Fragments.*
+import com.example.rishi.towatch.Fragments.NowPlayingFragment
+import com.example.rishi.towatch.Fragments.WatchListFragment
+import com.example.rishi.towatch.Fragments.WatchedListFragment
 import com.example.rishi.towatch.R
 
 /**

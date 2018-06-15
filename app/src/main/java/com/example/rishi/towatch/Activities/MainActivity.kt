@@ -11,14 +11,22 @@ import android.view.Window
 import android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
 import android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
 import com.example.rishi.towatch.Adapters.HomeAdapter
+import com.example.rishi.towatch.Api.Clients.YouTubeClient
+import com.example.rishi.towatch.Api.ServiceGenerator
+import com.example.rishi.towatch.BuildConfig
 import com.example.rishi.towatch.Fragments.SearchFragment
+import com.example.rishi.towatch.POJOs.YouTube.YouTubeVideo
 import com.example.rishi.towatch.R
 import kotlinx.android.synthetic.main.activity_main.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class MainActivity : AppCompatActivity() {
 
-    var actionSearchView: android.support.v7.widget.SearchView? = null
+    private var actionSearchView: android.support.v7.widget.SearchView? = null
+    private lateinit var searchMenuItem:MenuItem
 
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -33,6 +41,35 @@ class MainActivity : AppCompatActivity() {
         window.clearFlags(FLAG_TRANSLUCENT_STATUS)
         window.addFlags(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
 
+        val extras = intent.extras
+        if (extras != null) {
+            val value1 = extras.getString(Intent.EXTRA_TEXT)
+            var videoId = value1.substringAfter("https://youtu.be/")
+            val ytClient = ServiceGenerator.createYtService(YouTubeClient::class.java)
+            val call = ytClient.getVideoTitle(videoId, BuildConfig.YoutubeApiKey)
+            call.enqueue(object : Callback<YouTubeVideo> {
+                override fun onFailure(call: Call<YouTubeVideo>?, t: Throwable?) {
+
+                }
+
+                override fun onResponse(call: Call<YouTubeVideo>?, response: Response<YouTubeVideo>?) {
+                    val videoTitle: String = response?.body()?.items!![0].snippet.title
+                    searchMenuItem.expandActionView()
+                    actionSearchView?.setQuery(modifyTitle(videoTitle),true)
+                }
+
+                private fun modifyTitle(title: String): String {
+//                    val temp1 = title.split("official",true,0)[0]
+                    var temp1 = title.replace("official","*",true)
+                    temp1 = temp1.replace("trailer","*",true)
+                    temp1 = temp1.replace("|","*",true)
+                    temp1 = temp1.replace("#","*",true)
+                    return temp1.split("*")[0].trim()
+                }
+            })
+        }
+
+
         viewPager.adapter = HomeAdapter(this, supportFragmentManager)
         tabLayout.setupWithViewPager(viewPager)
     }
@@ -42,7 +79,8 @@ class MainActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.actionbar_menu, menu)
 
         val searchItem = menu?.findItem(R.id.app_bar_search)
-        actionSearchView = searchItem?.actionView as android.support.v7.widget.SearchView
+        searchMenuItem = searchItem!!
+        actionSearchView = searchItem.actionView as android.support.v7.widget.SearchView
 
         searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
@@ -54,7 +92,6 @@ class MainActivity : AppCompatActivity() {
                 menu.findItem(R.id.app_bar_profile).isVisible = true
                 val fragment = supportFragmentManager.findFragmentById(R.id.mainView)
                 if (fragment != null) {
-                    fragmentManager.popBackStack()
                     supportFragmentManager.beginTransaction().remove(supportFragmentManager.findFragmentById(R.id.mainView)).commit()
                 }
                 return true
@@ -90,11 +127,12 @@ class MainActivity : AppCompatActivity() {
 //            R.id.app_bar_search ->
 
             R.id.app_bar_profile -> {
-//                val intent = Intent(this, AccountActivity::class.java)
-//                startActivity(intent)
+                val intent = Intent(this, AccountActivity::class.java)
+                startActivity(intent)
+            }
+            R.id.app_bar_discover -> {
                 val intent = Intent(this, DiscoverActivity::class.java)
                 startActivity(intent)
-
             }
             else -> return super.onOptionsItemSelected(item)
         }

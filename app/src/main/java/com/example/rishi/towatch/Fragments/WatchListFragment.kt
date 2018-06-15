@@ -10,13 +10,11 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.rishi.towatch.Adapters.ListAdapter
 import com.example.rishi.towatch.Database.WatchDatabase
 import com.example.rishi.towatch.Database.WatchList
-
-import com.example.rishi.towatch.R
-import com.example.rishi.towatch.Adapters.ListAdapter
 import com.example.rishi.towatch.Database.WatchedList
-import kotlinx.android.synthetic.main.activity_account.*
+import com.example.rishi.towatch.R
 import kotlinx.android.synthetic.main.recycler_view.*
 
 /**
