@@ -226,7 +226,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:background="@color/colorAccent"
+        android:background="@drawable/pill_button"
         android:foreground="?attr/selectableItemBackground"
         android:text="@string/discover"
         android:textColor="#fff" />

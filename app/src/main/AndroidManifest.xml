@@ -41,6 +41,7 @@
             android:name="android.support.PARENT_ACTIVITY"
             android:value="com.example.rishi.towatch.Activities.MainActivity" />
         </activity>
+        <activity android:name=".firebase.SignUpActivity" />
         <activity android:name=".Activities.DiscoverActivity" />
     </application>
 
