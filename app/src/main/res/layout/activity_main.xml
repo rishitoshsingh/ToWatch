@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_activity"
-    android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:orientation="vertical">
 
     <!--<android.support.v7.widget.Toolbar-->
@@ -27,6 +27,11 @@
         app:subtitleTextColor="@color/secondary_text"
         app:titleTextColor="@color/primary_text" />
 
+    <FrameLayout
+        android:id="@+id/mainView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
     <android.support.design.widget.TabLayout
         android:id="@+id/tabLayout"
         style="@style/CategoryTab"
@@ -39,4 +44,5 @@
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
 </LinearLayout>

@@ -47,13 +47,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.rishi.towatch.Activities.MainActivity" />
         </activity>
-        <activity
-            android:name=".Activities.ScrollingActivity"
-            android:label="@string/title_activity_scrolling"
-            android:theme="@style/AppTheme" />
-        <activity android:name=".firebase.SignUpActivity" />
         <activity android:name=".Activities.AccountActivity" />
-        <activity android:name=".Activities.DiscoverActivity"></activity>
+        <activity android:name=".Activities.DiscoverActivity"/>
     </application>
 
 </manifest>

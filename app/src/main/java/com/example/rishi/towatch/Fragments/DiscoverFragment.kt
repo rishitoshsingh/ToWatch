@@ -237,18 +237,6 @@ class DiscoverFragment : Fragment() {
     }
 
     private fun callDiscoverMovie(): Call<JsonA> {
-//        val call = client.getDiscoverMovie(
-//                BuildConfig.TmdbApiKey,
-//                null,
-//                null,
-//                null,
-//                null,
-//                null,
-//                true,
-//                currentPage
-//        )
-//        Log.v("Fragment Data ", language)
-
 
         val call = client.getDiscoverMovie(
                 BuildConfig.TmdbApiKey,

@@ -32,7 +32,7 @@ interface TmdbApiClient {
 
     @GET("search/movie")
     fun search(@Query("api_key") apikey: String,
-               @Query("language") language: String,
+               @Query("language") language: String?,
                @Query("include_adult") adult: Boolean,
                @Query("page") page: Int,
                @Query("query") query: String): Call<JsonA>

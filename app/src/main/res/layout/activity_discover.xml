@@ -23,10 +23,15 @@
 
     <!--</android.support.design.widget.AppBarLayout>-->
 
-    <FrameLayout
-        android:id="@+id/discoverActivityPlaceholder"
+    <LinearLayout
+        android:id="@+id/fragmentRootLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
+        <FrameLayout
+            android:id="@+id/discoverActivityPlaceholder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
 
     <View
         android:id="@+id/bg"

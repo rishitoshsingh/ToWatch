@@ -10,16 +10,15 @@ import android.view.MenuItem
 import android.view.Window
 import android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
 import android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
-import android.widget.SearchView
 import com.example.rishi.towatch.Adapters.HomeAdapter
-import com.example.rishi.towatch.BuildConfig
+import com.example.rishi.towatch.Fragments.SearchFragment
 import com.example.rishi.towatch.R
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
 
-    var actionSearchView: SearchView? = null
+    var actionSearchView: android.support.v7.widget.SearchView? = null
 
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -37,61 +36,50 @@ class MainActivity : AppCompatActivity() {
         viewPager.adapter = HomeAdapter(this, supportFragmentManager)
         tabLayout.setupWithViewPager(viewPager)
     }
-//actionBar Menu
-
-    fun createQuerystring(string: String?): String {
-        var query: String = ""
-        if (string == null) {
-            return "move"
-        } else {
-            val strings = string.split(" ")
-            for (str in strings) {
-                query += str
-                query += "%20"
-            }
-        }
-        return query
-    }
-
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 
         menuInflater.inflate(R.menu.actionbar_menu, menu)
 
         val searchItem = menu?.findItem(R.id.app_bar_search)
-        actionSearchView = searchItem?.actionView as SearchView
+        actionSearchView = searchItem?.actionView as android.support.v7.widget.SearchView
 
+        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                menu.findItem(R.id.app_bar_profile).isVisible = false
+                return true
+            }
 
-//        actionSearchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextChange(newText: String?): Boolean {
-//                return false
-//            }
-//
-//            override fun onQueryTextSubmit(query: String?): Boolean {
-//                val query = createQuerystring(actionSearchView?.query.toString())
-//                val client = ServiceGenerator.createService(TmdbApiClient::class.java)
-//                val call = client.search(R.string.tmdb_key.toString(),
-//                        "en-US",
-//                        true,
-//                        1,
-//                        query)
-//                call.enqueue(object : retrofit2.Callback<JsonA> {
-//                    override fun onFailure(call: Call<JsonA>?, t: Throwable?) {
-//                        Log.v("Search Failure", t.toString())
-//                    }
-//
-//                    override fun onResponse(call: Call<JsonA>?, response: Response<JsonA>?) {
-//                        val discoverMovie: JsonA = response?.body()!!
-//                        movies.clear()
-//                        for (item in discoverMovie.results) movies.add(item)
-//                        viewAdapter.notifyDataSetChanged()
-//                    }
-//
-//                })
-//
-//                return false
-//            }
-//        })
+            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                menu.findItem(R.id.app_bar_profile).isVisible = true
+                val fragment = supportFragmentManager.findFragmentById(R.id.mainView)
+                if (fragment != null) {
+                    fragmentManager.popBackStack()
+                    supportFragmentManager.beginTransaction().remove(supportFragmentManager.findFragmentById(R.id.mainView)).commit()
+                }
+                return true
+            }
+
+        })
+
+        actionSearchView?.setOnQueryTextListener(object : android.support.v7.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                val query = actionSearchView?.query.toString()
+                val bundle: Bundle = Bundle()
+                bundle.putString("searchQuery", query)
+                val searchFragment = SearchFragment()
+                searchFragment.arguments = bundle
+                supportFragmentManager.beginTransaction()
+                        .replace(R.id.mainView, searchFragment)
+                        .addToBackStack(null)
+                        .commit()
+                return false
+            }
+        })
 
         return true
 
@@ -100,10 +88,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
 //            R.id.app_bar_search ->
-//            R.id.app_bar_profile -> {
-//                val intent = Intent(this, SignUpActivity::class.java)
-//                startActivity(intent)
-//            }
+
             R.id.app_bar_profile -> {
 //                val intent = Intent(this, AccountActivity::class.java)
 //                startActivity(intent)
@@ -111,9 +96,9 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
 
             }
-            else -> return super.onOptionsItemSelected(item);
+            else -> return super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item)
     }
 
 }
