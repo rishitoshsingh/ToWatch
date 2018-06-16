@@ -1,8 +1,10 @@
 package com.example.rishi.towatch.Activities
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.annotation.RequiresApi
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
@@ -22,11 +24,12 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-
 class MainActivity : AppCompatActivity() {
 
     private var actionSearchView: android.support.v7.widget.SearchView? = null
     private lateinit var searchMenuItem:MenuItem
+    private lateinit var mSharedPreferences: SharedPreferences
+
 
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -77,6 +80,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 
         menuInflater.inflate(R.menu.actionbar_menu, menu)
+
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
         val searchItem = menu?.findItem(R.id.app_bar_search)
         searchMenuItem = searchItem!!

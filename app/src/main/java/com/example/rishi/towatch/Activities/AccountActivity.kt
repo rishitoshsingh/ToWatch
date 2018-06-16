@@ -1,7 +1,10 @@
 package com.example.rishi.towatch.Activities
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.preference.Preference
+import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
@@ -10,6 +13,7 @@ import android.view.WindowManager
 import com.example.rishi.towatch.Adapters.AccountAdapter
 import com.example.rishi.towatch.R
 import com.example.rishi.towatch.firebase.SignUpActivity
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_account.*
 
@@ -17,6 +21,7 @@ import kotlinx.android.synthetic.main.activity_account.*
 class AccountActivity : AppCompatActivity() {
 
     private var mAuth: FirebaseAuth? = null
+    private lateinit var mSharedPreferences:SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +39,9 @@ class AccountActivity : AppCompatActivity() {
         setSupportActionBar(account_toolbar)
         val toolbar = supportActionBar
         toolbar?.title = "Account"
+
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        toolbar?.title = "Welcome, " + mSharedPreferences.getString("GivenName","No One")
 
         val window: Window = window
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
