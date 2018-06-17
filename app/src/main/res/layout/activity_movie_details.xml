@@ -205,7 +205,7 @@
         tools:context="com.example.rishi.towatch.Activities.ScrollingActivity">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/white"
             android:orientation="vertical">
@@ -240,7 +240,7 @@
                 android:gravity="center"
                 android:paddingTop="16dp"
                 android:text="@string/overview"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
 
@@ -297,9 +297,26 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
+                android:layout_marginBottom="2dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:background="@color/colorPrimaryLight" />
+
+            <FrameLayout
+                android:id="@+id/collectionFrameLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:id="@+id/viewBelowFrame"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="2dp"
+                android:background="@color/colorPrimaryLight"
+                android:visibility="gone" />
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -473,6 +490,27 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:background="@color/colorPrimaryLight" />
+
+            <FrameLayout
+                android:id="@+id/similarMoviesFrame"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="4dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:background="@color/colorPrimaryLight" />
+
+            <FrameLayout
+                android:id="@+id/recommendedMoviesFrame"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="4dp" />
 
             <View
                 android:layout_width="match_parent"

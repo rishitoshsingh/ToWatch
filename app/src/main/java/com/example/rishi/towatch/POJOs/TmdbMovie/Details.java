@@ -12,7 +12,7 @@ public class Details {
     @SerializedName("backdrop_path")
     private String mBackdropPath;
     @SerializedName("belongs_to_collection")
-    private Object mBelongsToCollection;
+    private BelongsToCollection mBelongsToCollection;
     @SerializedName("budget")
     private Long mBudget;
     @SerializedName("genres")
@@ -74,13 +74,11 @@ public class Details {
         mBackdropPath = backdropPath;
     }
 
-    public Object getBelongsToCollection() {
+    public BelongsToCollection getBelongsToCollection() {
         return mBelongsToCollection;
     }
 
-    public void setBelongsToCollection(Object belongsToCollection) {
-        mBelongsToCollection = belongsToCollection;
-    }
+    public void setBelongsToCollection(BelongsToCollection belongsToCollection) { mBelongsToCollection = belongsToCollection; }
 
     public Long getBudget() {
         return mBudget;

@@ -46,30 +46,35 @@ class MainActivity : AppCompatActivity() {
 
         val extras = intent.extras
         if (extras != null) {
-            val value1 = extras.getString(Intent.EXTRA_TEXT)
-            var videoId = value1.substringAfter("https://youtu.be/")
-            val ytClient = ServiceGenerator.createYtService(YouTubeClient::class.java)
-            val call = ytClient.getVideoTitle(videoId, BuildConfig.YoutubeApiKey)
-            call.enqueue(object : Callback<YouTubeVideo> {
-                override fun onFailure(call: Call<YouTubeVideo>?, t: Throwable?) {
+            try {
+                val value1 = extras.getString(Intent.EXTRA_TEXT)
+                var videoId = value1.substringAfter("https://youtu.be/")
+                val ytClient = ServiceGenerator.createYtService(YouTubeClient::class.java)
+                val call = ytClient.getVideoTitle(videoId, BuildConfig.YoutubeApiKey)
+                call.enqueue(object : Callback<YouTubeVideo> {
+                    override fun onFailure(call: Call<YouTubeVideo>?, t: Throwable?) {
 
-                }
+                    }
 
-                override fun onResponse(call: Call<YouTubeVideo>?, response: Response<YouTubeVideo>?) {
-                    val videoTitle: String = response?.body()?.items!![0].snippet.title
-                    searchMenuItem.expandActionView()
-                    actionSearchView?.setQuery(modifyTitle(videoTitle),true)
-                }
+                    override fun onResponse(call: Call<YouTubeVideo>?, response: Response<YouTubeVideo>?) {
+                        val videoTitle: String = response?.body()?.items!![0].snippet.title
+                        searchMenuItem.expandActionView()
+                        actionSearchView?.setQuery(modifyTitle(videoTitle),true)
+                    }
 
-                private fun modifyTitle(title: String): String {
+                    private fun modifyTitle(title: String): String {
 //                    val temp1 = title.split("official",true,0)[0]
-                    var temp1 = title.replace("official","*",true)
-                    temp1 = temp1.replace("trailer","*",true)
-                    temp1 = temp1.replace("|","*",true)
-                    temp1 = temp1.replace("#","*",true)
-                    return temp1.split("*")[0].trim()
-                }
-            })
+                        var temp1 = title.replace("official","*",true)
+                        temp1 = temp1.replace("trailer","*",true)
+                        temp1 = temp1.replace("|","*",true)
+                        temp1 = temp1.replace("#","*",true)
+                        return temp1.split("*")[0].trim()
+                    }
+                })
+            } catch ( ex:Exception) {
+
+            }
+
         }
 
 

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="118dp"
+    android:layout_height="176dp"
+    android:maxWidth="170dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp"
+    app:cardUseCompatPadding="true">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/movieListGrid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/selectableItemBackground"
+        android:orientation="vertical">
+        <!--104dp width-->
+        <!--248dp image-->
+
+        <ProgressBar
+            android:id="@+id/posterProgressBar"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_centerInParent="true" />
+
+
+        <ImageView
+            android:id="@+id/moviePoster"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:transitionName="moviePoster"
+            android:background="?attr/selectableItemBackground"
+            android:scaleType="centerCrop" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:layout_alignParentBottom="true"
+            android:background="#80000000"
+            android:elevation="4dp"
+            android:orientation="vertical"
+            android:paddingBottom="4dp"
+            android:paddingStart="4dp"
+            android:paddingTop="4dp"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/movieTile"
+                    android:layout_width="152dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:ellipsize="end"
+                    android:gravity="center_vertical"
+                    android:maxLines="1"
+                    android:textColor="@android:color/white"
+                    android:textSize="13sp"
+                    tools:text="Ghost in Shell" />
+
+                <TextView
+                    android:id="@+id/movieReleaseDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:textColor="@android:color/white"
+                    android:textSize="10sp"
+                    tools:text="2018-01-14" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/threeDotMenu"
+                android:layout_width="24dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_more_vert_white_48dp" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

@@ -19,31 +19,19 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.example.rishi.towatch.Activities.MovieDetailsActivity
-import com.example.rishi.towatch.POJOs.Tmdb.Result
 import com.example.rishi.towatch.R
 import java.util.*
 
 /**
- * Created by rishi on 14/3/18.
+ * Created by rishi on 17/6/18.
  */
-abstract class MovieAdapter(context: Context, moviesPassed: ArrayList<Result>) : RecyclerView.Adapter<MovieAdapter.ViewHolder>() {
+abstract class RecommendationAdapter(context: Context, moviesPassed: ArrayList<com.example.rishi.towatch.POJOs.TmdbRecommendations.Result>) : RecyclerView.Adapter<RecommendationAdapter.ViewHolder>() {
     private val IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500/"
     private val mContext = context
-    private var smallPoster: Boolean = false
-
-    constructor(context: Context, moviesPassed: ArrayList<Result>, small: Boolean) : this(context, moviesPassed) {
-        smallPoster = small
-    }
-
-    var movies: ArrayList<Result> = moviesPassed
+    var movies: ArrayList<com.example.rishi.towatch.POJOs.TmdbRecommendations.Result> = moviesPassed
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val itemView:View
-        if (smallPoster) {
-            itemView = LayoutInflater.from(parent.context).inflate(R.layout.small_movie_card, parent, false)
-        } else {
-            itemView = LayoutInflater.from(parent.context).inflate(R.layout.movie_list_grid, parent, false)
-        }
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.small_movie_card, parent, false)
         return ViewHolder(itemView)
     }
 
@@ -54,10 +42,10 @@ abstract class MovieAdapter(context: Context, moviesPassed: ArrayList<Result>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val movie = movies[position]
         val dateString = movie.releaseDate.split("-")
-        var date: Date = Date(1912, 1, 1)
+        var date: Date = Date(1912,1,1)
         try {
             date = Date(dateString[0].toInt(), dateString[1].toInt(), dateString[2].toInt())
-        } catch (ex: NumberFormatException) {
+        }catch (ex:NumberFormatException){
 
         }
         val posterUri = Uri.parse(IMAGE_BASE_URL + movie.posterPath)
@@ -84,18 +72,18 @@ abstract class MovieAdapter(context: Context, moviesPassed: ArrayList<Result>) :
             val intent = Intent(mContext, MovieDetailsActivity::class.java)
 //            intent.putExtra("movie", movies[position])
             intent.putExtra("movieId", movies[position].id)
-            intent.putExtra("posterPath", movies[position].posterPath)
-            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(mContext as Activity, holder.moviePoster as View, "moviePoster")
-            mContext.startActivity(intent, options.toBundle())
+            intent.putExtra("posterPath",movies[position].posterPath)
+            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(mContext as Activity,holder.moviePoster as View, "moviePoster")
+            mContext.startActivity(intent,options.toBundle())
         }
 
         holder.threeDotMenu.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
-                val popup = PopupMenu(mContext, holder.threeDotMenu)
+                val popup = PopupMenu(mContext,holder.threeDotMenu)
                 popup.inflate(R.menu.card_menu)
-                popup.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
+                popup.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener{
                     override fun onMenuItemClick(item: MenuItem?): Boolean {
-                        when (item!!.itemId) {
+                        when (item!!.itemId){
                             R.id.addMovie -> {
                                 addMovie(movie)
                             }
@@ -117,9 +105,9 @@ abstract class MovieAdapter(context: Context, moviesPassed: ArrayList<Result>) :
 
     }
 
-    abstract fun addMovie(movie: Result)
-    abstract fun removeMovie(movie: Result)
-    abstract fun watchedMovie(movie: Result)
+    abstract fun addMovie(movie: com.example.rishi.towatch.POJOs.TmdbRecommendations.Result)
+    abstract fun removeMovie(movie: com.example.rishi.towatch.POJOs.TmdbRecommendations.Result)
+    abstract fun watchedMovie(movie: com.example.rishi.towatch.POJOs.TmdbRecommendations.Result)
 
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -142,4 +130,3 @@ abstract class MovieAdapter(context: Context, moviesPassed: ArrayList<Result>) :
     }
 
 }
-
