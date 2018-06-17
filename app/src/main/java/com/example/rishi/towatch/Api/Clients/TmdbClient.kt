@@ -91,12 +91,12 @@ interface TmdbApiClient {
                       @Query("api_key") apiKey:String): Call<Collection>
 
     @GET("movie/{movie_id}/recommendations")
-    fun getRecommendations(@Path("movie_id") collectionId: Int,
+    fun getRecommendations(@Path("movie_id") movieId: Int,
                            @Query("api_key") apiKey:String,
                            @Query("page") page: Int): Call<Recommendations>
 
     @GET("movie/{movie_id}/similar")
-    fun getSimilars(@Path("movie_id") collectionId: Int,
+    fun getSimilars(@Path("movie_id") movieId: Int,
                     @Query("api_key") apiKey:String,
                     @Query("page") page: Int): Call<JsonA>
 

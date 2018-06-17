@@ -23,6 +23,7 @@ import com.example.rishi.towatch.POJOs.Tmdb.JsonA
 import com.example.rishi.towatch.POJOs.Tmdb.Result
 import com.example.rishi.towatch.R
 import com.example.rishi.towatch.TmdbApi.TmdbApiClient
+import kotlinx.android.synthetic.main.activity_movie_details.*
 import kotlinx.android.synthetic.main.recycler_view.*
 import kotlinx.android.synthetic.main.similar_recommendation.*
 import retrofit2.Call
@@ -54,6 +55,8 @@ class SimilarFragment : Fragment() {
     private var presentInWatch: Boolean = false
     private var presentInWatched: Boolean = false
 
+    private lateinit var mView: View
+
 
     private var mMovieId: Long = 0
 
@@ -75,6 +78,7 @@ class SimilarFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mView = view
         view.findViewById<TextView>(R.id.similarRecommendationTitle).text = "Similar Movies"
 
         client = ServiceGenerator.createService(TmdbApiClient::class.java)
@@ -130,11 +134,16 @@ class SimilarFragment : Fragment() {
             }
 
             override fun onResponse(p0: Call<JsonA>?, p1: Response<JsonA>?) {
-                val recommendations: JsonA? = p1?.body()!!
+                val jsonA: JsonA? = p1?.body()!!
 
-                TOTAL_PAGES = recommendations?.totalPages?.toInt()!!
+                if(jsonA?.totalResults == 0.toLong()){
+                    mView.visibility = View.GONE
+//                    belowSimilar.visibility = View.GONE
+                }
+
+                TOTAL_PAGES = jsonA?.totalPages?.toInt()!!
                 similarMovies.clear()
-                for (item in recommendations.results) similarMovies.add(item)
+                for (item in jsonA.results) similarMovies.add(item)
                 viewAdapter.notifyDataSetChanged()
                 isLoading = false
             }

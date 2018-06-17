@@ -499,6 +499,7 @@
                 android:layout_marginTop="4dp" />
 
             <View
+                android:id="@+id/belowSimilar"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_marginEnd="8dp"
@@ -513,6 +514,7 @@
                 android:layout_marginTop="4dp" />
 
             <View
+                android:id="@+id/belowRecommendations"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_marginEnd="8dp"

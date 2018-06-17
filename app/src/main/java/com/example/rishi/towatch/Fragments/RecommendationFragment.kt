@@ -22,6 +22,7 @@ import com.example.rishi.towatch.Listners.PaginationScrollListner
 import com.example.rishi.towatch.POJOs.TmdbRecommendations.Recommendations
 import com.example.rishi.towatch.R
 import com.example.rishi.towatch.TmdbApi.TmdbApiClient
+import kotlinx.android.synthetic.main.activity_movie_details.*
 import kotlinx.android.synthetic.main.recycler_view.*
 import kotlinx.android.synthetic.main.similar_recommendation.*
 import retrofit2.Call
@@ -53,6 +54,8 @@ class RecommendationFragment : Fragment() {
     private var presentInWatch: Boolean = false
     private var presentInWatched: Boolean = false
 
+    private lateinit var mView:View
+
 
     private var mMovieId: Long = 0
 
@@ -74,6 +77,7 @@ class RecommendationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mView = view
         view.findViewById<TextView>(R.id.similarRecommendationTitle).text = "Recommendations"
 
         client = ServiceGenerator.createService(TmdbApiClient::class.java)
@@ -107,30 +111,6 @@ class RecommendationFragment : Fragment() {
             adapter = viewAdapter
             itemAnimator = DefaultItemAnimator()
         }
-//        recyclerView.addOnScrollListener(object : PaginationScrollListner(viewManager as GridLayoutManager) {
-//            override fun getCurrentPage(): Int {
-//                return currentPage
-//            }
-//
-//            override fun loadMoreItems() {
-//                isLoading = true
-//                currentPage += 1
-//                loadNextPage()
-//            }
-//
-//            override fun getTotalPageCount(): Int {
-//                return TOTAL_PAGES
-//            }
-//
-//            override fun isLastPage(): Boolean {
-//                return isLastPage
-//            }
-//
-//            override fun isLoading(): Boolean {
-//                return isLoading
-//            }
-//
-//        })
 
         loadFirstPage()
 
@@ -146,7 +126,10 @@ class RecommendationFragment : Fragment() {
             override fun onResponse(p0: Call<Recommendations>?, p1: Response<Recommendations>?) {
 
                 val recommendations: Recommendations? = p1?.body()!!
-
+                if(recommendations?.totalResults == 0.toLong()){
+                    mView.visibility = View.GONE
+//                    belowRecommendations.visibility = View.GONE
+                }
                 TOTAL_PAGES = recommendations?.totalPages?.toInt()!!
                 recommendedMovies.clear()
                 for (item in recommendations.results) recommendedMovies.add(item)
@@ -155,24 +138,6 @@ class RecommendationFragment : Fragment() {
             }
         })
     }
-
-//    private fun loadNextPage() {
-//
-//        val call = callRecommendedMovie()
-//        call.enqueue(object : retrofit2.Callback<Recommendations> {
-//            override fun onFailure(p0: Call<Recommendations>?, p1: Throwable?) {
-//                Log.v("temp", "failed Next Page", p1)
-//            }
-//
-//            override fun onResponse(p0: Call<Recommendations>?, p1: Response<Recommendations>?) {
-//                val recommendations: Recommendations = p1?.body()!!
-//                for (item in recommendations.results) recommendedMovies.add(item)
-//                viewAdapter.notifyDataSetChanged()
-//                isLoading = false
-//            }
-//        })
-//
-//    }
 
     private fun callRecommendedMovie(): Call<Recommendations> {
         val call = client.getRecommendations(
