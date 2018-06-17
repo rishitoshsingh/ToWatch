@@ -21,4 +21,9 @@
         android:title="Discover"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/app_bar_preferences"
+        android:title="Preferences"
+        app:showAsAction="never"/>
+
 </menu>

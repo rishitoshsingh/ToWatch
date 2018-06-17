@@ -15,20 +15,34 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+
     <style name="CategoryTab" parent="Widget.Design.TabLayout">
         <item name="tabIndicatorColor">@color/colorAccent</item>
         <item name="tabBackground">@color/colorPrimary</item>
         <item name="tabSelectedTextColor">@color/colorAccent</item>
         <item name="tabTextAppearance">@style/CategoryTabTextAppearance</item>
     </style>
+
     <style name="CategoryTabTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="android:textColor">@color/secondary_text</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" >
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="android:colorBackground">@color/colorPrimary</item>
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="BottomSheet" parent="@style/Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/new_bottomsheet_bg</item>
+    </style>
+
+    <style name="BaseBottomSheetDialog" parent="@style/Theme.Design.Light.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="bottomSheetStyle">@style/BottomSheet</item>
+    </style>
+
+    <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog" />
+
 
 </resources>

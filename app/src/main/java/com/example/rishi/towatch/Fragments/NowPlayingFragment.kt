@@ -1,8 +1,10 @@
 package com.example.rishi.towatch.Fragments
 
 
+import android.content.SharedPreferences
 import android.os.AsyncTask
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.widget.*
@@ -48,6 +50,9 @@ class NowPlayingFragment : Fragment() {
     private var presentInWatch: Boolean = false
     private var presentInWatched: Boolean = false
 
+    private lateinit var region:String
+    private lateinit var language:String
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.recycler_view, container, false)
@@ -69,6 +74,11 @@ class NowPlayingFragment : Fragment() {
         client = ServiceGenerator.createService(TmdbApiClient::class.java)
 
         watchDatabase = WatchDatabase.getInstance(context!!)!!
+
+        val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
+        region = sharedPreferences.getString("region","US")
+        language = sharedPreferences.getString("language","en-US")
+
 
         viewManager = GridLayoutManager(context, 2)
         viewAdapter = object : MovieAdapter(context!!, nowPlayingMovies) {
@@ -199,9 +209,9 @@ class NowPlayingFragment : Fragment() {
     private fun callDiscoverMovie(): Call<JsonB> {
         val call = client.getNowPlaying(
                 BuildConfig.TmdbApiKey,
-                "en-US",
+                language,
                 currentPage,
-                null
+                region
         )
         return call
     }

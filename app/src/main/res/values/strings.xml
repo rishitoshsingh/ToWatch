@@ -60,6 +60,9 @@
     <string name="discover">Discover</string>
     <string name="filter_result">Filter Result</string>
     <string name="spinner_title">Temp</string>
+    <string name="region">Region</string>
+    <string name="language">Language</string>
+    <string name="save">Save</string>
 
 
 </resources>
