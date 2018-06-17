@@ -23,6 +23,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import com.example.rishi.towatch.Fragments.BottomSheetFragment
+
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -36,6 +39,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val sharedPreferences:SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val sharedPreferenceEditor:SharedPreferences.Editor = sharedPreferences.edit()
+        sharedPreferenceEditor.putString("region","US")
+        sharedPreferenceEditor.putString("language","en-US")
+        sharedPreferenceEditor.commit()
 
         setSupportActionBar(my_toolbar)
         val toolbar = supportActionBar
@@ -143,6 +152,10 @@ class MainActivity : AppCompatActivity() {
             R.id.app_bar_discover -> {
                 val intent = Intent(this, DiscoverActivity::class.java)
                 startActivity(intent)
+            }
+            R.id.app_bar_preferences -> {
+                val bottomSheetFragment = BottomSheetFragment()
+                bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
             }
             else -> return super.onOptionsItemSelected(item)
         }

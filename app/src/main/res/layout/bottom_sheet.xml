@@ -4,30 +4,27 @@
     android:id="@+id/bottom_sheet"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="4dp"
-    android:layout_marginStart="4dp"
-    android:background="@drawable/bottomsheet_bg"
+    android:background="@drawable/new_bottomsheet_bg"
+    android:clickable="true"
+    android:focusable="true"
     android:orientation="vertical"
-    android:paddingBottom="16dp"
-    android:paddingEnd="@dimen/activity_margin"
-    android:paddingStart="@dimen/activity_margin"
-    android:paddingTop="8dp"
     app:behavior_hideable="true"
-    app:behavior_peekHeight="36dp"
+    app:behavior_peekHeight="48dp"
     app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
     <LinearLayout
         android:id="@+id/bottomSheetPeek"
-        android:gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="24dp"
+        android:layout_height="48dp"
         android:layout_gravity="center_horizontal"
+        android:gravity="center"
         android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/filterPullButton"
             android:layout_width="wrap_content"
-            android:layout_height="24dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical"
             android:scaleType="centerInside"
             app:srcCompat="@drawable/filter_results_button" />
     </LinearLayout>
@@ -36,65 +33,78 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingEnd="@dimen/activity_margin"
+        android:paddingStart="@dimen/activity_margin">
 
         <RelativeLayout
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:padding="8dp">
 
             <CheckBox
-                android:layout_centerVertical="true"
                 android:id="@+id/genreCheckBox"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/genreCheckBox"
                 android:layout_centerVertical="true"
+                android:layout_marginStart="8dp"
+                android:layout_toEndOf="@id/genreCheckBox"
                 android:text="@string/genre"
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
 
-            <Spinner
+
+            <android.support.v7.widget.AppCompatSpinner
                 android:id="@+id/genreSpinner"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:gravity="end"
                 android:prompt="@string/genre"
-                android:spinnerMode="dialog" />
+                android:spinnerMode="dialog"
+                android:textAlignment="center" />
+
         </RelativeLayout>
 
         <RelativeLayout
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:padding="8dp">
 
             <CheckBox
-                android:layout_centerVertical="true"
                 android:id="@+id/yearCheckBox"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true" />
 
             <TextView
-                android:layout_centerVertical="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="8dp"
                 android:layout_toEndOf="@id/yearCheckBox"
                 android:text="@string/year"
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
 
-            <Spinner
-                android:layout_centerVertical="true"
+            <android.support.v7.widget.AppCompatSpinner
                 android:id="@+id/yearSpinner"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
                 android:gravity="end"
                 android:prompt="@string/year"
                 android:spinnerMode="dialog" />
@@ -102,62 +112,70 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:padding="8dp">
 
             <CheckBox
-                android:layout_centerVertical="true"
                 android:id="@+id/voteAverageCheckBox"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true" />
 
             <TextView
-                android:layout_centerVertical="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="8dp"
                 android:layout_toEndOf="@+id/voteAverageCheckBox"
                 android:text="@string/vote_average"
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
 
-            <Spinner
-                android:layout_centerVertical="true"
+            <android.support.v7.widget.AppCompatSpinner
                 android:id="@+id/voteAverageSpinner"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
                 android:gravity="end"
                 android:prompt="@string/vote_average"
-                android:spinnerMode="dialog" />
+                android:spinnerMode="dropdown" />
         </RelativeLayout>
 
         <RelativeLayout
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:padding="8dp">
 
             <CheckBox
-                android:layout_centerVertical="true"
                 android:id="@+id/originalLanguageCheckBox"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true" />
 
             <TextView
-                android:layout_centerVertical="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="8dp"
                 android:layout_toEndOf="@+id/originalLanguageCheckBox"
                 android:text="@string/original_language"
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
 
-            <Spinner
-                android:layout_centerVertical="true"
+            <android.support.v7.widget.AppCompatSpinner
                 android:id="@+id/originalLanguageSpinner"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
                 android:gravity="end"
                 android:prompt="@string/original_language"
                 android:spinnerMode="dialog" />
@@ -165,69 +183,80 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:padding="8dp">
 
             <CheckBox
-                android:layout_centerVertical="true"
                 android:id="@+id/sortCheckBox"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true" />
 
             <TextView
-                android:layout_centerVertical="true"
                 android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="8dp"
                 android:layout_toEndOf="@id/sortCheckBox"
                 android:text="@string/sort"
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
 
-            <Spinner
-                android:layout_centerVertical="true"
+            <android.support.v7.widget.AppCompatSpinner
                 android:id="@+id/sortSpinner"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
                 android:gravity="end"
                 android:prompt="@string/sort"
-                android:spinnerMode="dialog" />
+                android:spinnerMode="dropdown" />
         </RelativeLayout>
 
         <RelativeLayout
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:padding="8dp">
 
             <TextView
-                android:layout_centerVertical="true"
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="8dp"
                 android:text="@string/include_adult"
                 android:textColor="@android:color/black"
                 android:textSize="18sp" />
 
             <Switch
-                android:layout_centerVertical="true"
                 android:id="@+id/adultSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true" />
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true" />
 
         </RelativeLayout>
 
     </LinearLayout>
 
     <Button
+        android:layout_margin="8dp"
         android:id="@+id/discoverButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:background="@drawable/pill_button"
-        android:foreground="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
         android:text="@string/discover"
         android:textColor="#fff" />
 

@@ -86,6 +86,9 @@ interface TmdbApiClient {
     @GET("genre/movie/list")
     fun getGenres(@Query("api_key") apiKey: String): Call<GenreResult>
 
+    @GET("configuration/primary_translations")
+    fun getTranslations(@Query("api_key") apiKey: String): Call<List<String>>
+
     @GET("collection/{collection_id}")
     fun getCollection(@Path("collection_id") collectionId: Int,
                       @Query("api_key") apiKey:String): Call<Collection>
@@ -99,5 +102,6 @@ interface TmdbApiClient {
     fun getSimilars(@Path("movie_id") collectionId: Int,
                     @Query("api_key") apiKey:String,
                     @Query("page") page: Int): Call<JsonA>
+
 
 }

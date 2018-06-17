@@ -1,8 +1,10 @@
 package com.example.rishi.towatch.Fragments
 
 
+import android.content.SharedPreferences
 import android.os.AsyncTask
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DefaultItemAnimator
@@ -48,6 +50,9 @@ class UpcomingFragment : Fragment() {
     private var presentInWatch: Boolean = false
     private var presentInWatched: Boolean = false
 
+    private lateinit var region:String
+    private lateinit var language:String
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.recycler_view, container, false)
@@ -67,6 +72,10 @@ class UpcomingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         client = ServiceGenerator.createService(TmdbApiClient::class.java)
+
+        val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
+        region = sharedPreferences.getString("region","US")
+        language = sharedPreferences.getString("language","en-US")
 
         watchDatabase = WatchDatabase.getInstance(context!!)!!
 
@@ -202,9 +211,9 @@ class UpcomingFragment : Fragment() {
     private fun callUpcomingMovies(): Call<JsonB> {
         val call = client.getUpcoming(
                 BuildConfig.TmdbApiKey,
-                "en-US",
+                language,
                 currentPage,
-                null
+                region
         )
         return call
     }
