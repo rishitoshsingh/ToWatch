@@ -1,6 +1,7 @@
 package com.example.rishi.towatch.Activities
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.AsyncTask
@@ -27,6 +28,7 @@ import com.example.rishi.towatch.Api.ServiceGenerator
 import com.example.rishi.towatch.BuildConfig
 import com.example.rishi.towatch.Database.WatchDatabase
 import com.example.rishi.towatch.Database.WatchList
+import com.example.rishi.towatch.Fragments.CollectionFragment
 import com.example.rishi.towatch.Listners.AppBarStateChangeListener
 import com.example.rishi.towatch.POJOs.TmdbMovie.Details
 import com.example.rishi.towatch.POJOs.TmdbMovie.MovieImage
@@ -40,6 +42,7 @@ import kotlinx.android.synthetic.main.activity_movie_details.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.reflect.Field
 
 
 class MovieDetailsActivity : AppCompatActivity() {
@@ -215,6 +218,19 @@ class MovieDetailsActivity : AppCompatActivity() {
         call.enqueue(object : Callback<Details> {
             override fun onResponse(call: Call<Details>?, response: Response<Details>?) {
                 movie = response?.body()!!
+                if (movie.belongsToCollection != null){
+                    val bundle:Bundle = Bundle()
+                    bundle.putLong("collectionId",movie.belongsToCollection.id)
+                    val collectionFragment:CollectionFragment = CollectionFragment()
+                    collectionFragment.arguments = bundle
+                    supportFragmentManager.beginTransaction()
+                            .replace(R.id.collectionFrameLayout,collectionFragment)
+                            .disallowAddToBackStack()
+                            .commit()
+                    viewBelowFrame.visibility = View.VISIBLE
+
+                }
+
                 getMovieImages()
                 getMovieVideos()
 //                UpdateUI()
@@ -241,7 +257,10 @@ class MovieDetailsActivity : AppCompatActivity() {
     private fun updateMoviesDetails(details: Details?) {
         mToolbar?.title = details?.originalTitle
         tmdb_rating.text = details?.voteAverage.toString()
-        movie_tagline.text = details?.tagline
+        if(details?.tagline.isNullOrEmpty())
+            movie_tagline.visibility = View.GONE
+        else
+            movie_tagline.text = details?.tagline
         status.text = details?.status
         release_date.text = details?.releaseDate
         revenue.text = details?.revenue.toString()

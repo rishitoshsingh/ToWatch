@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorPrimaryDark"
+    android:orientation="vertical">
+
+    <TextView
+        android:textColor="@color/white"
+        android:id="@+id/collectionName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:textStyle="bold"
+        android:textSize="18sp" />
+
+    <TextView
+        android:textColor="@color/white"
+        android:id="@+id/collectionOverview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:textSize="15sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="123dp"
+            android:layout_height="182dp"
+            android:layout_margin="8dp">
+
+            <ProgressBar
+                android:id="@+id/collectionPosterProgressBar"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_centerInParent="true" />
+
+            <ImageView
+                android:id="@+id/collectionPoster"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop" />
+
+        </RelativeLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_gravity="center"
+            android:id="@+id/collectionRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</LinearLayout>
