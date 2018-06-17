@@ -4,7 +4,7 @@ package com.example.rishi.towatch.POJOs.TmdbRecommendations;
 import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
-public class Recomendations {
+public class Recommendations {
 
     @SerializedName("page")
     private Long mPage;

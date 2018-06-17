@@ -29,6 +29,8 @@ import com.example.rishi.towatch.BuildConfig
 import com.example.rishi.towatch.Database.WatchDatabase
 import com.example.rishi.towatch.Database.WatchList
 import com.example.rishi.towatch.Fragments.CollectionFragment
+import com.example.rishi.towatch.Fragments.RecommendationFragment
+import com.example.rishi.towatch.Fragments.SimilarFragment
 import com.example.rishi.towatch.Listners.AppBarStateChangeListener
 import com.example.rishi.towatch.POJOs.TmdbMovie.Details
 import com.example.rishi.towatch.POJOs.TmdbMovie.MovieImage
@@ -155,6 +157,22 @@ class MovieDetailsActivity : AppCompatActivity() {
         }
 
         getMovieDetails()
+
+        val bundle:Bundle = Bundle()
+        bundle.putLong("movieId",movieId)
+        val recommendationFragment = RecommendationFragment()
+        val similarFragment = SimilarFragment()
+        recommendationFragment.arguments = bundle
+        similarFragment.arguments = bundle
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.similarMoviesFrame,similarFragment)
+                .disallowAddToBackStack()
+                .commit()
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.recommendedMoviesFrame,recommendationFragment)
+                .disallowAddToBackStack()
+                .commit()
+
     }
 
     private fun playVideo(videoId: String) {

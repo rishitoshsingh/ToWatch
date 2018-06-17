@@ -6,7 +6,8 @@
     android:orientation="vertical">
 
     <TextView
-        android:textColor="@color/white"
+        android:layout_gravity="end"
+        android:textColor="@color/colorAccent"
         android:id="@+id/collectionName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

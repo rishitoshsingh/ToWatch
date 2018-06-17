@@ -9,7 +9,7 @@ import com.example.rishi.towatch.POJOs.TmdbCollection.Collection
 import com.example.rishi.towatch.POJOs.TmdbMovie.Details
 import com.example.rishi.towatch.POJOs.TmdbMovie.MovieImage
 import com.example.rishi.towatch.POJOs.TmdbMovie.VideoResults
-import com.example.rishi.towatch.POJOs.TmdbRecommendations.Recomendations
+import com.example.rishi.towatch.POJOs.TmdbRecommendations.Recommendations
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -93,10 +93,10 @@ interface TmdbApiClient {
     @GET("movie/{movie_id}/recommendations")
     fun getRecommendations(@Path("movie_id") collectionId: Int,
                            @Query("api_key") apiKey:String,
-                           @Query("page") page: Int): Call<Recomendations>
+                           @Query("page") page: Int): Call<Recommendations>
 
     @GET("movie/{movie_id}/similar")
-    fun getSimilars(@Path("collection_id") collectionId: Int,
+    fun getSimilars(@Path("movie_id") collectionId: Int,
                     @Query("api_key") apiKey:String,
                     @Query("page") page: Int): Call<JsonA>
 
