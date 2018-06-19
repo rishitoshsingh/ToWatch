@@ -51,6 +51,10 @@ import kotlinx.android.synthetic.main.activity_movie_details.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.sql.Time
+import java.text.NumberFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class MovieDetailsActivity : AppCompatActivity() {
@@ -413,9 +417,9 @@ class MovieDetailsActivity : AppCompatActivity() {
         else
             movie_tagline.text = details?.tagline
         status.text = details?.status
-        release_date.text = details?.releaseDate
-        revenue.text = details?.revenue.toString()
-        runtime.text = details?.runtime.toString()
+        release_date.text = formatDate(details?.releaseDate)
+        revenue.text = formatRevenue(details?.revenue)
+        runtime.text = formatRuntime(details?.runtime)
         movie_overview.text = details?.overview
 
         for (genre in details?.genres!!) {
@@ -491,6 +495,42 @@ class MovieDetailsActivity : AppCompatActivity() {
             }
         }
 
+    }
+
+    private fun formatRuntime(runtime: Long?): CharSequence? {
+        try {
+            val time = Time(0, runtime?.toInt()!!,0)
+            return time.toString()
+
+        }catch (ex:Exception){
+
+        }
+        return runtime.toString()
+    }
+
+    private fun formatDate(releaseDate: String?): CharSequence? {
+        val items = releaseDate?.split("-")
+        try {
+            val calendar = Calendar.getInstance()
+            calendar.set(items!![0].toInt(),items[1].toInt(),items[2].toInt())
+            val date = calendar.time
+            val DATE_FORMAT = SimpleDateFormat("dd-MM-yyyy")
+            val dateString = DATE_FORMAT.format(date)
+            return dateString
+        } catch (ex:Exception){
+
+        }
+        return releaseDate
+    }
+
+    private fun formatRevenue(revenue: Long?): String {
+        try {
+            val revenueFormat: NumberFormat = NumberFormat.getCurrencyInstance(Locale.getDefault())
+            return revenueFormat.format(revenue).toString()
+        } catch (ex:Exception){
+
+        }
+        return "--"
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
