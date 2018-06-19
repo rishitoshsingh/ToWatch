@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
@@ -66,7 +67,8 @@ abstract class RecommendationAdapter(context: Context, moviesPassed: ArrayList<c
                 })
                 .apply(RequestOptions()
                         .error(R.drawable.poster_placeholder)
-                        .centerCrop())
+                        .centerCrop()
+                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC))
                 .into(holder.moviePoster)
         holder.itemLayout.setOnClickListener {
             val intent = Intent(mContext, MovieDetailsActivity::class.java)

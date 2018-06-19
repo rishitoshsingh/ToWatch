@@ -3,6 +3,7 @@ package com.example.rishi.towatch.TmdbApi
 import com.example.rishi.towatch.POJOs.Configrations.Country
 import com.example.rishi.towatch.POJOs.Configrations.Genres.GenreResult
 import com.example.rishi.towatch.POJOs.Configrations.Language
+import com.example.rishi.towatch.POJOs.ExternalIds
 import com.example.rishi.towatch.POJOs.Tmdb.JsonA
 import com.example.rishi.towatch.POJOs.Tmdb.JsonB
 import com.example.rishi.towatch.POJOs.TmdbCollection.Collection
@@ -91,17 +92,19 @@ interface TmdbApiClient {
 
     @GET("collection/{collection_id}")
     fun getCollection(@Path("collection_id") collectionId: Int,
-                      @Query("api_key") apiKey:String): Call<Collection>
+                      @Query("api_key") apiKey: String): Call<Collection>
 
     @GET("movie/{movie_id}/recommendations")
     fun getRecommendations(@Path("movie_id") movieId: Int,
-                           @Query("api_key") apiKey:String,
+                           @Query("api_key") apiKey: String,
                            @Query("page") page: Int): Call<Recommendations>
 
     @GET("movie/{movie_id}/similar")
     fun getSimilars(@Path("movie_id") movieId: Int,
-                    @Query("api_key") apiKey:String,
+                    @Query("api_key") apiKey: String,
                     @Query("page") page: Int): Call<JsonA>
 
-
+    @GET("movie/{movie_id}/external_ids")
+    fun getExternalIds(@Path("movie_id") movieId: Int,
+                       @Query("api_key") apiKey: String): Call<ExternalIds>
 }

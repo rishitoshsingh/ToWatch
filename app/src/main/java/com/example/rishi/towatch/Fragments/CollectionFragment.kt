@@ -1,24 +1,30 @@
 package com.example.rishi.towatch.Fragments
 
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.AsyncTask
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.graphics.Palette
 import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.request.transition.Transition
 import com.example.rishi.towatch.Adapters.CollectionAdapter
 import com.example.rishi.towatch.Api.ServiceGenerator
 import com.example.rishi.towatch.BuildConfig
@@ -29,6 +35,7 @@ import com.example.rishi.towatch.POJOs.TmdbCollection.Collection
 import com.example.rishi.towatch.POJOs.TmdbCollection.Part
 import com.example.rishi.towatch.R
 import com.example.rishi.towatch.TmdbApi.TmdbApiClient
+import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.collection_layout.*
 import retrofit2.Call
 import retrofit2.Response
@@ -58,6 +65,8 @@ class CollectionFragment : Fragment() {
     private var presentInWatch: Boolean = false
     private var presentInWatched: Boolean = false
 
+    private lateinit var mView: View
+
 
     private var collectionId: Long = 0
 
@@ -80,6 +89,7 @@ class CollectionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mView = view
 
         client = ServiceGenerator.createService(TmdbApiClient::class.java)
 
@@ -127,6 +137,7 @@ class CollectionFragment : Fragment() {
             override fun onResponse(p0: Call<Collection>?, p1: Response<Collection>?) {
                 val collection: Collection? = p1?.body()!!
                 val posterUri = Uri.parse(IMAGE_BASE_URL + collection?.posterPath)
+                val bannerUri = Uri.parse(IMAGE_BASE_URL + collection?.backdropPath)
                 Glide.with(this@CollectionFragment)
                         .load(posterUri)
                         .listener(object : RequestListener<Drawable> {
@@ -144,6 +155,25 @@ class CollectionFragment : Fragment() {
                                 .error(R.drawable.poster_placeholder)
                                 .centerCrop())
                         .into(collectionPoster)
+                Glide.with(this@CollectionFragment)
+                        .asBitmap()
+                        .load(bannerUri)
+                        .apply(RequestOptions().transforms(BlurTransformation(25)))
+                        .into(object : SimpleTarget<Bitmap>() {
+                            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                                    collectionRoot.background = BitmapDrawable(resource)
+                                }
+                                val palette = Palette.from(resource).generate()
+                                try {
+                                    mView.findViewById<TextView>(R.id.collectionName).setTextColor(palette.vibrantSwatch?.rgb!!)
+                                    mView.findViewById<TextView>(R.id.collectionOverview).setTextColor(palette.darkMutedSwatch?.rgb!!)
+                                } catch (ex: Exception) {
+
+                                }
+                            }
+                        })
+
                 collectionName.text = collection?.name
                 collectionOverview.text = collection?.overview
                 collectionMovies.clear()

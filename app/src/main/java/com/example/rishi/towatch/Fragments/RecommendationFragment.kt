@@ -3,14 +3,15 @@ package com.example.rishi.towatch.Fragments
 import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import com.example.rishi.towatch.Adapters.RecommendationAdapter
 import com.example.rishi.towatch.Api.ServiceGenerator
@@ -18,12 +19,9 @@ import com.example.rishi.towatch.BuildConfig
 import com.example.rishi.towatch.Database.WatchDatabase
 import com.example.rishi.towatch.Database.WatchList
 import com.example.rishi.towatch.Database.WatchedList
-import com.example.rishi.towatch.Listners.PaginationScrollListner
 import com.example.rishi.towatch.POJOs.TmdbRecommendations.Recommendations
 import com.example.rishi.towatch.R
 import com.example.rishi.towatch.TmdbApi.TmdbApiClient
-import kotlinx.android.synthetic.main.activity_movie_details.*
-import kotlinx.android.synthetic.main.recycler_view.*
 import kotlinx.android.synthetic.main.similar_recommendation.*
 import retrofit2.Call
 import retrofit2.Response
@@ -58,10 +56,14 @@ class RecommendationFragment : Fragment() {
 
 
     private var mMovieId: Long = 0
+    private var mBgcolor: Int = 0
+    private var mVibrantColor: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mMovieId = arguments!!.getLong("movieId")
+        mBgcolor = arguments!!.getInt("bgcolor", ContextCompat.getColor(activity?.applicationContext!!, R.color.colorPrimaryDark))
+        mVibrantColor = arguments!!.getInt("accentColor", ContextCompat.getColor(activity?.applicationContext!!, R.color.colorAccent))
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -78,6 +80,12 @@ class RecommendationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mView = view
+        try {
+            view.findViewById<LinearLayout>(R.id.similar_recommendation_root).setBackgroundColor(mBgcolor)
+            view.findViewById<TextView>(R.id.similarRecommendationTitle).setTextColor(mVibrantColor)
+        } catch (ex: Exception) {
+
+        }
         view.findViewById<TextView>(R.id.similarRecommendationTitle).text = "Recommendations"
 
         client = ServiceGenerator.createService(TmdbApiClient::class.java)

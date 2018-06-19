@@ -1,7 +1,12 @@
 package com.example.rishi.towatch.Activities
 
 import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.res.ColorStateList
+import android.graphics.Bitmap
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.AsyncTask
@@ -10,6 +15,7 @@ import android.support.design.widget.AppBarLayout
 import android.support.design.widget.Snackbar
 import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.graphics.Palette
 import android.util.Log
 import android.view.Gravity
 import android.view.MenuItem
@@ -32,6 +38,7 @@ import com.example.rishi.towatch.Fragments.CollectionFragment
 import com.example.rishi.towatch.Fragments.RecommendationFragment
 import com.example.rishi.towatch.Fragments.SimilarFragment
 import com.example.rishi.towatch.Listners.AppBarStateChangeListener
+import com.example.rishi.towatch.POJOs.ExternalIds
 import com.example.rishi.towatch.POJOs.TmdbMovie.Details
 import com.example.rishi.towatch.POJOs.TmdbMovie.MovieImage
 import com.example.rishi.towatch.POJOs.TmdbMovie.VideoResults
@@ -44,7 +51,6 @@ import kotlinx.android.synthetic.main.activity_movie_details.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.lang.reflect.Field
 
 
 class MovieDetailsActivity : AppCompatActivity() {
@@ -64,6 +70,10 @@ class MovieDetailsActivity : AppCompatActivity() {
     private var youTubePlayer: YouTubePlayer? = null
     private var VideoResult: List<com.example.rishi.towatch.POJOs.TmdbMovie.Result>? = null
     private var currentVideo: Int = 0
+
+    private lateinit var externalIds: ExternalIds
+
+    lateinit var mPalette: Palette
 
     @SuppressLint("RestrictedApi")
 
@@ -122,14 +132,53 @@ class MovieDetailsActivity : AppCompatActivity() {
 
         posterUri = Uri.parse(POSTER_BASE_URL + intent.getStringExtra("posterPath"))
         Glide.with(this)
+                .asBitmap()
                 .load(posterUri)
-                .listener(object : RequestListener<Drawable> {
-                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                .listener(object : RequestListener<Bitmap> {
+                    override fun onResourceReady(resource: Bitmap?, model: Any?, target: Target<Bitmap>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
                         posterProgressBar.visibility = View.GONE
+                        mPalette = Palette.from(resource!!).generate()
+                        try {
+                            collasping_toolbar_child.setBackgroundColor(mPalette.darkMutedSwatch?.rgb!!)
+                            collasping_toolbar_genre.setTextColor(mPalette.lightVibrantSwatch?.rgb!!)
+                            tmdb_rating.setTextColor(mPalette.lightVibrantSwatch?.rgb!!)
+                            imdb_rating.setTextColor(mPalette.lightVibrantSwatch?.rgb!!)
+                            tagline_card_view.setCardBackgroundColor(mPalette.darkVibrantSwatch?.rgb!!)
+                            overview_title.setTextColor(mPalette.darkVibrantSwatch?.rgb!!)
+                            movie_tagline.setTextColor(mPalette.vibrantSwatch?.rgb!!)
+                            previousVideoButton.backgroundTintList = ColorStateList.valueOf(mPalette.vibrantSwatch?.rgb!!)
+                            nextVideoButton.backgroundTintList = ColorStateList.valueOf(mPalette.vibrantSwatch?.rgb!!)
+                            fab.backgroundTintList = ColorStateList.valueOf(mPalette.vibrantSwatch?.rgb!!)
+                            fabSecond.backgroundTintList = ColorStateList.valueOf(mPalette.vibrantSwatch?.rgb!!)
+                            collasping_toolbar.contentScrim = ColorDrawable(mPalette.darkMutedSwatch?.rgb!!)
+                            collasping_toolbar.statusBarScrim = ColorDrawable(mPalette.darkMutedSwatch?.rgb!!)
+                        } catch (ex: Exception) {
+
+                        }
+                        val bundle: Bundle = Bundle()
+                        bundle.putLong("movieId", movieId)
+                        try {
+                            bundle.putInt("bgcolor", mPalette.darkMutedSwatch?.rgb!!)
+                            bundle.putInt("accentColor", mPalette.vibrantSwatch?.rgb!!)
+                        } catch (ex: Exception) {
+
+                        }
+                        val recommendationFragment = RecommendationFragment()
+                        val similarFragment = SimilarFragment()
+                        recommendationFragment.arguments = bundle
+                        similarFragment.arguments = bundle
+                        supportFragmentManager.beginTransaction()
+                                .replace(R.id.similarMoviesFrame, similarFragment)
+                                .disallowAddToBackStack()
+                                .commit()
+                        supportFragmentManager.beginTransaction()
+                                .replace(R.id.recommendedMoviesFrame, recommendationFragment)
+                                .disallowAddToBackStack()
+                                .commit()
                         return false
                     }
 
-                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean {
                         posterProgressBar.visibility = View.GONE
                         return false
                     }
@@ -156,22 +205,82 @@ class MovieDetailsActivity : AppCompatActivity() {
             playVideo(videoId)
         }
 
+        website.setOnClickListener {
+            val intent: Intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(movie.homepage)
+            startActivity(intent)
+        }
+
+        facebook.setOnClickListener {
+            val packageManager: PackageManager = this.packageManager
+            try {
+                val versionCode: Int = packageManager.getPackageInfo("com.facebook.katana", 0).versionCode
+                if (versionCode >= 3002850) { //newer versions of fb app
+                    val facebookUrl = "fb://facewebmodal/f?href=https://www.facebook.com/" + externalIds.facebookId
+                    val facebookIntent = Intent(Intent.ACTION_VIEW)
+                    facebookIntent.data = Uri.parse(facebookUrl)
+                    startActivity(facebookIntent)
+                } else { //older versions of fb app
+                    val url = "fb://page/" + externalIds.facebookId
+                    val facebookIntent = Intent(Intent.ACTION_VIEW)
+                    facebookIntent.data = Uri.parse(url)
+                    startActivity(facebookIntent)
+                }
+            } catch (ex: PackageManager.NameNotFoundException) {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/" + externalIds.facebookId))
+                startActivity(intent)
+            }
+        }
+
+        instagram.setOnClickListener {
+            val uri: Uri = Uri.parse("http://instagram.com/_u/" + externalIds.instagramId)
+            val instagramIntent = Intent(Intent.ACTION_VIEW, uri)
+            instagramIntent.`package` = "com.instagram.android"
+            try {
+                startActivity(instagramIntent)
+            } catch (ex: ActivityNotFoundException) {
+                startActivity(Intent(Intent.ACTION_VIEW,
+                        Uri.parse("http://instagram.com/" + externalIds.instagramId)))
+
+            }
+        }
+
+        twitter.setOnClickListener {
+            try {
+                // get the Twitter app if possible
+                this.packageManager.getPackageInfo("com.twitter.android", 0)
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("twitter://user?screen_name=" + externalIds.twitterId))
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+            } catch (ex: Exception) {
+                // no Twitter app, revert to browser
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/" + externalIds.twitterId))
+                startActivity(intent)
+            }
+        }
+
+
         getMovieDetails()
 
-        val bundle:Bundle = Bundle()
-        bundle.putLong("movieId",movieId)
-        val recommendationFragment = RecommendationFragment()
-        val similarFragment = SimilarFragment()
-        recommendationFragment.arguments = bundle
-        similarFragment.arguments = bundle
-        supportFragmentManager.beginTransaction()
-                .replace(R.id.similarMoviesFrame,similarFragment)
-                .disallowAddToBackStack()
-                .commit()
-        supportFragmentManager.beginTransaction()
-                .replace(R.id.recommendedMoviesFrame,recommendationFragment)
-                .disallowAddToBackStack()
-                .commit()
+//        val bundle: Bundle = Bundle()
+//        bundle.putLong("movieId", movieId)
+//        try {
+//            bundle.putInt("bgcolor",mPalette.darkMutedSwatch?.rgb!!)
+//        }catch (ex:Exception){
+//
+//        }
+//        val recommendationFragment = RecommendationFragment()
+//        val similarFragment = SimilarFragment()
+//        recommendationFragment.arguments = bundle
+//        similarFragment.arguments = bundle
+//        supportFragmentManager.beginTransaction()
+//                .replace(R.id.similarMoviesFrame, similarFragment)
+//                .disallowAddToBackStack()
+//                .commit()
+//        supportFragmentManager.beginTransaction()
+//                .replace(R.id.recommendedMoviesFrame, recommendationFragment)
+//                .disallowAddToBackStack()
+//                .commit()
 
     }
 
@@ -196,6 +305,21 @@ class MovieDetailsActivity : AppCompatActivity() {
                 } else {
                     playVideo(VideoResult?.get(0)?.key!!)
                 }
+            }
+        })
+    }
+
+    private fun getExternalIds() {
+        callExternalIds().enqueue(object : Callback<ExternalIds> {
+            override fun onFailure(call: Call<ExternalIds>?, t: Throwable?) {
+
+            }
+
+            override fun onResponse(call: Call<ExternalIds>?, response: Response<ExternalIds>?) {
+                externalIds = response?.body()!!
+                if (externalIds.instagramId != null) instagram.visibility = View.VISIBLE
+                if (externalIds.twitterId != null) twitter.visibility = View.VISIBLE
+                if (externalIds.facebookId != null) facebook.visibility = View.VISIBLE
             }
         })
     }
@@ -236,13 +360,13 @@ class MovieDetailsActivity : AppCompatActivity() {
         call.enqueue(object : Callback<Details> {
             override fun onResponse(call: Call<Details>?, response: Response<Details>?) {
                 movie = response?.body()!!
-                if (movie.belongsToCollection != null){
-                    val bundle:Bundle = Bundle()
-                    bundle.putLong("collectionId",movie.belongsToCollection.id)
-                    val collectionFragment:CollectionFragment = CollectionFragment()
+                if (movie.belongsToCollection != null) {
+                    val bundle: Bundle = Bundle()
+                    bundle.putLong("collectionId", movie.belongsToCollection.id)
+                    val collectionFragment: CollectionFragment = CollectionFragment()
                     collectionFragment.arguments = bundle
                     supportFragmentManager.beginTransaction()
-                            .replace(R.id.collectionFrameLayout,collectionFragment)
+                            .replace(R.id.collectionFrameLayout, collectionFragment)
                             .disallowAddToBackStack()
                             .commit()
                     viewBelowFrame.visibility = View.VISIBLE
@@ -251,7 +375,7 @@ class MovieDetailsActivity : AppCompatActivity() {
 
                 getMovieImages()
                 getMovieVideos()
-//                UpdateUI()
+                getExternalIds()
                 updateMoviesDetails(movie)
             }
 
@@ -271,11 +395,20 @@ class MovieDetailsActivity : AppCompatActivity() {
         return call
     }
 
+    private fun callExternalIds(): Call<ExternalIds> {
+        val call = client.getExternalIds(
+                movieId.toInt(),
+                BuildConfig.TmdbApiKey
+        )
+        return call
+    }
+
 
     private fun updateMoviesDetails(details: Details?) {
+        if (movie.homepage != null) website.visibility = View.VISIBLE
         mToolbar?.title = details?.originalTitle
         tmdb_rating.text = details?.voteAverage.toString()
-        if(details?.tagline.isNullOrEmpty())
+        if (details?.tagline.isNullOrEmpty())
             movie_tagline.visibility = View.GONE
         else
             movie_tagline.text = details?.tagline
@@ -290,12 +423,17 @@ class MovieDetailsActivity : AppCompatActivity() {
             textView.text = genre.name
             textView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             textView.setTextColor(resources.getColor(R.color.grey))
+            try {
+                textView.setTextColor(mPalette.lightMutedSwatch?.rgb!!)
+            } catch (ex: Exception) {
+
+            }
             textView.gravity = Gravity.CENTER
             movie_genre_list.addView(textView)
         }
 
         val logoUrls: ArrayList<String> = ArrayList()
-        for (company in details?.productionCompanies!!) {
+        for (company in details.productionCompanies!!) {
             if (company.logoPath == null) {
                 continue
             }
@@ -374,7 +512,7 @@ class MovieDetailsActivity : AppCompatActivity() {
     private inner class InsertMovie : AsyncTask<WatchList, Void, Void?>() {
         override fun doInBackground(vararg movieData: WatchList): Void? {
             val data = movieData[0]
-            watchDatabase.watchDaoAccess().insertMovie(data);
+            watchDatabase.watchDaoAccess().insertMovie(data)
             return null
         }
 
