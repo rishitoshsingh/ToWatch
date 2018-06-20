@@ -30,10 +30,12 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.example.rishi.towatch.Adapters.CompaniesAdapter
+import com.example.rishi.towatch.Adapters.SlidingImageAdapter
 import com.example.rishi.towatch.Api.ServiceGenerator
 import com.example.rishi.towatch.BuildConfig
 import com.example.rishi.towatch.Database.WatchDatabase
 import com.example.rishi.towatch.Database.WatchList
+import com.example.rishi.towatch.Database.WatchedList
 import com.example.rishi.towatch.Fragments.CollectionFragment
 import com.example.rishi.towatch.Fragments.RecommendationFragment
 import com.example.rishi.towatch.Fragments.SimilarFragment
@@ -47,6 +49,7 @@ import com.example.rishi.towatch.TmdbApi.TmdbApiClient
 import com.google.android.youtube.player.YouTubeInitializationResult
 import com.google.android.youtube.player.YouTubePlayer
 import com.google.android.youtube.player.YouTubePlayerFragment
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_movie_details.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -55,6 +58,7 @@ import java.sql.Time
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class MovieDetailsActivity : AppCompatActivity() {
@@ -70,6 +74,7 @@ class MovieDetailsActivity : AppCompatActivity() {
     private var appBarCollapsed: Boolean = false
     private lateinit var watchDatabase: WatchDatabase
     private var presentInList: Boolean = false
+    private var presentInWatchedList: Boolean = false
     private lateinit var youTubePlayerFragment: YouTubePlayerFragment
     private var youTubePlayer: YouTubePlayer? = null
     private var VideoResult: List<com.example.rishi.towatch.POJOs.TmdbMovie.Result>? = null
@@ -345,7 +350,18 @@ class MovieDetailsActivity : AppCompatActivity() {
             }
 
             override fun onResponse(call: Call<MovieImage>?, response: Response<MovieImage>?) {
-//                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                val movieImages: MovieImage = response?.body()!!
+                val backdropUrls: ArrayList<String> = ArrayList()
+                for (image in movieImages.backdrops) {
+                    backdropUrls.add(image.filePath)
+                }
+                if (backdropUrls.size != 0) {
+                    backdropCard.visibility = View.GONE
+                    backdropViewPager.visibility = View.VISIBLE
+                    pagerIndicator.visibility = View.VISIBLE
+                    backdropViewPager.adapter = SlidingImageAdapter(this@MovieDetailsActivity, backdropUrls)
+                    pagerIndicator.attachToViewPager(backdropViewPager)
+                }
             }
 
         })
@@ -474,24 +490,38 @@ class MovieDetailsActivity : AppCompatActivity() {
         toolbar?.title = movie.title
         if (movie.title != movie.originalTitle) toolbar?.subtitle = movie.originalTitle
 
-        FindMovie().execute(movie.id)
+        FindWatchedMovie().execute(movie.id)
         fab.setOnClickListener {
-            if (!presentInList) {
-                val data = WatchList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
-                InsertMovie().execute(data)
-            } else {
-                val data = WatchList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
-                RemoveMovie().execute(data)
+            when {
+                presentInWatchedList -> {
+                    val data = WatchedList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
+                    RemoveWatchedMovie().execute(data)
+                }
+                presentInList -> {
+                    val data = WatchList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
+                    RemoveMovie().execute(data)
+                }
+                else -> {
+                    val data = WatchList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
+                    InsertMovie().execute(data)
+                }
             }
         }
 
         fabSecond.setOnClickListener {
-            if (!presentInList) {
-                val data = WatchList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
-                InsertMovie().execute(data)
-            } else {
-                val data = WatchList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
-                RemoveMovie().execute(data)
+            when {
+                presentInWatchedList -> {
+                    val data = WatchedList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
+                    RemoveWatchedMovie().execute(data)
+                }
+                presentInList -> {
+                    val data = WatchList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
+                    RemoveMovie().execute(data)
+                }
+                else -> {
+                    val data = WatchList(movie.title, movie.id, movie.posterPath, movie.releaseDate)
+                    InsertMovie().execute(data)
+                }
             }
         }
 
@@ -499,10 +529,10 @@ class MovieDetailsActivity : AppCompatActivity() {
 
     private fun formatRuntime(runtime: Long?): CharSequence? {
         try {
-            val time = Time(0, runtime?.toInt()!!,0)
+            val time = Time(0, runtime?.toInt()!!, 0)
             return time.toString()
 
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
 
         }
         return runtime.toString()
@@ -512,12 +542,12 @@ class MovieDetailsActivity : AppCompatActivity() {
         val items = releaseDate?.split("-")
         try {
             val calendar = Calendar.getInstance()
-            calendar.set(items!![0].toInt(),items[1].toInt(),items[2].toInt())
+            calendar.set(items!![0].toInt(), items[1].toInt(), items[2].toInt())
             val date = calendar.time
             val DATE_FORMAT = SimpleDateFormat("dd-MM-yyyy")
             val dateString = DATE_FORMAT.format(date)
             return dateString
-        } catch (ex:Exception){
+        } catch (ex: Exception) {
 
         }
         return releaseDate
@@ -525,9 +555,9 @@ class MovieDetailsActivity : AppCompatActivity() {
 
     private fun formatRevenue(revenue: Long?): String {
         try {
-            val revenueFormat: NumberFormat = NumberFormat.getCurrencyInstance(Locale.getDefault())
+            val revenueFormat: NumberFormat = NumberFormat.getCurrencyInstance(Locale.US)
             return revenueFormat.format(revenue).toString()
-        } catch (ex:Exception){
+        } catch (ex: Exception) {
 
         }
         return "--"
@@ -596,6 +626,41 @@ class MovieDetailsActivity : AppCompatActivity() {
                 presentInList = false
                 fab.setImageDrawable(resources.getDrawable(R.drawable.ic_playlist_add_white_48dp))
                 fabSecond.setImageDrawable(resources.getDrawable(R.drawable.ic_playlist_add_white_48dp))
+            }
+        }
+    }
+
+    private inner class RemoveWatchedMovie : AsyncTask<WatchedList, Void, Void>() {
+        override fun doInBackground(vararg params: WatchedList?): Void? {
+            val movie = params[0]
+            watchDatabase.watchedDaoAccess().deleteMovie(movie!!)
+            return null
+        }
+
+        override fun onPostExecute(result: Void?) {
+            presentInWatchedList = false
+            Snackbar.make(movie_details_layout, "Removed from Watched List", Snackbar.LENGTH_SHORT).show()
+            fab.setImageDrawable(resources.getDrawable(R.drawable.ic_playlist_add_white_48dp))
+            fabSecond.setImageDrawable(resources.getDrawable(R.drawable.ic_playlist_add_white_48dp))
+        }
+    }
+
+    private inner class FindWatchedMovie : AsyncTask<Long, Void, Boolean>() {
+        override fun doInBackground(vararg params: Long?): Boolean {
+            val movieId = params[0]
+            val movieList = watchDatabase.watchedDaoAccess().fetchMovie(movieId!!)
+            return !movieList.isEmpty()
+
+        }
+
+        override fun onPostExecute(result: Boolean) {
+            if (result) {
+                presentInWatchedList = true
+                fab.setImageDrawable(resources.getDrawable(R.drawable.ic_visibility_white_48dp))
+                fabSecond.setImageDrawable(resources.getDrawable(R.drawable.ic_visibility_white_48dp))
+            } else {
+                presentInWatchedList = false
+                FindMovie().execute(movie.id)
             }
         }
     }

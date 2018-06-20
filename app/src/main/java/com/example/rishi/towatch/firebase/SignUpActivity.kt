@@ -1,13 +1,15 @@
 package com.example.rishi.towatch.firebase
 
-import android.app.PendingIntent.getActivity
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.animation.Animation
+import android.widget.LinearLayout
 import android.widget.Toast
 import com.example.rishi.towatch.R
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -20,21 +22,21 @@ import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.activity_sign_up.*
 
 
+//import javax.swing.text.StyleConstants.getBackground
+
+
 class SignUpActivity : AppCompatActivity() {
 
     private var mAuth: FirebaseAuth? = null
     private lateinit var mGoogleSignInClient: GoogleSignInClient
 
-    private lateinit var mSharedPreferences:SharedPreferences
+    private lateinit var mSharedPreferences: SharedPreferences
     private lateinit var mSharedPreferencesEditor: SharedPreferences.Editor
 
     private val RC_SIGN_IN = 9001
 
-
     public override fun onStart() {
         super.onStart()
-        // Check if user is signed in (non-null) and update UI accordingly.
-        val currentUser = mAuth?.currentUser
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,25 +50,25 @@ class SignUpActivity : AppCompatActivity() {
             val password = password.text.toString()
 
             if (email == "") {
-                Snackbar.make(new_linear_layout, "Enter Email ID", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(signInContainer, "Enter Email ID", Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             } else if (password == "") {
-                Snackbar.make(new_linear_layout, "Enter Password", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(signInContainer, "Enter Password", Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
 
             mAuth?.createUserWithEmailAndPassword(email, password)
                     ?.addOnCompleteListener(this) { task ->
                         if (task.isSuccessful) {
                             Log.d("CreateUser", "createUserWithEmail:success")
                             val user = mAuth?.getCurrentUser()
-                            Snackbar.make(new_linear_layout, "Registered", Snackbar.LENGTH_SHORT).show()
+                            Snackbar.make(signInContainer, "Registered", Snackbar.LENGTH_SHORT).show()
                             finish()
                         } else {
                             Log.w("CreateUser", "createUserWithEmail:failure", task.getException())
-                            Snackbar.make(new_linear_layout, "Registration Unsuccessful", Snackbar.LENGTH_SHORT).show()
+                            Snackbar.make(signInContainer, "Registration Unsuccessful", Snackbar.LENGTH_SHORT).show()
                         }
-
                     }
         }
 
@@ -76,10 +78,10 @@ class SignUpActivity : AppCompatActivity() {
             val password = password.text.toString()
 
             if (email == "") {
-                Snackbar.make(new_linear_layout, "Enter Email ID", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(signInContainer, "Enter Email ID", Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             } else if (password == "") {
-                Snackbar.make(new_linear_layout, "Enter Password", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(signInContainer, "Enter Password", Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -89,19 +91,19 @@ class SignUpActivity : AppCompatActivity() {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("onCompleteListner", "signInWithEmail:success")
                             val user = mAuth?.getCurrentUser()
-                            Snackbar.make(new_linear_layout, "Login Successful", Snackbar.LENGTH_SHORT).show()
+                            Snackbar.make(signInContainer, "Login Successful", Snackbar.LENGTH_SHORT).show()
                             finish()
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("onCompleteListner", "signInWithEmail:failure", task.exception)
-                            Snackbar.make(new_linear_layout, "Login Unsuccessful", Snackbar.LENGTH_SHORT).show()
+                            Snackbar.make(signInContainer, "Login Unsuccessful", Snackbar.LENGTH_SHORT).show()
 
                         }
                     }
         }
 
         forgot.setOnClickListener {
-            Snackbar.make(new_linear_layout, "Currently this feature is not available", Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(signInContainer, "Currently this feature is not available", Snackbar.LENGTH_SHORT).show()
 //            TODO("Forgot Password")
         }
 
@@ -113,10 +115,11 @@ class SignUpActivity : AppCompatActivity() {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
 
         googleSignIn.setOnClickListener {
-            val signInIntent:Intent = mGoogleSignInClient.signInIntent
+            val signInIntent: Intent = mGoogleSignInClient.signInIntent
             startActivityForResult(signInIntent, RC_SIGN_IN)
         }
     }
+
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -129,11 +132,11 @@ class SignUpActivity : AppCompatActivity() {
 
                 mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
                 mSharedPreferencesEditor = mSharedPreferences.edit()
-                mSharedPreferencesEditor.putBoolean("account",true)
-                mSharedPreferencesEditor.putString("GivenName",account.givenName)
-                mSharedPreferencesEditor.putString("DisplayName",account.displayName)
-                mSharedPreferencesEditor.putString("Email",account.email)
-                mSharedPreferencesEditor.putString("Id",account.id)
+                mSharedPreferencesEditor.putBoolean("account", true)
+                mSharedPreferencesEditor.putString("GivenName", account.givenName)
+                mSharedPreferencesEditor.putString("DisplayName", account.displayName)
+                mSharedPreferencesEditor.putString("Email", account.email)
+                mSharedPreferencesEditor.putString("Id", account.id)
                 mSharedPreferencesEditor.putString("PersonPhotoUrl", account.photoUrl.toString())
                 mSharedPreferencesEditor.commit()
                 firebaseAuthWithGoogle(account)
@@ -151,7 +154,7 @@ class SignUpActivity : AppCompatActivity() {
                         finish()
                     } else {
                         Log.w("TAG", "signInWithCredential:failure", task.exception)
-                        Toast.makeText(this,"Failed",Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, "Failed", Toast.LENGTH_LONG).show()
                     }
 
                     // ...
