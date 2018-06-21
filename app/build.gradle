@@ -74,6 +74,4 @@ dependencies {
     implementation 'jp.wasabeef:blurry:2.1.1'
 
     implementation 'com.ryanjeffreybrooks:indefinitepagerindicator:1.0.9'
-
-
 }

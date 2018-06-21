@@ -2,14 +2,15 @@ package com.example.rishi.towatch.firebase
 
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.drawable.AnimationDrawable
+import android.graphics.drawable.TransitionDrawable
 import android.os.Bundle
+import android.os.Handler
 import android.preference.PreferenceManager
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.view.animation.Animation
-import android.widget.LinearLayout
+import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import com.example.rishi.towatch.R
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -20,6 +21,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.activity_sign_up.*
+import java.util.*
 
 
 //import javax.swing.text.StyleConstants.getBackground
@@ -42,6 +44,46 @@ class SignUpActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
+
+        val texts = arrayOf("Watch Trailers", "Check Facts", "Get Recommendations", "Find Similar Movies", "Discover Movies", "Get info of movies from Youtube Movie Trailers")
+        var tipPosition = 0
+
+        val fadingText = findViewById<TextView>(R.id.fadingTextView)
+        val faddingTextHandler = Handler()
+        val fadingTextRunnable = object : Runnable {
+            override fun run() {
+                //set number of tip(randon/another way)
+                runOnUiThread {
+                    fadingText.text = texts[tipPosition++]
+                    fadingText.visibility = View.VISIBLE
+                    fadingText.setTextColor(resources.getColor(R.color.colorAccent))
+                }
+                if (tipPosition == 6) tipPosition = 0
+                faddingTextHandler.postDelayed(this, 3000)
+            }
+        }
+        faddingTextHandler.post(fadingTextRunnable)
+
+        val gradients = arrayOf(resources.getDrawable(R.drawable.pacific_dream), resources.getDrawable(R.drawable.venice), resources.getDrawable(R.drawable.can_you_feel_the_love_tonight), resources.getDrawable(R.drawable.the_blue_lagoon))
+        var nextPosition = 1
+        var previousPosition = 0
+        val colorChangeHandler = Handler()
+        val colorChangingRunnable = object : Runnable {
+            override fun run() {
+                val color = arrayOf(gradients[previousPosition++], gradients[nextPosition++])
+                val trans = TransitionDrawable(color)
+                runOnUiThread {
+                    iconBackground.background = trans
+                    trans.startTransition(3000)
+                }
+                if (nextPosition == 3) nextPosition = 0
+                if (previousPosition == 3) previousPosition = 0
+                colorChangeHandler.postDelayed(this, 3000)
+            }
+        }
+        colorChangeHandler.post(colorChangingRunnable)
+//
+
 
         mAuth = FirebaseAuth.getInstance()
         register.setOnClickListener {

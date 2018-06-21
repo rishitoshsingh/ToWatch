@@ -1,6 +1,7 @@
 package com.example.rishi.towatch.Fragments
 
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.AsyncTask
 import android.os.Bundle
@@ -75,7 +76,7 @@ class PopularFragment : Fragment() {
         client = ServiceGenerator.createService(TmdbApiClient::class.java)
 
 
-        val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
+        val sharedPreferences: SharedPreferences = activity?.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)!!
         region = sharedPreferences.getString("region","US")
         language = sharedPreferences.getString("language","en-US")
 
@@ -152,6 +153,9 @@ class PopularFragment : Fragment() {
 
 
         refresh_layout.setOnRefreshListener {
+            val temp: SharedPreferences = activity?.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)!!
+            region = temp.getString("region","US")
+            language = temp.getString("language","en-US")
             shimmer_container.startShimmerAnimation()
             shimmer_container.visibility = View.VISIBLE
             popularMovies.removeAll(popularMovies)

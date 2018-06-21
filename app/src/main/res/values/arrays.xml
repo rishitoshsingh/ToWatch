@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="examples">
+        <item>Watch Trailers</item>
+        <item>Check Facts</item>
+        <item>Get Recommendations</item>
+        <item>Find Similar Movies</item>
+        <item>Discover Movies</item>
+        <item>Get info of movies from Youtube Movie Trailers</item>
+    </string-array>
+</resources>
