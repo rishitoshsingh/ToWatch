@@ -26,7 +26,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import com.example.rishi.towatch.Fragments.BottomSheetFragment
-
+import com.google.android.gms.ads.MobileAds
 
 
 class MainActivity : AppCompatActivity() {
@@ -41,6 +41,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        MobileAds.initialize(this, "ca-app-pub-3940256099942544/1033173712")
 
         val sharedPreferences:SharedPreferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
         if (!sharedPreferences.contains("firstTime")){
@@ -146,6 +148,7 @@ class MainActivity : AppCompatActivity() {
         return true
 
     }
+
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {

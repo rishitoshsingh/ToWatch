@@ -43,19 +43,19 @@
                     android:fitsSystemWindows="true">
 
                     <android.support.v4.view.ViewPager
-                        android:visibility="gone"
                         android:id="@+id/backdropViewPager"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:visibility="gone" />
 
                     <com.rbrooks.indefinitepagerindicator.IndefinitePagerIndicator
                         android:id="@+id/pagerIndicator"
-                        android:visibility="gone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginBottom="2dp" />
+                        android:layout_marginBottom="2dp"
+                        android:visibility="gone" />
 
                     <android.support.v7.widget.CardView
                         android:id="@+id/backdropCard"
@@ -538,6 +538,31 @@
 
             <View
                 android:id="@+id/belowSimilar"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:background="@color/colorPrimaryLight" />
+
+            <RelativeLayout
+                android:layout_width="320dp"
+                android:layout_marginBottom="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_height="100dp">
+
+                <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/adView"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    ads:adSize="LARGE_BANNER"
+                    ads:adUnitId="ca-app-pub-3940256099942544/6300978111" />
+
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/belowBannerAd"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_marginEnd="8dp"

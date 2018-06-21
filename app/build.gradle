@@ -54,6 +54,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.1'
     implementation 'com.google.android.gms:play-services-auth:15.0.1'
 
+    implementation 'com.google.android.gms:play-services-ads:15.0.1'
+    implementation('com.mopub:mopub-sdk-native-static:4.12.0@aar') { transitive = true }
+
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
 

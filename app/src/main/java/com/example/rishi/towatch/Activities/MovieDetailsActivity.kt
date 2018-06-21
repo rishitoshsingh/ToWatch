@@ -46,10 +46,13 @@ import com.example.rishi.towatch.POJOs.TmdbMovie.MovieImage
 import com.example.rishi.towatch.POJOs.TmdbMovie.VideoResults
 import com.example.rishi.towatch.R
 import com.example.rishi.towatch.TmdbApi.TmdbApiClient
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.InterstitialAd
 import com.google.android.youtube.player.YouTubeInitializationResult
 import com.google.android.youtube.player.YouTubePlayer
 import com.google.android.youtube.player.YouTubePlayerFragment
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_movie_details.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -81,6 +84,7 @@ class MovieDetailsActivity : AppCompatActivity() {
     private var currentVideo: Int = 0
 
     private lateinit var externalIds: ExternalIds
+    private lateinit var mInterstitialAd: InterstitialAd
 
     lateinit var mPalette: Palette
 
@@ -90,6 +94,13 @@ class MovieDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_details)
+
+        mInterstitialAd = InterstitialAd(this)
+        mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712"
+        mInterstitialAd.loadAd(AdRequest.Builder().build())
+
+        val adRequest = AdRequest.Builder().build()
+        adView.loadAd(adRequest)
 
         setSupportActionBar(toolbar)
         mToolbar = supportActionBar
@@ -293,6 +304,15 @@ class MovieDetailsActivity : AppCompatActivity() {
 
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        if (mInterstitialAd.isLoaded) {
+            mInterstitialAd.show()
+        } else {
+            Log.d("TAG", "The interstitial wasn't loaded yet.")
+        }
+    }
+
     private fun playVideo(videoId: String) {
         if (youTubePlayer != null) {
             youTubePlayer!!.cueVideo(videoId)
@@ -352,7 +372,7 @@ class MovieDetailsActivity : AppCompatActivity() {
             override fun onResponse(call: Call<MovieImage>?, response: Response<MovieImage>?) {
                 val movieImages: MovieImage = response?.body()!!
                 val backdropUrls: ArrayList<String> = ArrayList()
-                    for (image in movieImages.backdrops) {
+                for (image in movieImages.backdrops) {
                     backdropUrls.add(image.filePath)
                 }
                 if (backdropUrls.size != 0) {
@@ -578,6 +598,7 @@ class MovieDetailsActivity : AppCompatActivity() {
         WatchDatabase.destroyInstance()
         super.onDestroy()
     }
+
 
     private inner class InsertMovie : AsyncTask<WatchList, Void, Void?>() {
         override fun doInBackground(vararg movieData: WatchList): Void? {
