@@ -352,7 +352,7 @@ class MovieDetailsActivity : AppCompatActivity() {
             override fun onResponse(call: Call<MovieImage>?, response: Response<MovieImage>?) {
                 val movieImages: MovieImage = response?.body()!!
                 val backdropUrls: ArrayList<String> = ArrayList()
-                for (image in movieImages.backdrops) {
+                    for (image in movieImages.backdrops) {
                     backdropUrls.add(image.filePath)
                 }
                 if (backdropUrls.size != 0) {

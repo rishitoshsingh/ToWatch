@@ -1,5 +1,6 @@
 package com.example.rishi.towatch.Activities
 
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
@@ -12,6 +13,7 @@ import android.view.MenuItem
 import android.view.Window
 import android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
 import android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+import android.widget.Toast
 import com.example.rishi.towatch.Adapters.HomeAdapter
 import com.example.rishi.towatch.Api.Clients.YouTubeClient
 import com.example.rishi.towatch.Api.ServiceGenerator
@@ -40,11 +42,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val sharedPreferences:SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val sharedPreferenceEditor:SharedPreferences.Editor = sharedPreferences.edit()
-        sharedPreferenceEditor.putString("region","US")
-        sharedPreferenceEditor.putString("language","en-US")
-        sharedPreferenceEditor.commit()
+        val sharedPreferences:SharedPreferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+        if (!sharedPreferences.contains("firstTime")){
+            Toast.makeText(this,"Welcome toWatch",Toast.LENGTH_LONG).show()
+            val sharedPreferenceEditor:SharedPreferences.Editor = sharedPreferences.edit()
+            sharedPreferenceEditor.putBoolean("firstTime",false)
+            sharedPreferenceEditor.putString("region","US")
+            sharedPreferenceEditor.putString("language","en-US")
+            sharedPreferenceEditor.commit()
+        }
 
         setSupportActionBar(my_toolbar)
         val toolbar = supportActionBar

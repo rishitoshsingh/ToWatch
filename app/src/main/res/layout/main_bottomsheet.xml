@@ -96,4 +96,14 @@
         android:foreground="?attr/selectableItemBackgroundBorderless"
         android:text="@string/save"
         android:textColor="@color/white" />
+    <Button
+        android:id="@+id/defaultButton"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_margin="8dp"
+        android:background="@drawable/pill_button_border"
+        android:clickable="true"
+        android:focusable="true"
+        android:text="@string/defaults"
+        android:textColor="@color/colorAccent" />
 </LinearLayout>

@@ -63,6 +63,7 @@
     <string name="region">Region</string>
     <string name="language">Language</string>
     <string name="save">Save</string>
+    <string name="defaults">Defaults</string>
 
 
 </resources>
