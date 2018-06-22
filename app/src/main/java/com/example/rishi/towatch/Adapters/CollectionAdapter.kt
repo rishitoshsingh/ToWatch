@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -14,7 +15,6 @@ import android.view.ViewGroup
 import android.widget.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
@@ -22,6 +22,9 @@ import com.bumptech.glide.request.target.Target
 import com.example.rishi.towatch.Activities.MovieDetailsActivity
 import com.example.rishi.towatch.POJOs.TmdbCollection.Part
 import com.example.rishi.towatch.R
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.InterstitialAd
 import java.util.*
 
 /**
@@ -31,6 +34,14 @@ abstract class CollectionAdapter(context: Context, moviesPassed: ArrayList<Part>
     private val IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500/"
     private val mContext = context
     var movies: ArrayList<Part> = moviesPassed
+
+    private lateinit var mInterstitialAd: InterstitialAd
+
+    init {
+        mInterstitialAd = InterstitialAd(mContext)
+        mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712"
+        mInterstitialAd.loadAd(AdRequest.Builder().build())
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.small_movie_card, parent, false)
@@ -44,10 +55,10 @@ abstract class CollectionAdapter(context: Context, moviesPassed: ArrayList<Part>
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val movie = movies[position]
         val dateString = movie.releaseDate.split("-")
-        var date: Date = Date(1912,1,1)
+        var date: Date = Date(1912, 1, 1)
         try {
             date = Date(dateString[0].toInt(), dateString[1].toInt(), dateString[2].toInt())
-        }catch (ex:NumberFormatException){
+        } catch (ex: NumberFormatException) {
 
         }
         val posterUri = Uri.parse(IMAGE_BASE_URL + movie.posterPath)
@@ -68,25 +79,50 @@ abstract class CollectionAdapter(context: Context, moviesPassed: ArrayList<Part>
                 })
                 .apply(RequestOptions()
                         .error(R.drawable.poster_placeholder)
-                        .centerCrop()
-                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC))
+                        .centerCrop())
                 .into(holder.moviePoster)
         holder.itemLayout.setOnClickListener {
-            val intent = Intent(mContext, MovieDetailsActivity::class.java)
-//            intent.putExtra("movie", movies[position])
-            intent.putExtra("movieId", movies[position].id)
-            intent.putExtra("posterPath",movies[position].posterPath)
-            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(mContext as Activity,holder.moviePoster as View, "moviePoster")
-            mContext.startActivity(intent,options.toBundle())
+
+            val sharedPreferences = mContext.getSharedPreferences("Interstitial", Context.MODE_PRIVATE)
+            val userClicks = sharedPreferences.getInt("KeyEvents", 2)
+            var showAd: Boolean = userClicks == 2
+
+            mInterstitialAd.adListener = object : AdListener() {
+                override fun onAdClosed() {
+                    mInterstitialAd.loadAd(AdRequest.Builder().build())
+                    transition(holder.adapterPosition,holder)
+                }
+            }
+
+            if (userClicks != 2) {
+                val shaPrefEditor = sharedPreferences.edit()
+                shaPrefEditor.putInt("KeyEvents", userClicks + 1)
+                shaPrefEditor.commit()
+            }
+            if (mInterstitialAd.isLoaded and showAd) {
+                mInterstitialAd.show()
+                val prefEditor = sharedPreferences.edit()
+                prefEditor.putInt("KeyEvents", 0)
+                prefEditor.commit()
+                Log.d("Interstitial", "Interstitial shown")
+            } else {
+                if (showAd) {
+                    val prefEditor = sharedPreferences.edit()
+                    prefEditor.putInt("KeyEvents", 2)
+                    prefEditor.commit()
+                }
+                Log.d("Interstitial", "The interstitial wasn't loaded yet.")
+                transition(holder.adapterPosition, holder)
+            }
         }
 
         holder.threeDotMenu.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
-                val popup = PopupMenu(mContext,holder.threeDotMenu)
+                val popup = PopupMenu(mContext, holder.threeDotMenu)
                 popup.inflate(R.menu.card_menu)
-                popup.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener{
+                popup.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
                     override fun onMenuItemClick(item: MenuItem?): Boolean {
-                        when (item!!.itemId){
+                        when (item!!.itemId) {
                             R.id.addMovie -> {
                                 addMovie(movie)
                             }
@@ -106,6 +142,14 @@ abstract class CollectionAdapter(context: Context, moviesPassed: ArrayList<Part>
 
         })
 
+    }
+
+    private fun transition(position: Int, holder: ViewHolder) {
+        val intent = Intent(mContext, MovieDetailsActivity::class.java)
+        intent.putExtra("movieId", movies[position].id)
+        intent.putExtra("posterPath", movies[position].posterPath)
+        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(mContext as Activity, holder.moviePoster as View, "moviePoster")
+        mContext.startActivity(intent, options.toBundle())
     }
 
     abstract fun addMovie(movie: Part)

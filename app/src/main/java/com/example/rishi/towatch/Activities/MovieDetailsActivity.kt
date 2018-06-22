@@ -84,7 +84,6 @@ class MovieDetailsActivity : AppCompatActivity() {
     private var currentVideo: Int = 0
 
     private lateinit var externalIds: ExternalIds
-    private lateinit var mInterstitialAd: InterstitialAd
 
     lateinit var mPalette: Palette
 
@@ -95,12 +94,7 @@ class MovieDetailsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_details)
 
-        mInterstitialAd = InterstitialAd(this)
-        mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712"
-        mInterstitialAd.loadAd(AdRequest.Builder().build())
-
-        val adRequest = AdRequest.Builder().build()
-        adView.loadAd(adRequest)
+        adView.loadAd(AdRequest.Builder().build())
 
         setSupportActionBar(toolbar)
         mToolbar = supportActionBar
@@ -109,7 +103,6 @@ class MovieDetailsActivity : AppCompatActivity() {
 //        val window: Window = window
 //        window.clearFlags(FLAG_TRANSLUCENT_STATUS)
 //        window.addFlags(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-
 
         watchDatabase = WatchDatabase.getInstance(this)!!
 
@@ -282,35 +275,6 @@ class MovieDetailsActivity : AppCompatActivity() {
 
         getMovieDetails()
 
-//        val bundle: Bundle = Bundle()
-//        bundle.putLong("movieId", movieId)
-//        try {
-//            bundle.putInt("bgcolor",mPalette.darkMutedSwatch?.rgb!!)
-//        }catch (ex:Exception){
-//
-//        }
-//        val recommendationFragment = RecommendationFragment()
-//        val similarFragment = SimilarFragment()
-//        recommendationFragment.arguments = bundle
-//        similarFragment.arguments = bundle
-//        supportFragmentManager.beginTransaction()
-//                .replace(R.id.similarMoviesFrame, similarFragment)
-//                .disallowAddToBackStack()
-//                .commit()
-//        supportFragmentManager.beginTransaction()
-//                .replace(R.id.recommendedMoviesFrame, recommendationFragment)
-//                .disallowAddToBackStack()
-//                .commit()
-
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-        if (mInterstitialAd.isLoaded) {
-            mInterstitialAd.show()
-        } else {
-            Log.d("TAG", "The interstitial wasn't loaded yet.")
-        }
     }
 
     private fun playVideo(videoId: String) {
@@ -331,6 +295,8 @@ class MovieDetailsActivity : AppCompatActivity() {
                 VideoResult = response?.body()?.results
                 if (VideoResult?.isEmpty()!!) {
                     Toast.makeText(this@MovieDetailsActivity, "No Trailer Found", Toast.LENGTH_LONG).show()
+                    previousVideoButton.isEnabled = false
+                    nextVideoButton.isEnabled = false
                 } else {
                     playVideo(VideoResult?.get(0)?.key!!)
                 }

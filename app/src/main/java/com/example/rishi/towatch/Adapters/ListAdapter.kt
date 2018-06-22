@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -22,6 +23,9 @@ import com.bumptech.glide.request.target.Target
 import com.example.rishi.towatch.Activities.MovieDetailsActivity
 import com.example.rishi.towatch.Database.WatchList
 import com.example.rishi.towatch.R
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.InterstitialAd
 import java.util.*
 
 /**
@@ -31,6 +35,14 @@ abstract class ListAdapter(context: Context, moviesPassed: List<WatchList>) : Re
     private val IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500/"
     private val mContext = context
     var movies: List<WatchList> = moviesPassed
+
+    private lateinit var mInterstitialAd: InterstitialAd
+
+    init {
+        mInterstitialAd = InterstitialAd(mContext)
+        mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712"
+        mInterstitialAd.loadAd(AdRequest.Builder().build())
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.movie_list_grid, parent, false)
@@ -63,20 +75,44 @@ abstract class ListAdapter(context: Context, moviesPassed: List<WatchList>) : Re
                 })
                 .apply(RequestOptions()
                         .centerCrop()
-                        .error(R.drawable.poster_placeholder)
-                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC))
+                        .error(R.drawable.poster_placeholder))
                 .into(holder.moviePoster)
 //        holder.itemLayout.setOnClickListener {
 //            val intent = Intent(mContext, MovieDetailsActivity::class.java)
 //            intent.putExtra("movie", movies[position])
 //            mContext.startActivity(intent)
         holder.itemLayout.setOnClickListener {
-            val intent = Intent(mContext, MovieDetailsActivity::class.java)
-//            intent.putExtra("movie", movies[position])
-            intent.putExtra("movieId", movies[position].movieId)
-            intent.putExtra("posterPath",movies[position].moviePoster)
-            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(mContext as Activity,holder.moviePoster as View, "moviePoster")
-            mContext.startActivity(intent,options.toBundle())
+
+            val sharedPreferences = mContext.getSharedPreferences("Interstitial", Context.MODE_PRIVATE)
+            val userClicks = sharedPreferences.getInt("KeyEvents", 2)
+            var showAd: Boolean = userClicks == 2
+
+            mInterstitialAd.adListener = object : AdListener() {
+                override fun onAdClosed() {
+                    mInterstitialAd.loadAd(AdRequest.Builder().build())
+                    transition(holder.adapterPosition, holder)
+                }
+            }
+            if (userClicks != 2) {
+                val shaPrefEditor = sharedPreferences.edit()
+                shaPrefEditor.putInt("KeyEvents", userClicks + 1)
+                shaPrefEditor.commit()
+            }
+            if (mInterstitialAd.isLoaded and showAd) {
+                mInterstitialAd.show()
+                val prefEditor = sharedPreferences.edit()
+                prefEditor.putInt("KeyEvents", 0)
+                prefEditor.commit()
+                Log.d("Interstitial", "Interstitial shown")
+            } else {
+                if (showAd) {
+                    val prefEditor = sharedPreferences.edit()
+                    prefEditor.putInt("KeyEvents", 2)
+                    prefEditor.commit()
+                }
+                Log.d("Interstitial", "The interstitial wasn't loaded yet.")
+                transition(holder.adapterPosition, holder)
+            }
         }
         holder.threeDotMenu.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
@@ -101,6 +137,15 @@ abstract class ListAdapter(context: Context, moviesPassed: List<WatchList>) : Re
 
         })
 
+
+    }
+
+    private fun transition(position: Int,holder: MovieViewHolder){
+        val intent = Intent(mContext, MovieDetailsActivity::class.java)
+        intent.putExtra("movieId", movies[position].movieId)
+        intent.putExtra("posterPath",movies[position].moviePoster)
+        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(mContext as Activity,holder.moviePoster as View, "moviePoster")
+        mContext.startActivity(intent,options.toBundle())
 
     }
 
