@@ -47,8 +47,8 @@ class PopularFragment : Fragment() {
     private var isLastPage = false
     private var TOTAL_PAGES = 2
     private var currentPage = PAGE_START
-    private lateinit var viewAdapter: RecyclerView.Adapter<*>
-    private lateinit var viewManager: RecyclerView.LayoutManager
+    private lateinit var viewAdapter: MovieAdapter
+    private lateinit var viewManager: GridLayoutManager
     private lateinit var watchDatabase: WatchDatabase
     private var task:Int = 1
     private lateinit var data:WatchList
@@ -89,6 +89,17 @@ class PopularFragment : Fragment() {
         watchDatabase = WatchDatabase.getInstance(context!!)!!
 
         viewManager = GridLayoutManager(context, 2)
+
+        viewManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return when (viewAdapter.getItemViewType(position)) {
+                    viewAdapter.MOVIE -> 1
+                    viewAdapter.NATIVE_AD -> (viewManager).spanCount
+                    else -> 1
+                }
+            }
+        }
+
         viewAdapter = object : MovieAdapter(context!!, popularMovies){
             override fun addMovie(movie: Result) {
                 task = 1

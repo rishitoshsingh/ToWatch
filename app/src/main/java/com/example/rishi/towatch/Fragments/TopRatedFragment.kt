@@ -90,7 +90,7 @@ class TopRatedFragment : Fragment() {
             override fun getSpanSize(position: Int): Int {
                 return when (viewAdapter.getItemViewType(position)) {
                     viewAdapter.MOVIE -> 1
-                    viewAdapter.NATIVE_AD -> (viewManager as GridLayoutManager).spanCount
+                    viewAdapter.NATIVE_AD -> viewManager.spanCount
                     else -> 1
                 }
             }
