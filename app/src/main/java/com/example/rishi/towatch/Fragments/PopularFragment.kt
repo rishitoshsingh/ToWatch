@@ -59,9 +59,8 @@ class PopularFragment : Fragment() {
     private lateinit var region:String
     private lateinit var language:String
 
-    private var nextAdPosition: Int = 5
     private var lastAdPosition: Int = -1
-    private val ADS_PER_ITEMS: Int = 7
+    private val ADS_PER_ITEMS: Int = 9
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -166,8 +165,7 @@ class PopularFragment : Fragment() {
     }
 
     private fun loadAdsToList() {
-        AdSettings.addTestDevice("aab16a2b-c590-4f73-b619-fc9d7f8e37b1")
-//        try {
+        try {
             val nativeAdsManager = NativeAdsManager(activity!!, "YOUR_PLACEMENT_ID", 3)
             nativeAdsManager.setListener(object : NativeAdsManager.Listener {
                 override fun onAdError(adError: AdError) {}
@@ -186,13 +184,13 @@ class PopularFragment : Fragment() {
                 }
             })
             nativeAdsManager.loadAds()
-//        } catch (e: Exception) {
-//            val str = "TAG"
-//            val stringBuilder = StringBuilder()
-//            stringBuilder.append("loadAdsToList: ")
-//            stringBuilder.append(e.toString())
-//            Log.e(str, stringBuilder.toString())
-//        }
+        } catch (e: Exception) {
+            val str = "TAG"
+            val stringBuilder = StringBuilder()
+            stringBuilder.append("loadAdsToList: ")
+            stringBuilder.append(e.toString())
+            Log.e(str, stringBuilder.toString())
+        }
     }
 
 
@@ -217,7 +215,7 @@ class PopularFragment : Fragment() {
                 for (item in jsonA.results) popularMovies.add(item)
                 viewAdapter.notifyDataSetChanged()
 
-//                loadAdsToList()
+                loadAdsToList()
 
                 isLoading = false
                 if(refresh_layout != null){
@@ -240,7 +238,7 @@ class PopularFragment : Fragment() {
                 for (item in jsonA.results) popularMovies.add(item)
                 viewAdapter.notifyDataSetChanged()
 
-//                loadAdsToList()
+                loadAdsToList()
 
                 isLoading = false
                 if(refresh_layout != null){

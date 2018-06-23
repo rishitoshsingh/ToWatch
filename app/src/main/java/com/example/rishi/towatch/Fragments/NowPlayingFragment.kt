@@ -24,7 +24,8 @@ import com.example.rishi.towatch.POJOs.Tmdb.JsonB
 import com.example.rishi.towatch.POJOs.Tmdb.Result
 import com.example.rishi.towatch.R
 import com.example.rishi.towatch.TmdbApi.TmdbApiClient
-import com.facebook.ads.*
+import com.facebook.ads.AdError
+import com.facebook.ads.NativeAdsManager
 import kotlinx.android.synthetic.main.recycler_view.*
 import retrofit2.Call
 import retrofit2.Response
@@ -183,13 +184,10 @@ class NowPlayingFragment : Fragment() {
     }
 
     private fun loadAdsToList() {
-//        AdSettings.addTestDevice("aab16a2b-c590-4f73-b619-fc9d7f8e37b1")
-//        try {
-        Log.d("load Ads","inside")
+        try {
             val nativeAdsManager = NativeAdsManager(activity!!, "YOUR_PLACEMENT_ID", 2)
             nativeAdsManager.setListener(object : NativeAdsManager.Listener {
                 override fun onAdError(adError: AdError) {
-                    Log.d("AdError",adError.toString())
                 }
 
                 override fun onAdsLoaded() {
@@ -197,24 +195,24 @@ class NowPlayingFragment : Fragment() {
                         while (lastAdPosition + ADS_PER_ITEMS < nowPlayingMovies.size) {
                             val nextNativeAd = nativeAdsManager.nextNativeAd()
                             lastAdPosition += ADS_PER_ITEMS
-                            Log.d("AdLoaded fb","1")
+                            Log.d("AdLoaded fb", "1")
                             nowPlayingMovies.add(lastAdPosition, nextNativeAd)
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
-                        Log.d("Error Ad fb",e.toString())
+                        Log.d("Error Ad fb", e.toString())
                     }
                     viewAdapter.notifyDataSetChanged()
                 }
             })
             nativeAdsManager.loadAds()
-//        } catch (e: Exception) {
-//            val str = "TAG"
-//            val stringBuilder = StringBuilder()
-//            stringBuilder.append("loadAdsToList: ")
-//            stringBuilder.append(e.toString())
-//            Log.e(str, stringBuilder.toString())
-//        }
+        } catch (e: Exception) {
+            val str = "TAG"
+            val stringBuilder = StringBuilder()
+            stringBuilder.append("loadAdsToList: ")
+            stringBuilder.append(e.toString())
+            Log.e(str, stringBuilder.toString())
+        }
     }
 
 
@@ -258,9 +256,6 @@ class NowPlayingFragment : Fragment() {
 
             override fun onResponse(p0: Call<JsonB>?, p1: Response<JsonB>?) {
                 val jsonB: JsonB = p1?.body()!!
-
-                val totalResults = jsonB.results?.size
-//                for (i in 0..totalResults!! step 5) totalAdsToBeLoaded++
 
                 for (item in jsonB.results) nowPlayingMovies.add(item)
                 viewAdapter.notifyDataSetChanged()

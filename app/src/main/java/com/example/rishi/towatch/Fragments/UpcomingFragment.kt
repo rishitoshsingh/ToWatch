@@ -57,9 +57,8 @@ class UpcomingFragment : Fragment() {
     private lateinit var region:String
     private lateinit var language:String
 
-    private var nextAdPosition: Int = 5
     private var lastAdPosition: Int = -1
-    private val ADS_PER_ITEMS: Int = 7
+    private val ADS_PER_ITEMS: Int = 9
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -162,35 +161,34 @@ class UpcomingFragment : Fragment() {
 
     }
 
-//    private fun loadAdsToList() {
-//        AdSettings.addTestDevice("aab16a2b-c590-4f73-b619-fc9d7f8e37b1")
-////        try {
-//            val nativeAdsManager = NativeAdsManager(activity!!, "YOUR_PLACEMENT_ID", 3)
-//            nativeAdsManager.setListener(object : NativeAdsManager.Listener {
-//                override fun onAdError(adError: AdError) {}
-//
-//                override fun onAdsLoaded() {
-//                    try {
-//                        while (lastAdPosition + ADS_PER_ITEMS < upcomingMovies.size) {
-//                            val nextNativeAd = nativeAdsManager.nextNativeAd()
-//                            lastAdPosition += ADS_PER_ITEMS
-//                            upcomingMovies.add(lastAdPosition, nextNativeAd)
-//                        }
-//                    } catch (e: Exception) {
-//                        e.printStackTrace()
-//                    }
-//                    viewAdapter.notifyDataSetChanged()
-//                }
-//            })
-//            nativeAdsManager.loadAds()
-////        } catch (e: Exception) {
-////            val str = "TAG"
-////            val stringBuilder = StringBuilder()
-////            stringBuilder.append("loadAdsToList: ")
-////            stringBuilder.append(e.toString())
-////            Log.e(str, stringBuilder.toString())
-////        }
-//    }
+    private fun loadAdsToList() {
+        try {
+            val nativeAdsManager = NativeAdsManager(activity!!, "YOUR_PLACEMENT_ID", 3)
+            nativeAdsManager.setListener(object : NativeAdsManager.Listener {
+                override fun onAdError(adError: AdError) {}
+
+                override fun onAdsLoaded() {
+                    try {
+                        while (lastAdPosition + ADS_PER_ITEMS < upcomingMovies.size) {
+                            val nextNativeAd = nativeAdsManager.nextNativeAd()
+                            lastAdPosition += ADS_PER_ITEMS
+                            upcomingMovies.add(lastAdPosition, nextNativeAd)
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                    viewAdapter.notifyDataSetChanged()
+                }
+            })
+            nativeAdsManager.loadAds()
+        } catch (e: Exception) {
+            val str = "TAG"
+            val stringBuilder = StringBuilder()
+            stringBuilder.append("loadAdsToList: ")
+            stringBuilder.append(e.toString())
+            Log.e(str, stringBuilder.toString())
+        }
+    }
 
 
     private fun loadFirstPage() {
@@ -214,7 +212,7 @@ class UpcomingFragment : Fragment() {
                 for (item in jsonB.results) upcomingMovies.add(item)
                 viewAdapter.notifyDataSetChanged()
 
-//                loadAdsToList()
+                loadAdsToList()
 
                 isLoading = false
                 if(refresh_layout != null){
@@ -237,7 +235,7 @@ class UpcomingFragment : Fragment() {
                 for (item in jsonB.results) upcomingMovies.add(item)
                 viewAdapter.notifyDataSetChanged()
 
-//                loadAdsToList()
+                loadAdsToList()
 
                 isLoading = false
                 if(refresh_layout != null){
