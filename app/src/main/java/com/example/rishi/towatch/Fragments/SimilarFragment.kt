@@ -38,7 +38,7 @@ import retrofit2.Response
  */
 class SimilarFragment : Fragment() {
 
-    private var similarMovies: ArrayList<Result> = ArrayList()
+    private var similarMovies: ArrayList<kotlin.Any> = ArrayList()
     private lateinit var client: TmdbApiClient
     private val PAGE_START = 1
     private var isLoading = false

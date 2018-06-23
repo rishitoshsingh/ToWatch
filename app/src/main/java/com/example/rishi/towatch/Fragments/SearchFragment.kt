@@ -37,7 +37,7 @@ import retrofit2.Response
  */
 class SearchFragment : Fragment() {
 
-    private var searchMovies: ArrayList<Result> = ArrayList<Result>()
+    private var searchMovies: ArrayList<kotlin.Any> = ArrayList<kotlin.Any>()
     private lateinit var client: TmdbApiClient
     private val PAGE_START = 1
     private var isLoading = false

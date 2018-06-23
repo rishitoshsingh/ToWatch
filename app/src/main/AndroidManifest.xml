@@ -6,6 +6,7 @@
 
     <application
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -37,9 +38,9 @@
         <activity
             android:name=".Activities.AccountActivity"
             android:parentActivityName=".Activities.MainActivity">
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value="com.example.rishi.towatch.Activities.MainActivity" />
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.rishi.towatch.Activities.MainActivity" />
         </activity>
         <activity android:name=".firebase.SignUpActivity" />
         <activity android:name=".Activities.DiscoverActivity" />

@@ -36,7 +36,7 @@ import retrofit2.Response
  * create an instance of this fragment.
  */
 class DiscoverFragment : Fragment() {
-    private var discoverMovies: ArrayList<Result> = ArrayList<Result>()
+    private var discoverMovies: ArrayList<kotlin.Any> = ArrayList<kotlin.Any>()
     private lateinit var client: TmdbApiClient
     private val PAGE_START = 1
     private var isLoading = false

@@ -5,10 +5,10 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.AsyncTask
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
-import android.support.v7.widget.*
+import android.support.v7.widget.DefaultItemAnimator
+import android.support.v7.widget.GridLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -24,9 +24,7 @@ import com.example.rishi.towatch.POJOs.Tmdb.JsonB
 import com.example.rishi.towatch.POJOs.Tmdb.Result
 import com.example.rishi.towatch.R
 import com.example.rishi.towatch.TmdbApi.TmdbApiClient
-import com.mopub.nativeads.MoPubRecyclerAdapter
-import com.mopub.nativeads.MoPubStaticNativeAdRenderer
-import com.mopub.nativeads.ViewBinder
+import com.facebook.ads.*
 import kotlinx.android.synthetic.main.recycler_view.*
 import retrofit2.Call
 import retrofit2.Response
@@ -38,15 +36,15 @@ import retrofit2.Response
  * create an instance of this fragment.
  */
 class NowPlayingFragment : Fragment() {
-    private var nowPlayingMovies: ArrayList<Result> = ArrayList<Result>()
+    private var nowPlayingMovies: ArrayList<kotlin.Any> = ArrayList<kotlin.Any>()
     private lateinit var client: TmdbApiClient
     private val PAGE_START = 1
     private var isLoading = false
     private var isLastPage = false
     private var TOTAL_PAGES = 2
     private var currentPage = PAGE_START
-    private lateinit var viewAdapter: RecyclerView.Adapter<*>
-    private lateinit var viewManager: RecyclerView.LayoutManager
+    private lateinit var viewAdapter: MovieAdapter
+    private lateinit var viewManager: GridLayoutManager
     private lateinit var watchDatabase: WatchDatabase
     private var task: Int = 1
     private lateinit var data: WatchList
@@ -54,8 +52,11 @@ class NowPlayingFragment : Fragment() {
     private var presentInWatch: Boolean = false
     private var presentInWatched: Boolean = false
 
-    private lateinit var region:String
-    private lateinit var language:String
+    private lateinit var region: String
+    private lateinit var language: String
+
+    private var lastAdPosition: Int = -1
+    private val ADS_PER_ITEMS: Int = 9
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -80,11 +81,22 @@ class NowPlayingFragment : Fragment() {
         watchDatabase = WatchDatabase.getInstance(context!!)!!
 
         val sharedPreferences: SharedPreferences = activity?.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)!!
-        region = sharedPreferences.getString("region","US")
-        language = sharedPreferences.getString("language","en-US")
+        region = sharedPreferences.getString("region", "US")
+        language = sharedPreferences.getString("language", "en-US")
 
 
         viewManager = GridLayoutManager(context, 2)
+
+        viewManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return when (viewAdapter.getItemViewType(position)) {
+                    viewAdapter.MOVIE -> 1
+                    viewAdapter.NATIVE_AD -> (viewManager).spanCount
+                    else -> 1
+                }
+            }
+        }
+
         viewAdapter = object : MovieAdapter(context!!, nowPlayingMovies) {
             override fun addMovie(movie: Result) {
                 task = 1
@@ -121,41 +133,45 @@ class NowPlayingFragment : Fragment() {
             itemAnimator = DefaultItemAnimator()
         }
         recyclerView.addOnScrollListener(object : PaginationScrollListner(viewManager as GridLayoutManager) {
-            override fun getCurrentPage(): Int {
-                return currentPage
-            }
-
+            override fun getCurrentPage() = currentPage
             override fun loadMoreItems() {
                 isLoading = true
                 currentPage += 1
-                refresh_layout.isRefreshing = true
+                if (refresh_layout != null) refresh_layout.isRefreshing = true
                 loadNextPage()
             }
 
-            override fun getTotalPageCount(): Int {
-                return TOTAL_PAGES
-            }
-
-            override fun isLastPage(): Boolean {
-                return isLastPage
-            }
-
-            override fun isLoading(): Boolean {
-                return isLoading
-            }
+            override fun getTotalPageCount() = TOTAL_PAGES
+            override fun isLastPage() = isLastPage
+            override fun isLoading() = isLoading
         })
 
         if (refresh_layout != null) {
             refresh_layout.isRefreshing = true
         }
+
+//        nativeAd = NativeAd(this.context, "YOUR_PLACEMENT_ID")
+//        nativeAd.setAdListener(object : NativeAdListener {
+//            override fun onMediaDownloaded(p0: Ad?) {}
+//            override fun onError(ad: Ad, adError: AdError) {}
+//            override fun onAdLoaded(ad: Ad) {
+//                addAds(ad)
+//            }
+//
+//            override fun onAdClicked(ad: Ad) {}
+//            override fun onLoggingImpression(ad: Ad) {}
+//        })
+
         loadFirstPage()
 
         refresh_layout.setOnRefreshListener {
             val temp: SharedPreferences = activity?.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)!!
-            region = temp.getString("region","US")
-            language = temp.getString("language","en-US")
-            shimmer_container.startShimmerAnimation()
-            shimmer_container.visibility = View.VISIBLE
+            region = temp.getString("region", "US")
+            language = temp.getString("language", "en-US")
+            if (shimmer_container != null) {
+                shimmer_container.stopShimmerAnimation()
+                shimmer_container.visibility = View.GONE
+            }
             nowPlayingMovies.removeAll(nowPlayingMovies)
             isLoading = false
             isLastPage = false
@@ -166,6 +182,42 @@ class NowPlayingFragment : Fragment() {
         }
     }
 
+    private fun loadAdsToList() {
+//        AdSettings.addTestDevice("aab16a2b-c590-4f73-b619-fc9d7f8e37b1")
+//        try {
+        Log.d("load Ads","inside")
+            val nativeAdsManager = NativeAdsManager(activity!!, "YOUR_PLACEMENT_ID", 2)
+            nativeAdsManager.setListener(object : NativeAdsManager.Listener {
+                override fun onAdError(adError: AdError) {
+                    Log.d("AdError",adError.toString())
+                }
+
+                override fun onAdsLoaded() {
+                    try {
+                        while (lastAdPosition + ADS_PER_ITEMS < nowPlayingMovies.size) {
+                            val nextNativeAd = nativeAdsManager.nextNativeAd()
+                            lastAdPosition += ADS_PER_ITEMS
+                            Log.d("AdLoaded fb","1")
+                            nowPlayingMovies.add(lastAdPosition, nextNativeAd)
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        Log.d("Error Ad fb",e.toString())
+                    }
+                    viewAdapter.notifyDataSetChanged()
+                }
+            })
+            nativeAdsManager.loadAds()
+//        } catch (e: Exception) {
+//            val str = "TAG"
+//            val stringBuilder = StringBuilder()
+//            stringBuilder.append("loadAdsToList: ")
+//            stringBuilder.append(e.toString())
+//            Log.e(str, stringBuilder.toString())
+//        }
+    }
+
+
     private fun loadFirstPage() {
         val call = callDiscoverMovie()
         call.enqueue(object : retrofit2.Callback<JsonB> {
@@ -174,16 +226,20 @@ class NowPlayingFragment : Fragment() {
             }
 
             override fun onResponse(p0: Call<JsonB>?, p1: Response<JsonB>?) {
-
-                shimmer_container.stopShimmerAnimation()
-                shimmer_container.visibility = View.GONE
-
                 val jsonB: JsonB? = p1?.body()!!
+
+                if (shimmer_container != null) {
+                    shimmer_container.stopShimmerAnimation()
+                    shimmer_container.visibility = View.GONE
+                }
 
                 TOTAL_PAGES = jsonB?.totalPages?.toInt()!!
                 nowPlayingMovies.clear()
                 for (item in jsonB.results) nowPlayingMovies.add(item)
                 viewAdapter.notifyDataSetChanged()
+
+                loadAdsToList()
+
                 isLoading = false
                 if (refresh_layout != null) {
                     refresh_layout.isRefreshing = false
@@ -202,8 +258,15 @@ class NowPlayingFragment : Fragment() {
 
             override fun onResponse(p0: Call<JsonB>?, p1: Response<JsonB>?) {
                 val jsonB: JsonB = p1?.body()!!
+
+                val totalResults = jsonB.results?.size
+//                for (i in 0..totalResults!! step 5) totalAdsToBeLoaded++
+
                 for (item in jsonB.results) nowPlayingMovies.add(item)
                 viewAdapter.notifyDataSetChanged()
+
+                loadAdsToList()
+
                 isLoading = false
                 if (refresh_layout != null) {
                     refresh_layout.isRefreshing = false
@@ -251,7 +314,7 @@ class NowPlayingFragment : Fragment() {
         }
 
         override fun onPostExecute(result: Void?) {
-            if(refresh_layout != null){
+            if (refresh_layout != null) {
                 refresh_layout.isRefreshing = false
             }
             Snackbar.make(recyclerView, "Added to Playlist", Snackbar.LENGTH_SHORT).show()
@@ -266,7 +329,7 @@ class NowPlayingFragment : Fragment() {
         }
 
         override fun onPostExecute(result: Void?) {
-            if(refresh_layout != null){
+            if (refresh_layout != null) {
                 refresh_layout.isRefreshing = false
             }
             Snackbar.make(recyclerView, "Removed from Playlist", Snackbar.LENGTH_SHORT).show()
@@ -298,7 +361,7 @@ class NowPlayingFragment : Fragment() {
                     if (result) {
                         InsertMovie().execute(data)
                     } else {
-                        if(refresh_layout != null){
+                        if (refresh_layout != null) {
                             refresh_layout.isRefreshing = false
                         }
                         Snackbar.make(recyclerView, "Movie Already in Watch List", Snackbar.LENGTH_SHORT).show()
@@ -308,7 +371,7 @@ class NowPlayingFragment : Fragment() {
                     if (!result) {
                         RemoveMovie().execute(data)
                     } else {
-                        if(refresh_layout != null){
+                        if (refresh_layout != null) {
                             refresh_layout.isRefreshing = false
                         }
                         Snackbar.make(recyclerView, "Movie not found in Watch List", Snackbar.LENGTH_SHORT).show()
@@ -322,7 +385,7 @@ class NowPlayingFragment : Fragment() {
                             RemoveMovie().execute(data)
                             InsertWatchedMovie().execute(watchedData)
                         } else {
-                            if(refresh_layout != null){
+                            if (refresh_layout != null) {
                                 refresh_layout.isRefreshing = false
                             }
                             Snackbar.make(recyclerView, "Movie Already in Watched List", Snackbar.LENGTH_SHORT).show()

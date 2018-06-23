@@ -26,6 +26,9 @@ import com.example.rishi.towatch.POJOs.Tmdb.JsonA
 import com.example.rishi.towatch.POJOs.Tmdb.Result
 import com.example.rishi.towatch.R
 import com.example.rishi.towatch.TmdbApi.TmdbApiClient
+import com.facebook.ads.AdError
+import com.facebook.ads.AdSettings
+import com.facebook.ads.NativeAdsManager
 import kotlinx.android.synthetic.main.recycler_view.*
 import retrofit2.Call
 import retrofit2.Response
@@ -37,7 +40,7 @@ import retrofit2.Response
  * create an instance of this fragment.
  */
 class PopularFragment : Fragment() {
-    private var popularMovies: ArrayList<Result> = ArrayList<Result>()
+    private var popularMovies: ArrayList<kotlin.Any> = ArrayList<kotlin.Any>()
     private lateinit var client: TmdbApiClient
     private val PAGE_START = 1
     private var isLoading = false
@@ -55,6 +58,10 @@ class PopularFragment : Fragment() {
 
     private lateinit var region:String
     private lateinit var language:String
+
+    private var nextAdPosition: Int = 5
+    private var lastAdPosition: Int = -1
+    private val ADS_PER_ITEMS: Int = 7
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -119,10 +126,7 @@ class PopularFragment : Fragment() {
             itemAnimator = DefaultItemAnimator()
         }
         recyclerView.addOnScrollListener(object : PaginationScrollListner(viewManager as GridLayoutManager) {
-            override fun getCurrentPage(): Int {
-                return currentPage
-            }
-
+            override fun getCurrentPage() = currentPage
             override fun loadMoreItems() {
                 isLoading = true
                 currentPage += 1
@@ -131,19 +135,9 @@ class PopularFragment : Fragment() {
                 }
                 loadNextPage()
             }
-
-            override fun getTotalPageCount(): Int {
-                return TOTAL_PAGES
-            }
-
-            override fun isLastPage(): Boolean {
-                return isLastPage
-            }
-
-            override fun isLoading(): Boolean {
-                return isLoading
-            }
-
+            override fun getTotalPageCount() = TOTAL_PAGES
+            override fun isLastPage() = isLastPage
+            override fun isLoading() = isLoading
         })
 
         if(refresh_layout != null){
@@ -156,8 +150,10 @@ class PopularFragment : Fragment() {
             val temp: SharedPreferences = activity?.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)!!
             region = temp.getString("region","US")
             language = temp.getString("language","en-US")
-            shimmer_container.startShimmerAnimation()
-            shimmer_container.visibility = View.VISIBLE
+            if (shimmer_container != null){
+                shimmer_container.stopShimmerAnimation()
+                shimmer_container.visibility = View.GONE
+            }
             popularMovies.removeAll(popularMovies)
             isLoading = false
             isLastPage = false
@@ -167,6 +163,36 @@ class PopularFragment : Fragment() {
             loadFirstPage()
         }
 
+    }
+
+    private fun loadAdsToList() {
+        AdSettings.addTestDevice("aab16a2b-c590-4f73-b619-fc9d7f8e37b1")
+//        try {
+            val nativeAdsManager = NativeAdsManager(activity!!, "YOUR_PLACEMENT_ID", 3)
+            nativeAdsManager.setListener(object : NativeAdsManager.Listener {
+                override fun onAdError(adError: AdError) {}
+
+                override fun onAdsLoaded() {
+                    try {
+                        while (lastAdPosition + ADS_PER_ITEMS < popularMovies.size) {
+                            val nextNativeAd = nativeAdsManager.nextNativeAd()
+                            lastAdPosition += ADS_PER_ITEMS
+                            popularMovies.add(lastAdPosition, nextNativeAd)
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                    viewAdapter.notifyDataSetChanged()
+                }
+            })
+            nativeAdsManager.loadAds()
+//        } catch (e: Exception) {
+//            val str = "TAG"
+//            val stringBuilder = StringBuilder()
+//            stringBuilder.append("loadAdsToList: ")
+//            stringBuilder.append(e.toString())
+//            Log.e(str, stringBuilder.toString())
+//        }
     }
 
 
@@ -179,8 +205,10 @@ class PopularFragment : Fragment() {
 
             override fun onResponse(p0: Call<JsonA>?, p1: Response<JsonA>?) {
 
-                shimmer_container.stopShimmerAnimation()
-                shimmer_container.visibility = View.GONE
+                if (shimmer_container != null){
+                    shimmer_container.stopShimmerAnimation()
+                    shimmer_container.visibility = View.GONE
+                }
 
                 val jsonA: JsonA? = p1?.body()!!
 
@@ -188,6 +216,9 @@ class PopularFragment : Fragment() {
                 popularMovies.clear()
                 for (item in jsonA.results) popularMovies.add(item)
                 viewAdapter.notifyDataSetChanged()
+
+//                loadAdsToList()
+
                 isLoading = false
                 if(refresh_layout != null){
                     refresh_layout.isRefreshing = false
@@ -208,6 +239,9 @@ class PopularFragment : Fragment() {
                 val jsonA: JsonA = p1?.body()!!
                 for (item in jsonA.results) popularMovies.add(item)
                 viewAdapter.notifyDataSetChanged()
+
+//                loadAdsToList()
+
                 isLoading = false
                 if(refresh_layout != null){
                     refresh_layout.isRefreshing = false
