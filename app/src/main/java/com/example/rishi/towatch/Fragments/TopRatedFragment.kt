@@ -156,7 +156,7 @@ class TopRatedFragment : Fragment() {
             language = temp.getString("language", "en-US")
             if (shimmer_container != null) {
                 shimmer_container.stopShimmerAnimation()
-                shimmer_container.visibility = View.GONE
+                shimmer_container.visibility = View.VISIBLE
             }
             topRatedMovies.removeAll(topRatedMovies)
             isLoading = false

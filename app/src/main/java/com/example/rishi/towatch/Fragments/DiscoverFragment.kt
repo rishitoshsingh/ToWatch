@@ -23,6 +23,8 @@ import com.example.rishi.towatch.POJOs.Tmdb.JsonA
 import com.example.rishi.towatch.POJOs.Tmdb.Result
 import com.example.rishi.towatch.R
 import com.example.rishi.towatch.TmdbApi.TmdbApiClient
+import com.facebook.ads.AdError
+import com.facebook.ads.NativeAdsManager
 import kotlinx.android.synthetic.main.recycler_view.*
 import retrofit2.Call
 import retrofit2.Response
@@ -43,8 +45,8 @@ class DiscoverFragment : Fragment() {
     private var isLastPage = false
     private var TOTAL_PAGES = 2
     private var currentPage = PAGE_START
-    private lateinit var viewAdapter: RecyclerView.Adapter<*>
-    private lateinit var viewManager: RecyclerView.LayoutManager
+    private lateinit var viewAdapter: MovieAdapter
+    private lateinit var viewManager: GridLayoutManager
     private lateinit var watchDatabase: WatchDatabase
     private var task: Int = 1
     private lateinit var data: WatchList
@@ -58,6 +60,9 @@ class DiscoverFragment : Fragment() {
     private var language:String? = null
     private var sortBy:String? = null
     private var adult:Boolean = false
+
+    private var lastAdPosition: Int = -1
+    private val ADS_PER_ITEMS: Int = 9
 
     companion object {
 
@@ -105,6 +110,15 @@ class DiscoverFragment : Fragment() {
         watchDatabase = WatchDatabase.getInstance(context!!)!!
 
         viewManager = GridLayoutManager(context, 2)
+        viewManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return when (viewAdapter.getItemViewType(position)) {
+                    viewAdapter.MOVIE -> 1
+                    viewAdapter.NATIVE_AD -> (viewManager).spanCount
+                    else -> 1
+                }
+            }
+        }
         viewAdapter = object : MovieAdapter(context!!, discoverMovies) {
             override fun addMovie(movie: Result) {
                 task = 1
@@ -174,8 +188,10 @@ class DiscoverFragment : Fragment() {
         loadFirstPage()
 
         refresh_layout.setOnRefreshListener {
-            shimmer_container.startShimmerAnimation()
-            shimmer_container.visibility = View.VISIBLE
+            if (shimmer_container != null) {
+                shimmer_container.stopShimmerAnimation()
+                shimmer_container.visibility = View.VISIBLE
+            }
             discoverMovies.removeAll(discoverMovies)
             isLoading = false
             isLastPage = false
@@ -186,6 +202,38 @@ class DiscoverFragment : Fragment() {
             refresh_layout.isRefreshing = false
         }
 
+    }
+
+    private fun loadAdsToList() {
+        try {
+            val nativeAdsManager = NativeAdsManager(activity!!, "YOUR_PLACEMENT_ID", 2)
+            nativeAdsManager.setListener(object : NativeAdsManager.Listener {
+                override fun onAdError(adError: AdError) {
+                }
+
+                override fun onAdsLoaded() {
+                    try {
+                        while (lastAdPosition + ADS_PER_ITEMS < discoverMovies.size) {
+                            val nextNativeAd = nativeAdsManager.nextNativeAd()
+                            lastAdPosition += ADS_PER_ITEMS
+                            Log.d("AdLoaded fb", "1")
+                            discoverMovies.add(lastAdPosition, nextNativeAd)
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        Log.d("Error Ad fb", e.toString())
+                    }
+                    viewAdapter.notifyDataSetChanged()
+                }
+            })
+            nativeAdsManager.loadAds()
+        } catch (e: Exception) {
+            val str = "TAG"
+            val stringBuilder = StringBuilder()
+            stringBuilder.append("loadAdsToList: ")
+            stringBuilder.append(e.toString())
+            Log.e(str, stringBuilder.toString())
+        }
     }
 
     private fun loadFirstPage() {
@@ -206,6 +254,7 @@ class DiscoverFragment : Fragment() {
                 discoverMovies.clear()
                 for (item in jsonA.results) discoverMovies.add(item)
                 viewAdapter.notifyDataSetChanged()
+                loadAdsToList()
                 isLoading = false
                 if (refresh_layout != null) {
                     refresh_layout.isRefreshing = false
@@ -226,6 +275,7 @@ class DiscoverFragment : Fragment() {
                 val jsonA: JsonA = p1?.body()!!
                 for (item in jsonA.results) discoverMovies.add(item)
                 viewAdapter.notifyDataSetChanged()
+                loadAdsToList()
                 isLoading = false
                 if (refresh_layout != null) {
                     refresh_layout.isRefreshing = false
