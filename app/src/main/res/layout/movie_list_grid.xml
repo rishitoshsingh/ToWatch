@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="256dp"
+    android:focusableInTouchMode="true"
     app:cardCornerRadius="8dp"
     app:cardElevation="2dp"
     app:cardUseCompatPadding="true">
@@ -29,9 +30,9 @@
             android:id="@+id/moviePoster"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:transitionName="moviePoster"
             android:background="?attr/selectableItemBackground"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:transitionName="moviePoster" />
 
         <RelativeLayout
             android:layout_width="match_parent"

@@ -26,6 +26,9 @@ import com.example.rishi.towatch.POJOs.Tmdb.JsonB
 import com.example.rishi.towatch.POJOs.Tmdb.Result
 import com.example.rishi.towatch.R
 import com.example.rishi.towatch.TmdbApi.TmdbApiClient
+import com.facebook.ads.AdError
+import com.facebook.ads.AdSettings
+import com.facebook.ads.NativeAdsManager
 import kotlinx.android.synthetic.main.recycler_view.*
 import retrofit2.Call
 import retrofit2.Response
@@ -35,15 +38,15 @@ import retrofit2.Response
  * A simple [Fragment] subclass.
  */
 class UpcomingFragment : Fragment() {
-    private var upcomingMovies: ArrayList<Result> = ArrayList<Result>()
+    private var upcomingMovies: ArrayList<kotlin.Any> = ArrayList<kotlin.Any>()
     private lateinit var client: TmdbApiClient
     private val PAGE_START = 1
     private var isLoading = false
     private var isLastPage = false
     private var TOTAL_PAGES = 2
     private var currentPage = PAGE_START
-    private lateinit var viewAdapter: RecyclerView.Adapter<*>
-    private lateinit var viewManager: RecyclerView.LayoutManager
+    private lateinit var viewAdapter: MovieAdapter
+    private lateinit var viewManager: GridLayoutManager
     private lateinit var watchDatabase: WatchDatabase
     private var task:Int = 1
     private lateinit var data:WatchList
@@ -53,6 +56,9 @@ class UpcomingFragment : Fragment() {
 
     private lateinit var region:String
     private lateinit var language:String
+
+    private var lastAdPosition: Int = -1
+    private val ADS_PER_ITEMS: Int = 9
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -81,6 +87,16 @@ class UpcomingFragment : Fragment() {
         watchDatabase = WatchDatabase.getInstance(context!!)!!
 
         viewManager = GridLayoutManager(context, 2)
+        viewManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return when (viewAdapter.getItemViewType(position)) {
+                    viewAdapter.MOVIE -> 1
+                    viewAdapter.NATIVE_AD -> (viewManager).spanCount
+                    else -> 1
+                }
+            }
+        }
+
         viewAdapter = object : MovieAdapter(context!!, upcomingMovies) {
             override fun addMovie(movie: Result) {
                 task = 1
@@ -117,30 +133,18 @@ class UpcomingFragment : Fragment() {
             itemAnimator = DefaultItemAnimator()
         }
         recyclerView.addOnScrollListener(object : PaginationScrollListner(viewManager as GridLayoutManager) {
-            override fun getCurrentPage(): Int {
-                return currentPage
-            }
-
+            override fun getCurrentPage() = currentPage
             override fun loadMoreItems() {
                 isLoading = true
                 currentPage += 1
-                if(refresh_layout != null){
+                if (refresh_layout != null) {
                     refresh_layout.isRefreshing = true
                 }
                 loadNextPage()
             }
-
-            override fun getTotalPageCount(): Int {
-                return TOTAL_PAGES
-            }
-
-            override fun isLastPage(): Boolean {
-                return isLastPage
-            }
-
-            override fun isLoading(): Boolean {
-                return isLoading
-            }
+            override fun getTotalPageCount() = TOTAL_PAGES
+            override fun isLastPage() = isLastPage
+            override fun isLoading() = isLoading
         })
         if(refresh_layout != null){
             refresh_layout.isRefreshing = true
@@ -152,8 +156,10 @@ class UpcomingFragment : Fragment() {
             val temp: SharedPreferences = activity?.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)!!
             region = temp.getString("region","US")
             language = temp.getString("language","en-US")
-            shimmer_container.startShimmerAnimation()
-            shimmer_container.visibility = View.VISIBLE
+            if (shimmer_container != null){
+                shimmer_container.stopShimmerAnimation()
+                shimmer_container.visibility = View.VISIBLE
+            }
             upcomingMovies.removeAll(upcomingMovies)
             isLoading = false
             isLastPage = false
@@ -165,6 +171,36 @@ class UpcomingFragment : Fragment() {
 
     }
 
+    private fun loadAdsToList() {
+        try {
+            val nativeAdsManager = NativeAdsManager(activity!!, "YOUR_PLACEMENT_ID", 3)
+            nativeAdsManager.setListener(object : NativeAdsManager.Listener {
+                override fun onAdError(adError: AdError) {}
+
+                override fun onAdsLoaded() {
+                    try {
+                        while (lastAdPosition + ADS_PER_ITEMS < upcomingMovies.size) {
+                            val nextNativeAd = nativeAdsManager.nextNativeAd()
+                            lastAdPosition += ADS_PER_ITEMS
+                            upcomingMovies.add(lastAdPosition, nextNativeAd)
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                    viewAdapter.notifyDataSetChanged()
+                }
+            })
+            nativeAdsManager.loadAds()
+        } catch (e: Exception) {
+            val str = "TAG"
+            val stringBuilder = StringBuilder()
+            stringBuilder.append("loadAdsToList: ")
+            stringBuilder.append(e.toString())
+            Log.e(str, stringBuilder.toString())
+        }
+    }
+
+
     private fun loadFirstPage() {
         val call = callUpcomingMovies()
         call.enqueue(object : retrofit2.Callback<JsonB> {
@@ -174,8 +210,10 @@ class UpcomingFragment : Fragment() {
 
             override fun onResponse(p0: Call<JsonB>?, p1: Response<JsonB>?) {
 
-                shimmer_container.stopShimmerAnimation()
-                shimmer_container.visibility = View.GONE
+                if (shimmer_container != null){
+                    shimmer_container.stopShimmerAnimation()
+                    shimmer_container.visibility = View.GONE
+                }
 
                 val jsonB: JsonB? = p1?.body()!!
 
@@ -183,6 +221,9 @@ class UpcomingFragment : Fragment() {
                 upcomingMovies.clear()
                 for (item in jsonB.results) upcomingMovies.add(item)
                 viewAdapter.notifyDataSetChanged()
+
+                loadAdsToList()
+
                 isLoading = false
                 if(refresh_layout != null){
                     refresh_layout.isRefreshing = false
@@ -203,6 +244,9 @@ class UpcomingFragment : Fragment() {
                 val jsonB: JsonB = p1?.body()!!
                 for (item in jsonB.results) upcomingMovies.add(item)
                 viewAdapter.notifyDataSetChanged()
+
+                loadAdsToList()
+
                 isLoading = false
                 if(refresh_layout != null){
                     refresh_layout.isRefreshing = false
