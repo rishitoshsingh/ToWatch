@@ -64,6 +64,10 @@
     <string name="language">Language</string>
     <string name="save">Save</string>
     <string name="defaults">Defaults</string>
+    <string name="preferences">Preferences</string>
+    <string name="your_list">Your List</string>
+    <string name="about_us">About Us</string>
+    <string name="home">Home</string>
 
 
 </resources>

@@ -9,6 +9,7 @@
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowContentTransitions">true</item>
+
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -44,5 +45,21 @@
 
     <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog" />
 
+    <style name="CustomTheme" parent="MaterialDrawerTheme.Light.DarkToolbar">
+        <!-- ...and here we setting appcompat’s color theming attrs -->
+        <item name="colorPrimary">@color/material_drawer_primary</item>
+        <item name="colorPrimaryDark">@color/material_drawer_primary_dark</item>
+        <item name="colorAccent">@color/material_drawer_accent</item>
 
+        <!-- MaterialDrawer specific values -->
+        <item name="material_drawer_background">@color/colorAccent</item>
+        <item name="material_drawer_primary_text">@color/white</item>
+        <item name="material_drawer_primary_icon">@color/white</item>
+        <item name="material_drawer_secondary_text">@color/material_drawer_secondary_text</item>
+        <item name="material_drawer_hint_text">@color/material_drawer_hint_text</item>
+        <item name="material_drawer_divider">@color/material_drawer_divider</item>
+        <item name="material_drawer_selected">@color/material_drawer_selected</item>
+        <item name="material_drawer_selected_text">@color/md_blue_A700</item>
+        <item name="material_drawer_header_selection_text">@color/material_drawer_header_selection_text</item>
+    </style>
 </resources>

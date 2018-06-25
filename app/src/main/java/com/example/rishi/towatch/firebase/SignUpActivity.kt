@@ -1,5 +1,6 @@
 package com.example.rishi.towatch.firebase
 
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.drawable.TransitionDrawable
@@ -171,8 +172,7 @@ class SignUpActivity : AppCompatActivity() {
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 val account = task.getResult(ApiException::class.java)
-
-                mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+                mSharedPreferences = getSharedPreferences("Account", Context.MODE_PRIVATE)
                 mSharedPreferencesEditor = mSharedPreferences.edit()
                 mSharedPreferencesEditor.putBoolean("account", true)
                 mSharedPreferencesEditor.putString("GivenName", account.givenName)

@@ -26,6 +26,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import com.example.rishi.towatch.Fragments.BottomSheetFragment
+import com.example.rishi.towatch.Utils.CrossfadeDrawer
 import com.google.android.gms.ads.MobileAds
 
 
@@ -42,6 +43,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val window: Window = window
+        window.clearFlags(FLAG_TRANSLUCENT_STATUS)
+        window.addFlags(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        val context = this
+        object :CrossfadeDrawer(context,my_toolbar,context,savedInstanceState,0){
+            override fun showBottomSheetFragment() {
+                val bottomSheetFragment = BottomSheetFragment()
+                bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
+            }
+        }.getCrossfadeDrawer()
         MobileAds.initialize(this, "ca-app-pub-3940256099942544/1033173712")
 
         val sharedPreferences:SharedPreferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
@@ -56,10 +67,6 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(my_toolbar)
         val toolbar = supportActionBar
-
-        val window: Window = window
-        window.clearFlags(FLAG_TRANSLUCENT_STATUS)
-        window.addFlags(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
 
         val extras = intent.extras
         if (extras != null) {
@@ -111,16 +118,16 @@ class MainActivity : AppCompatActivity() {
 
         searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
-                menu.findItem(R.id.app_bar_profile).isVisible = false
+//                menu.findItem(R.id.app_bar_profile).isVisible = false
                 return true
             }
 
             override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
-                menu.findItem(R.id.app_bar_profile).isVisible = true
-                val fragment = supportFragmentManager.findFragmentById(R.id.mainView)
-                if (fragment != null) {
-                    supportFragmentManager.beginTransaction().remove(supportFragmentManager.findFragmentById(R.id.mainView)).commit()
-                }
+//                menu.findItem(R.id.app_bar_profile).isVisible = true
+//                val fragment = supportFragmentManager.findFragmentById(R.id.mainView)
+//                if (fragment != null) {
+//                    supportFragmentManager.beginTransaction().remove(supportFragmentManager.findFragmentById(R.id.mainView)).commit()
+//                }
                 return true
             }
 
@@ -147,28 +154,6 @@ class MainActivity : AppCompatActivity() {
 
         return true
 
-    }
-
-
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
-//            R.id.app_bar_search ->
-
-            R.id.app_bar_profile -> {
-                val intent = Intent(this, AccountActivity::class.java)
-                startActivity(intent)
-            }
-            R.id.app_bar_discover -> {
-                val intent = Intent(this, DiscoverActivity::class.java)
-                startActivity(intent)
-            }
-            R.id.app_bar_preferences -> {
-                val bottomSheetFragment = BottomSheetFragment()
-                bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
-            }
-            else -> return super.onOptionsItemSelected(item)
-        }
-        return super.onOptionsItemSelected(item)
     }
 
 }

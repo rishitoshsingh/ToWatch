@@ -1,5 +1,6 @@
 package com.example.rishi.towatch.Activities
 
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -40,7 +41,7 @@ class AccountActivity : AppCompatActivity() {
         val toolbar = supportActionBar
         toolbar?.title = "Account"
 
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        mSharedPreferences = getSharedPreferences("Account", Context.MODE_PRIVATE)
         toolbar?.title = "Welcome, " + mSharedPreferences.getString("GivenName","No One")
 
         val window: Window = window
@@ -60,6 +61,12 @@ class AccountActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.sign_out -> {
+
+
+                mSharedPreferences = getSharedPreferences("Account", Context.MODE_PRIVATE)
+                val editor = mSharedPreferences.edit()
+                editor.putBoolean("account", false)
+                editor.commit()
                 FirebaseAuth.getInstance().signOut()
                 finish()
             }
