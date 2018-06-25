@@ -27,6 +27,9 @@ import retrofit2.Callback
 import retrofit2.Response
 import com.example.rishi.towatch.Fragments.BottomSheetFragment
 import com.example.rishi.towatch.Utils.CrossfadeDrawer
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.InterstitialAd
 import com.google.android.gms.ads.MobileAds
 
 
@@ -35,8 +38,7 @@ class MainActivity : AppCompatActivity() {
     private var actionSearchView: android.support.v7.widget.SearchView? = null
     private lateinit var searchMenuItem:MenuItem
     private lateinit var mSharedPreferences: SharedPreferences
-
-
+    private lateinit var mInterstitialAd: InterstitialAd
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,6 +56,9 @@ class MainActivity : AppCompatActivity() {
             }
         }.getCrossfadeDrawer()
         MobileAds.initialize(this, "ca-app-pub-3940256099942544/1033173712")
+        mInterstitialAd = InterstitialAd(this)
+        mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712"
+        mInterstitialAd.loadAd(AdRequest.Builder().build())
 
         val sharedPreferences:SharedPreferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
         if (!sharedPreferences.contains("firstTime")){
@@ -92,15 +97,12 @@ class MainActivity : AppCompatActivity() {
                         temp1 = temp1.replace("trailer","*",true)
                         temp1 = temp1.replace("|","*",true)
                         temp1 = temp1.replace("#","*",true)
+                        temp1 = temp1.replace("movie","*",true)
                         return temp1.split("*")[0].trim()
                     }
                 })
-            } catch ( ex:Exception) {
-
-            }
-
+            } catch ( ex:Exception) { }
         }
-
 
         viewPager.adapter = HomeAdapter(this, supportFragmentManager)
         tabLayout.setupWithViewPager(viewPager)
@@ -117,20 +119,20 @@ class MainActivity : AppCompatActivity() {
         actionSearchView = searchItem.actionView as android.support.v7.widget.SearchView
 
         searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
-//                menu.findItem(R.id.app_bar_profile).isVisible = false
-                return true
-            }
-
+            override fun onMenuItemActionExpand(item: MenuItem?): Boolean { return true }
             override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
-//                menu.findItem(R.id.app_bar_profile).isVisible = true
-//                val fragment = supportFragmentManager.findFragmentById(R.id.mainView)
-//                if (fragment != null) {
-//                    supportFragmentManager.beginTransaction().remove(supportFragmentManager.findFragmentById(R.id.mainView)).commit()
-//                }
+                val sharedPreferences = getSharedPreferences("Interstitial", Context.MODE_PRIVATE)
+                val editor = sharedPreferences.edit()
+                editor.putInt("KeyEvents", 2)
+                editor.commit()
+                mInterstitialAd.adListener = object : AdListener() {
+                    override fun onAdClosed() {
+                        mInterstitialAd.loadAd(AdRequest.Builder().build())
+                    }
+                }
+                if (mInterstitialAd.isLoaded) mInterstitialAd.show()
                 return true
             }
-
         })
 
         actionSearchView?.setOnQueryTextListener(object : android.support.v7.widget.SearchView.OnQueryTextListener {

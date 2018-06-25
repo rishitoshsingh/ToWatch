@@ -58,7 +58,7 @@ class SearchFragment : Fragment() {
     private var searchQuery:String = ""
 
     private var lastAdPosition: Int = -1
-    private val ADS_PER_ITEMS: Int = 9
+    private val ADS_PER_ITEMS: Int = 5
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
