@@ -18,25 +18,25 @@ import com.example.rishi.towatch.Adapters.HomeAdapter
 import com.example.rishi.towatch.Api.Clients.YouTubeClient
 import com.example.rishi.towatch.Api.ServiceGenerator
 import com.example.rishi.towatch.BuildConfig
+import com.example.rishi.towatch.Fragments.BottomSheetFragment
 import com.example.rishi.towatch.Fragments.SearchFragment
 import com.example.rishi.towatch.POJOs.YouTube.YouTubeVideo
 import com.example.rishi.towatch.R
-import kotlinx.android.synthetic.main.activity_main.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import com.example.rishi.towatch.Fragments.BottomSheetFragment
 import com.example.rishi.towatch.Utils.CrossfadeDrawer
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.InterstitialAd
 import com.google.android.gms.ads.MobileAds
+import kotlinx.android.synthetic.main.activity_main.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class MainActivity : AppCompatActivity() {
 
     private var actionSearchView: android.support.v7.widget.SearchView? = null
-    private lateinit var searchMenuItem:MenuItem
+    private lateinit var searchMenuItem: MenuItem
     private lateinit var mSharedPreferences: SharedPreferences
     private lateinit var mInterstitialAd: InterstitialAd
 
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         window.clearFlags(FLAG_TRANSLUCENT_STATUS)
         window.addFlags(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         val context = this
-        object :CrossfadeDrawer(context,my_toolbar,context,savedInstanceState,0){
+        val drawer = object : CrossfadeDrawer(context, my_toolbar, context, savedInstanceState, 0) {
             override fun showBottomSheetFragment() {
                 val bottomSheetFragment = BottomSheetFragment()
                 bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
@@ -60,15 +60,21 @@ class MainActivity : AppCompatActivity() {
         mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712"
         mInterstitialAd.loadAd(AdRequest.Builder().build())
 
-        val sharedPreferences:SharedPreferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
-        if (!sharedPreferences.contains("firstTime")){
-            Toast.makeText(this,"Welcome toWatch",Toast.LENGTH_LONG).show()
-            val sharedPreferenceEditor:SharedPreferences.Editor = sharedPreferences.edit()
-            sharedPreferenceEditor.putBoolean("firstTime",false)
-            sharedPreferenceEditor.putString("region","US")
-            sharedPreferenceEditor.putString("language","en-US")
+        val sharedPreferences: SharedPreferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+        if (!sharedPreferences.contains("firstTime")) {
+            Toast.makeText(this, "Welcome toWatch", Toast.LENGTH_LONG).show()
+            val sharedPreferenceEditor: SharedPreferences.Editor = sharedPreferences.edit()
+//            sharedPreferenceEditor.putBoolean("firstTime", true)
+            sharedPreferenceEditor.putString("region", "US")
+            sharedPreferenceEditor.putString("language", "en-US")
             sharedPreferenceEditor.commit()
         }
+        val firstTime = sharedPreferences.getBoolean("firstTime",true)
+        if (firstTime){
+            val intent = Intent(this,WelcomeActivity::class.java)
+            startActivity(intent)
+        }
+
 
         setSupportActionBar(my_toolbar)
         val toolbar = supportActionBar
@@ -88,20 +94,21 @@ class MainActivity : AppCompatActivity() {
                     override fun onResponse(call: Call<YouTubeVideo>?, response: Response<YouTubeVideo>?) {
                         val videoTitle: String = response?.body()?.items!![0].snippet.title
                         searchMenuItem.expandActionView()
-                        actionSearchView?.setQuery(modifyTitle(videoTitle),true)
+                        actionSearchView?.setQuery(modifyTitle(videoTitle), true)
                     }
 
                     private fun modifyTitle(title: String): String {
 //                    val temp1 = title.split("official",true,0)[0]
-                        var temp1 = title.replace("official","*",true)
-                        temp1 = temp1.replace("trailer","*",true)
-                        temp1 = temp1.replace("|","*",true)
-                        temp1 = temp1.replace("#","*",true)
-                        temp1 = temp1.replace("movie","*",true)
+                        var temp1 = title.replace("official", "*", true)
+                        temp1 = temp1.replace("trailer", "*", true)
+                        temp1 = temp1.replace("|", "*", true)
+                        temp1 = temp1.replace("#", "*", true)
+                        temp1 = temp1.replace("movie", "*", true)
                         return temp1.split("*")[0].trim()
                     }
                 })
-            } catch ( ex:Exception) { }
+            } catch (ex: Exception) {
+            }
         }
 
         viewPager.adapter = HomeAdapter(this, supportFragmentManager)
@@ -119,7 +126,10 @@ class MainActivity : AppCompatActivity() {
         actionSearchView = searchItem.actionView as android.support.v7.widget.SearchView
 
         searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-            override fun onMenuItemActionExpand(item: MenuItem?): Boolean { return true }
+            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                return true
+            }
+
             override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
                 val sharedPreferences = getSharedPreferences("Interstitial", Context.MODE_PRIVATE)
                 val editor = sharedPreferences.edit()

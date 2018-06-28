@@ -68,6 +68,14 @@
     <string name="your_list">Your List</string>
     <string name="about_us">About Us</string>
     <string name="home">Home</string>
+    <string name="slide_1_title">Navigation Menu</string>
+    <string name="slide_1_desc">Swipe from Left for Navigation Menu</string>
+    <string name="slide_2_title">Three Dots Menu</string>
+    <string name="slide_2_desc">The Three Dots will popup a Menu</string>
+    <string name="slide_3_title">YouTube Share</string>
+    <string name="slide_4_desc">Share any movie trailer or clip to ToWatch for movie\'s information.</string>
+    <string name="next">Next</string>
+    <string name="start">Start</string>
 
 
 </resources>

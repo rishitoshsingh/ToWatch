@@ -91,8 +91,8 @@ abstract class CrossfadeDrawer(context: Context, toolbar: Toolbar, activity: Act
                     .withNameShown(true)
         } else {
             profile = ProfileDrawerItem()
-                    .withName(displayName)
-                    .withEmail(email)
+                    .withName("Log In")
+                    .withEmail("")
                     .withIcon(R.drawable.ic_account_circle_white_48dp)
                     .withNameShown(true)
         }
