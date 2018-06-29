@@ -31,7 +31,7 @@ class WelcomeActivity : AppCompatActivity() {
 
         // layouts of all welcome sliders
         // add few more layouts if you want
-        layouts = intArrayOf(R.layout.welcome_slide1, R.layout.welcome_slide2, R.layout.welcome_slide3)
+        layouts = intArrayOf(R.layout.welcome_slide1, R.layout.welcome_slide2, R.layout.welcome_slide3,R.layout.welcome_slide4)
 
         // adding bottom dots
         addBottomDots(0)
