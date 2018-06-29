@@ -38,11 +38,11 @@
         android:paddingStart="@dimen/activity_margin">
 
         <RelativeLayout
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
             android:padding="8dp">
 
             <CheckBox
@@ -76,11 +76,11 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
             android:padding="8dp">
 
             <CheckBox
@@ -112,11 +112,11 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
             android:padding="8dp">
 
             <CheckBox
@@ -147,11 +147,11 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
             android:padding="8dp">
 
             <CheckBox
@@ -183,11 +183,11 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
             android:padding="8dp">
 
             <CheckBox
@@ -219,12 +219,13 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:padding="8dp">
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="8dp"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/textView"
@@ -248,10 +249,10 @@
     </LinearLayout>
 
     <Button
-        android:layout_margin="8dp"
         android:id="@+id/discoverButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="8dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/pill_button"
         android:clickable="true"
