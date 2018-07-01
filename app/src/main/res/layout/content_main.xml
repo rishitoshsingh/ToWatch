@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.rishi.towatch.Activities.DiscoverActivity"
+    tools:context="com.alphae.rishi.towatch.Activities.DiscoverActivity"
     tools:showIn="@layout/activity_discover">
 
     <Button

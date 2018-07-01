@@ -12,7 +12,7 @@ apply plugin: 'com.google.gms.google-services'
 android {
     compileSdkVersion 27
     defaultConfig {
-        applicationId "com.example.rishi.towatch"
+        applicationId "com.alphae.rishi.towatch"
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 1

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingTop="50dp"
-    tools:context="com.example.rishi.towatch.firebase.SignUpActivity">
+    tools:context="com.alphae.rishi.towatch.firebase.SignUpActivity">
 
     <RelativeLayout
         android:layout_width="300dp"

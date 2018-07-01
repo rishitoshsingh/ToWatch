@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context="com.example.rishi.towatch.Activities.AccountActivity">
+    tools:context="com.alphae.rishi.towatch.Activities.AccountActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/account_toolbar"
