@@ -19,6 +19,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.example.rishi.towatch.Activities.MovieDetailsActivity
+import com.example.rishi.towatch.BuildConfig
 import com.example.rishi.towatch.POJOs.Tmdb.Result
 import com.example.rishi.towatch.R
 import com.facebook.ads.*
@@ -43,7 +44,8 @@ abstract class MovieAdapter(context: Context, moviesPassed: ArrayList<kotlin.Any
 
     init {
         mInterstitialAd = InterstitialAd(mContext)
-        mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712"
+//        mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712"
+        mInterstitialAd.adUnitId = BuildConfig.AdmobInterstitial
         mInterstitialAd.loadAd(AdRequest.Builder().build())
     }
 

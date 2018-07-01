@@ -17,10 +17,9 @@ import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.graphics.Palette
 import android.util.Log
-import android.view.Gravity
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
@@ -46,10 +45,7 @@ import com.example.rishi.towatch.POJOs.TmdbMovie.MovieImage
 import com.example.rishi.towatch.POJOs.TmdbMovie.VideoResults
 import com.example.rishi.towatch.R
 import com.example.rishi.towatch.TmdbApi.TmdbApiClient
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdSize
-import com.google.android.gms.ads.AdView
-import com.google.android.gms.ads.InterstitialAd
+import com.facebook.ads.*
 import com.google.android.youtube.player.YouTubeInitializationResult
 import com.google.android.youtube.player.YouTubePlayer
 import com.google.android.youtube.player.YouTubePlayerFragment
@@ -86,7 +82,7 @@ class MovieDetailsActivity : AppCompatActivity() {
     private lateinit var externalIds: ExternalIds
 
     lateinit var mPalette: Palette
-
+    private lateinit var nativeAd: NativeAd
     @SuppressLint("RestrictedApi")
 
 
@@ -94,7 +90,7 @@ class MovieDetailsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_details)
 
-        adView.loadAd(AdRequest.Builder().build())
+
 
         setSupportActionBar(toolbar)
         mToolbar = supportActionBar
@@ -105,6 +101,8 @@ class MovieDetailsActivity : AppCompatActivity() {
 //        window.addFlags(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
 
         watchDatabase = WatchDatabase.getInstance(this)!!
+
+        if (native_ad_container.childCount != 1) loadNativeAd()
 
         youTubePlayerFragment = fragmentManager.findFragmentById(R.id.youtubeFragment) as YouTubePlayerFragment
         youTubePlayerFragment.initialize(BuildConfig.YoutubeApiKey, object : YouTubePlayer.OnInitializedListener {
@@ -651,4 +649,68 @@ class MovieDetailsActivity : AppCompatActivity() {
             }
         }
     }
+
+
+    private fun loadNativeAd() {
+
+//        nativeAd = NativeAd(this, "YOUR_PLACEMENT_ID")
+        try {
+            nativeAd = NativeAd(this, BuildConfig.FanNativeDetails)
+            nativeAd.setAdListener(object : NativeAdListener {
+                override fun onMediaDownloaded(p0: Ad?) {}
+                override fun onAdClicked(p0: Ad?) {}
+                override fun onError(p0: Ad?, p1: AdError?) {}
+                override fun onLoggingImpression(p0: Ad?) {}
+                override fun onAdLoaded(p0: Ad?) {
+                    if (nativeAd == null || nativeAd != p0) {
+                        return
+                    }
+                    inflateAd(nativeAd)
+                }
+            })
+            nativeAd.loadAd()
+        } catch (ex: Exception) {
+        }
+
+    }
+
+    private fun inflateAd(nativeAd: NativeAd) {
+
+        nativeAd.unregisterView()
+
+        // Add the Ad view into the ad container.
+        val nativeAdContainer = findViewById<LinearLayout>(R.id.native_ad_container)
+        val inflater: LayoutInflater = LayoutInflater.from(this)
+        // Inflate the Ad view.  The layout referenced should be the one you created in the last step.
+        val adView = inflater.inflate(R.layout.item_native_ad, nativeAdContainer, false)
+        nativeAdContainer.addView(adView)
+
+        val adImage = adView.findViewById<AdIconView>(R.id.adImage)
+        val tvAdTitle = adView.findViewById<TextView>(R.id.tvAdTitle)
+        val tvAdHeadline = adView.findViewById<TextView>(R.id.tvAdHeadline)
+        val tvAdBody = adView.findViewById<TextView>(R.id.tvAdBody)
+        val btnCTA = adView.findViewById<Button>(R.id.btnCTA)
+        val adChoicesContainer = adView.findViewById<LinearLayout>(R.id.adChoicesContainer)
+        val mediaView = adView.findViewById<MediaView>(R.id.mediaView)
+        val socialContext = adView.findViewById<TextView>(R.id.social_context)
+        val sponsored = adView.findViewById<TextView>(R.id.sponsored_label)
+        tvAdTitle.text = nativeAd.advertiserName
+        tvAdHeadline.text = nativeAd.adHeadline
+        tvAdBody.text = nativeAd.adBodyText
+        sponsored.text = nativeAd.sponsoredTranslation
+        socialContext.text = nativeAd.adSocialContext
+        nativeAd.registerViewForInteraction(
+                adView,
+                mediaView,
+                adImage,
+                Arrays.asList(btnCTA, mediaView, tvAdTitle))
+        btnCTA.text = nativeAd.adCallToAction
+        if (adChoicesContainer.childCount != 1) {
+            val adChoicesView = AdChoicesView(this, nativeAd, true)
+            adChoicesContainer.addView(adChoicesView)
+        }
+
+    }
+
+
 }

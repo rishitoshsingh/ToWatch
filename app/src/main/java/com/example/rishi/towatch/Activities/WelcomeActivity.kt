@@ -2,6 +2,7 @@ package com.example.rishi.towatch.Activities
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
@@ -11,6 +12,10 @@ import android.view.*
 import android.widget.TextView
 import com.example.rishi.towatch.R
 import kotlinx.android.synthetic.main.activity_welcome.*
+import android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+import android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+
+
 
 
 class WelcomeActivity : AppCompatActivity() {
@@ -25,10 +30,9 @@ class WelcomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_welcome)
 
-        val window: Window = window
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-
+        window.statusBarColor = Color.TRANSPARENT
         // layouts of all welcome sliders
         // add few more layouts if you want
         layouts = intArrayOf(R.layout.welcome_slide1, R.layout.welcome_slide2, R.layout.welcome_slide3,R.layout.welcome_slide4)

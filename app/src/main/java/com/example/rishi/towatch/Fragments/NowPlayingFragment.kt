@@ -185,7 +185,8 @@ class NowPlayingFragment : Fragment() {
 
     private fun loadAdsToList() {
         try {
-            val nativeAdsManager = NativeAdsManager(activity!!, "YOUR_PLACEMENT_ID", 2)
+//            val nativeAdsManager = NativeAdsManager(activity!!, "YOUR_PLACEMENT_ID", 2)
+            val nativeAdsManager = NativeAdsManager(activity!!, BuildConfig.FanNative, 2)
             nativeAdsManager.setListener(object : NativeAdsManager.Listener {
                 override fun onAdError(adError: AdError) {
                 }

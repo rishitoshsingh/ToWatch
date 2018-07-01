@@ -20,6 +20,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.example.rishi.towatch.Activities.MovieDetailsActivity
+import com.example.rishi.towatch.BuildConfig
 import com.example.rishi.towatch.POJOs.TmdbCollection.Part
 import com.example.rishi.towatch.R
 import com.google.android.gms.ads.AdListener
@@ -39,7 +40,8 @@ abstract class CollectionAdapter(context: Context, moviesPassed: ArrayList<Part>
 
     init {
         mInterstitialAd = InterstitialAd(mContext)
-        mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712"
+//        mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712"
+        mInterstitialAd.adUnitId = BuildConfig.AdmobInterstitial
         mInterstitialAd.loadAd(AdRequest.Builder().build())
     }
 
@@ -116,31 +118,25 @@ abstract class CollectionAdapter(context: Context, moviesPassed: ArrayList<Part>
             }
         }
 
-        holder.threeDotMenu.setOnClickListener(object : View.OnClickListener {
-            override fun onClick(v: View?) {
-                val popup = PopupMenu(mContext, holder.threeDotMenu)
-                popup.inflate(R.menu.card_menu)
-                popup.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
-                    override fun onMenuItemClick(item: MenuItem?): Boolean {
-                        when (item!!.itemId) {
-                            R.id.addMovie -> {
-                                addMovie(movie)
-                            }
-                            R.id.removeMovie -> {
-                                removeMovie(movie)
-                            }
-                            R.id.watchedMovie -> {
-                                watchedMovie(movie)
-                            }
-                        }
-                        return false
+        holder.threeDotMenu.setOnClickListener {
+            val popup = PopupMenu(mContext, holder.threeDotMenu)
+            popup.inflate(R.menu.card_menu)
+            popup.setOnMenuItemClickListener { item ->
+                when (item!!.itemId) {
+                    R.id.addMovie -> {
+                        addMovie(movie)
                     }
-
-                })
-                popup.show()
+                    R.id.removeMovie -> {
+                        removeMovie(movie)
+                    }
+                    R.id.watchedMovie -> {
+                        watchedMovie(movie)
+                    }
+                }
+                false
             }
-
-        })
+            popup.show()
+        }
 
     }
 

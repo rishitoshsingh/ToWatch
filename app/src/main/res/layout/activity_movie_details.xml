@@ -544,23 +544,29 @@
                 android:layout_marginStart="8dp"
                 android:background="@color/colorPrimaryLight" />
 
-            <RelativeLayout
+            <LinearLayout
+                android:id="@+id/native_ad_container"
                 android:layout_width="match_parent"
-                android:minWidth="320dp"
-                android:layout_marginBottom="2dp"
-                android:layout_marginTop="2dp"
-                android:layout_height="100dp">
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
 
-                <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/adView"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    ads:adSize="LARGE_BANNER"
-                    ads:adUnitId="ca-app-pub-3940256099942544/6300978111" />
+            <!--<RelativeLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:minWidth="300dp"-->
+                <!--android:layout_marginBottom="2dp"-->
+                <!--android:layout_marginTop="2dp"-->
+                <!--android:layout_height="250dp">-->
 
-            </RelativeLayout>
+                <!--<com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"-->
+                    <!--android:id="@+id/adView"-->
+                    <!--android:layout_centerHorizontal="true"-->
+                    <!--android:layout_centerVertical="true"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--ads:adSize="MEDIUM_RECTANGLE"-->
+                    <!--ads:adUnitId="ca-app-pub-9914032848232792/8274618643" />-->
+
+            <!--</RelativeLayout>-->
 
             <View
                 android:id="@+id/belowBannerAd"

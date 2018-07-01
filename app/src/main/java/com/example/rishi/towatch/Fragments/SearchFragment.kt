@@ -190,7 +190,8 @@ class SearchFragment : Fragment() {
 
     private fun loadAdsToList() {
         try {
-            val nativeAdsManager = NativeAdsManager(activity!!, "YOUR_PLACEMENT_ID", 2)
+//            val nativeAdsManager = NativeAdsManager(activity!!, "YOUR_PLACEMENT_ID", 2)
+            val nativeAdsManager = NativeAdsManager(activity!!, BuildConfig.FanNative, 5)
             nativeAdsManager.setListener(object : NativeAdsManager.Listener {
                 override fun onAdError(adError: AdError) {
                 }

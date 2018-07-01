@@ -20,6 +20,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.example.rishi.towatch.Activities.MovieDetailsActivity
+import com.example.rishi.towatch.BuildConfig
 import com.example.rishi.towatch.Database.WatchedList
 import com.example.rishi.towatch.R
 import com.google.android.gms.ads.AdListener
@@ -39,7 +40,8 @@ abstract class WatchedAdapter(context: Context, moviesPassed: List<WatchedList>)
 
     init {
         mInterstitialAd = InterstitialAd(mContext)
-        mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712"
+//        mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712"
+        mInterstitialAd.adUnitId = BuildConfig.AdmobInterstitial
         mInterstitialAd.loadAd(AdRequest.Builder().build())
     }
 

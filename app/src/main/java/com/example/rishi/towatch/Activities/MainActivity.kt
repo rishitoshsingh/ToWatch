@@ -3,6 +3,7 @@ package com.example.rishi.towatch.Activities
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -48,6 +49,7 @@ class MainActivity : AppCompatActivity() {
         val window: Window = window
         window.clearFlags(FLAG_TRANSLUCENT_STATUS)
         window.addFlags(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.statusBarColor = resources.getColor(R.color.colorPrimary)
         val context = this
         val drawer = object : CrossfadeDrawer(context, my_toolbar, context, savedInstanceState, 0) {
             override fun showBottomSheetFragment() {
@@ -55,9 +57,10 @@ class MainActivity : AppCompatActivity() {
                 bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
             }
         }.getCrossfadeDrawer()
-        MobileAds.initialize(this, "ca-app-pub-3940256099942544/1033173712")
+//        MobileAds.initialize(this, "ca-app-pub-3940256099942544/1033173712")
+        MobileAds.initialize(this, BuildConfig.AdmobInterstitial)
         mInterstitialAd = InterstitialAd(this)
-        mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712"
+        mInterstitialAd.adUnitId = BuildConfig.AdmobInterstitial
         mInterstitialAd.loadAd(AdRequest.Builder().build())
 
         val sharedPreferences: SharedPreferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
