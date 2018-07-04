@@ -15,8 +15,8 @@ android {
         applicationId "com.alphae.rishi.towatch"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 4
-        versionName "1.0r"
+        versionCode 5
+        versionName "1.01-release"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

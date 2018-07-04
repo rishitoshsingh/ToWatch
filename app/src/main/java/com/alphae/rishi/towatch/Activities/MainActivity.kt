@@ -3,6 +3,7 @@ package com.alphae.rishi.towatch.Activities
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -13,6 +14,8 @@ import android.view.MenuItem
 import android.view.Window
 import android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
 import android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Toast
 import com.alphae.rishi.towatch.Adapters.HomeAdapter
 import com.alphae.rishi.towatch.Api.Clients.YouTubeClient
@@ -66,9 +69,9 @@ class MainActivity : AppCompatActivity() {
             sharedPreferenceEditor.putString("language", "en-US")
             sharedPreferenceEditor.commit()
         }
-        val firstTime = sharedPreferences.getBoolean("firstTime",true)
-        if (firstTime){
-            val intent = Intent(this,WelcomeActivity::class.java)
+        val firstTime = sharedPreferences.getBoolean("firstTime", true)
+        if (firstTime) {
+            val intent = Intent(this, WelcomeActivity::class.java)
             startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
         }
         val drawer = object : CrossfadeDrawer(context, my_toolbar, context, savedInstanceState, 0) {
@@ -127,7 +130,11 @@ class MainActivity : AppCompatActivity() {
         val searchItem = menu?.findItem(R.id.app_bar_search)
         searchMenuItem = searchItem!!
         actionSearchView = searchItem.actionView as android.support.v7.widget.SearchView
-
+        val searchEditText = actionSearchView!!.findViewById<EditText>(android.support.v7.appcompat.R.id.search_src_text) as (EditText)
+        searchEditText.setTextColor(getResources().getColor(R.color.accent))
+        val searchClose = actionSearchView!!.findViewById(android.support.v7.appcompat.R.id.search_close_btn) as ImageView
+        searchClose.setColorFilter(resources.getColor(R.color.accent))
+        searchClose.setAlpha(255)
         searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
                 return true

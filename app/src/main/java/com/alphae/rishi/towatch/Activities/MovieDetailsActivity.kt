@@ -287,6 +287,14 @@ class MovieDetailsActivity : AppCompatActivity() {
         if (youTubePlayer != null) {
             youTubePlayer!!.cueVideo(videoId)
             youTubePlayer!!.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT)
+            youTubePlayer!!.setOnFullscreenListener {
+                if (it){
+                    this@MovieDetailsActivity.onPause()
+                } else {
+                    this@MovieDetailsActivity.onResume()
+                }
+
+            }
         }
     }
 
@@ -311,6 +319,10 @@ class MovieDetailsActivity : AppCompatActivity() {
                     previousVideoButton.isEnabled = false
                     nextVideoButton.isEnabled = false
                 } else {
+                    if (VideoResult!!.size == 1) {
+                        previousVideoButton.visibility = View.GONE
+                        nextVideoButton.visibility = View.GONE
+                    }
                     playVideo(VideoResult?.get(0)?.key!!)
                 }
             }
