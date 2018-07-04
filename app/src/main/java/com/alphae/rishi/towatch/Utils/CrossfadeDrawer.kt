@@ -55,20 +55,20 @@ abstract class CrossfadeDrawer(context: Context, toolbar: Toolbar, activity: Act
     var item2 = PrimaryDrawerItem().withIdentifier(2).withName(R.string.discover).withSelectable(false).withIcon(R.drawable.baseline_weekend_white_48dp).withIconTintingEnabled(true)
     var item3 = PrimaryDrawerItem().withIdentifier(3).withName(R.string.your_list).withSelectable(false).withIcon(R.drawable.ic_list_white_48dp).withIconTintingEnabled(true)
     var item4 = PrimaryDrawerItem().withIdentifier(4).withName(R.string.preferences).withSelectable(false).withIcon(R.drawable.ic_settings_white_48dp).withIconTintingEnabled(true)
-    var item5 = PrimaryDrawerItem().withIdentifier(5).withName(R.string.about_us).withSelectable(false).withIcon(R.drawable.ic_work_white_48dp).withIconTintingEnabled(true)
+    var item5 = PrimaryDrawerItem().withIdentifier(5).withName(R.string.more_apps).withSelectable(false).withIcon(R.drawable.ic_work_white_48dp).withIconTintingEnabled(true)
 
     fun getCrossfadeDrawer() {
 
-        val backdrops = arrayOf(R.drawable.backdrop_one, R.drawable.backdrop_two, R.drawable.backdrop_three)
-        val item = rand.nextInt(2)
         DrawerImageLoader.init(object : AbstractDrawerImageLoader() {
             override fun set(imageView: ImageView?, uri: Uri?, placeholder: Drawable?) {
-                Picasso.with(imageView?.getContext()).load(uri).placeholder(placeholder).into(imageView)
+//                Picasso.with(imageView?.getContext()).load(uri).placeholder(placeholder).into(imageView)
+                Picasso.get().load(uri).placeholder(placeholder!!).into(imageView)
                 super.set(imageView, uri, placeholder)
             }
 
             override fun cancel(imageView: ImageView?) {
-                Picasso.with(imageView?.getContext()).cancelRequest(imageView)
+//                Picasso.with(imageView?.getContext()).cancelRequest(imageView)
+                Picasso.get().cancelRequest(imageView!!)
                 super.cancel(imageView)
             }
         })
@@ -137,6 +137,9 @@ abstract class CrossfadeDrawer(context: Context, toolbar: Toolbar, activity: Act
                             mContext.startActivity(intent)
                         } else if (drawerItem.identifier == 4.toLong()) {
                             showBottomSheetFragment()
+                        } else if (drawerItem.identifier == 5.toLong()) {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/developer?id=AlphaE"))
+                            mContext.startActivity(intent)
                         }
 //                        else if (drawerItem.identifier == 4.toLong())    intent = Intent(mContext,DiscoverActivity::class.java)
                     }
@@ -146,6 +149,7 @@ abstract class CrossfadeDrawer(context: Context, toolbar: Toolbar, activity: Act
                 .withSelectedItem(mSelected)
                 .withAccountHeader(headerResult)
                 .build()
+
 
 //define maxDrawerWidth (this is the width in the complete opened state)
         mCrossfadeDrawerLayout.setMaxWidthPx(DrawerUIUtils.getOptimalDrawerWidth(mContext))
@@ -174,6 +178,7 @@ abstract class CrossfadeDrawer(context: Context, toolbar: Toolbar, activity: Act
 
             }
         })
+        result.drawerLayout.openDrawer(GravityCompat.START)
     }
     abstract fun showBottomSheetFragment()
 }

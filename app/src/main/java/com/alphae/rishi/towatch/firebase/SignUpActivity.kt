@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import com.alphae.rishi.towatch.Activities.MainActivity
 import com.alphae.rishi.towatch.R
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -83,70 +84,7 @@ class SignUpActivity : AppCompatActivity() {
         colorChangeHandler.post(colorChangingRunnable)
 //
 
-
         mAuth = FirebaseAuth.getInstance()
-        register.setOnClickListener {
-
-            val email = email.text.toString()
-            val password = password.text.toString()
-
-            if (email == "") {
-                Snackbar.make(signInContainer, "Enter Email ID", Snackbar.LENGTH_SHORT).show()
-                return@setOnClickListener
-            } else if (password == "") {
-                Snackbar.make(signInContainer, "Enter Password", Snackbar.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-
-            mAuth?.createUserWithEmailAndPassword(email, password)
-                    ?.addOnCompleteListener(this) { task ->
-                        if (task.isSuccessful) {
-                            Log.d("CreateUser", "createUserWithEmail:success")
-                            val user = mAuth?.getCurrentUser()
-                            Snackbar.make(signInContainer, "Registered", Snackbar.LENGTH_SHORT).show()
-                            finish()
-                        } else {
-                            Log.w("CreateUser", "createUserWithEmail:failure", task.getException())
-                            Snackbar.make(signInContainer, "Registration Unsuccessful", Snackbar.LENGTH_SHORT).show()
-                        }
-                    }
-        }
-
-        log_in.setOnClickListener {
-
-            val email = email.text.toString()
-            val password = password.text.toString()
-
-            if (email == "") {
-                Snackbar.make(signInContainer, "Enter Email ID", Snackbar.LENGTH_SHORT).show()
-                return@setOnClickListener
-            } else if (password == "") {
-                Snackbar.make(signInContainer, "Enter Password", Snackbar.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            mAuth?.signInWithEmailAndPassword(email, password)
-                    ?.addOnCompleteListener(this) { task ->
-                        if (task.isSuccessful) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("onCompleteListner", "signInWithEmail:success")
-                            val user = mAuth?.getCurrentUser()
-                            Snackbar.make(signInContainer, "Login Successful", Snackbar.LENGTH_SHORT).show()
-                            finish()
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w("onCompleteListner", "signInWithEmail:failure", task.exception)
-                            Snackbar.make(signInContainer, "Login Unsuccessful", Snackbar.LENGTH_SHORT).show()
-
-                        }
-                    }
-        }
-
-        forgot.setOnClickListener {
-            Snackbar.make(signInContainer, "Currently this feature is not available", Snackbar.LENGTH_SHORT).show()
-//            TODO("Forgot Password")
-        }
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -191,7 +129,13 @@ class SignUpActivity : AppCompatActivity() {
         mAuth?.signInWithCredential(credential)
                 ?.addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        finish()
+                        val sharedPreferences: SharedPreferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+                        val editor = sharedPreferences.edit()
+                        editor.putBoolean("firstTime",false)
+                        editor.commit()
+                        val intent = Intent(this,MainActivity::class.java)
+                        startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+//                            finish()
                     } else {
                         Log.w("TAG", "signInWithCredential:failure", task.exception)
                         Toast.makeText(this, "Failed", Toast.LENGTH_LONG).show()

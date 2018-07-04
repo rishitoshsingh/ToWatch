@@ -1,6 +1,7 @@
 package com.alphae.rishi.towatch.Activities
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
@@ -11,6 +12,7 @@ import android.text.Html
 import android.view.*
 import android.widget.TextView
 import com.alphae.rishi.towatch.R
+import com.alphae.rishi.towatch.firebase.SignUpActivity
 import kotlinx.android.synthetic.main.activity_welcome.*
 
 
@@ -47,11 +49,8 @@ class WelcomeActivity : AppCompatActivity() {
                 // move to next screen
                 view_pager.currentItem = current
             } else {
-
-                val sharedPreferences: SharedPreferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
-                val editor = sharedPreferences.edit()
-                editor.putBoolean("firstTime",false)
-                editor.commit()
+                val intent = Intent(this,SignUpActivity::class.java)
+                startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
                 finish()
             }
         }

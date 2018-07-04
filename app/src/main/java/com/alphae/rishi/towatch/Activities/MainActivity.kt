@@ -50,12 +50,7 @@ class MainActivity : AppCompatActivity() {
         window.addFlags(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.statusBarColor = resources.getColor(R.color.colorPrimary)
         val context = this
-        val drawer = object : CrossfadeDrawer(context, my_toolbar, context, savedInstanceState, 0) {
-            override fun showBottomSheetFragment() {
-                val bottomSheetFragment = BottomSheetFragment()
-                bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
-            }
-        }.getCrossfadeDrawer()
+
 //        MobileAds.initialize(this, "ca-app-pub-3940256099942544/1033173712")
         MobileAds.initialize(this, BuildConfig.AdmobInterstitial)
         mInterstitialAd = InterstitialAd(this)
@@ -74,8 +69,14 @@ class MainActivity : AppCompatActivity() {
         val firstTime = sharedPreferences.getBoolean("firstTime",true)
         if (firstTime){
             val intent = Intent(this,WelcomeActivity::class.java)
-            startActivity(intent)
+            startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
         }
+        val drawer = object : CrossfadeDrawer(context, my_toolbar, context, savedInstanceState, 0) {
+            override fun showBottomSheetFragment() {
+                val bottomSheetFragment = BottomSheetFragment()
+                bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
+            }
+        }.getCrossfadeDrawer()
 
 
         setSupportActionBar(my_toolbar)

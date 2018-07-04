@@ -22,12 +22,6 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.Target
 import com.alphae.rishi.towatch.Adapters.CompaniesAdapter
 import com.alphae.rishi.towatch.Adapters.SlidingImageAdapter
 import com.alphae.rishi.towatch.Api.ServiceGenerator
@@ -45,6 +39,12 @@ import com.alphae.rishi.towatch.POJOs.TmdbMovie.MovieImage
 import com.alphae.rishi.towatch.POJOs.TmdbMovie.VideoResults
 import com.alphae.rishi.towatch.R
 import com.alphae.rishi.towatch.TmdbApi.TmdbApiClient
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.facebook.ads.*
 import com.google.android.youtube.player.YouTubeInitializationResult
 import com.google.android.youtube.player.YouTubePlayer
@@ -104,20 +104,28 @@ class MovieDetailsActivity : AppCompatActivity() {
 
         if (native_ad_container.childCount != 1) loadNativeAd()
 
-        youTubePlayerFragment = fragmentManager.findFragmentById(R.id.youtubeFragment) as YouTubePlayerFragment
-        youTubePlayerFragment.initialize(BuildConfig.YoutubeApiKey, object : YouTubePlayer.OnInitializedListener {
-            override fun onInitializationSuccess(p0: YouTubePlayer.Provider?, p1: YouTubePlayer?, p2: Boolean) {
-                if (!p2) {
-                    if (youTubePlayer == null) {
-                        youTubePlayer = p1
+        val packageName = "com.google.android.youtube"
+        val isYoutubeInstalled = isAppInstalled(packageName)
+        if (!isYoutubeInstalled) {
+            Toast.makeText(this, "Install Youtube to watch Trailers", Toast.LENGTH_SHORT).show()
+        }
+        if (isYoutubeInstalled) {
+
+            youTubePlayerFragment = fragmentManager.findFragmentById(R.id.youtubeFragment) as YouTubePlayerFragment
+            youTubePlayerFragment.initialize(BuildConfig.YoutubeApiKey, object : YouTubePlayer.OnInitializedListener {
+                override fun onInitializationSuccess(p0: YouTubePlayer.Provider?, p1: YouTubePlayer?, p2: Boolean) {
+                    if (!p2) {
+                        if (youTubePlayer == null) {
+                            youTubePlayer = p1
+                        }
                     }
                 }
-            }
 
-            override fun onInitializationFailure(p0: YouTubePlayer.Provider?, p1: YouTubeInitializationResult?) {
-                Toast.makeText(this@MovieDetailsActivity, p1.toString(), Toast.LENGTH_LONG).show()
-            }
-        })
+                override fun onInitializationFailure(p0: YouTubePlayer.Provider?, p1: YouTubeInitializationResult?) {
+                    Toast.makeText(this@MovieDetailsActivity, p1.toString(), Toast.LENGTH_LONG).show()
+                }
+            })
+        }
 
         app_bar_layout.addOnOffsetChangedListener(object : AppBarStateChangeListener() {
             override fun onStateChanged(appBarLayout: AppBarLayout, state: State) {
@@ -283,6 +291,13 @@ class MovieDetailsActivity : AppCompatActivity() {
     }
 
     private fun getMovieVideos() {
+
+        val packageName = "com.google.android.youtube"
+        val isYoutubeInstalled = isAppInstalled(packageName)
+        if (!isYoutubeInstalled) {
+            Toast.makeText(this, "Install Youtube to watch Trailers", Toast.LENGTH_SHORT).show()
+            return
+        }
         val call = callMovieVideos()
         call.enqueue(object : Callback<VideoResults> {
             override fun onFailure(call: Call<VideoResults>?, t: Throwable?) {
@@ -300,6 +315,11 @@ class MovieDetailsActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    private fun isAppInstalled(packageName: String): Boolean {
+        val mIntent = packageManager.getLaunchIntentForPackage(packageName)
+        return mIntent != null
     }
 
     private fun getExternalIds() {
