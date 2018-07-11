@@ -1,7 +1,8 @@
 # ToWatch
 
 ## Project is Live
-https://play.google.com/store/apps/details?id=com.alphae.rishi.towatch
+
+[![Get it on Google Play](https://developer.android.com/images/brand/en_generic_rgb_wo_60.png)](https://play.google.com/store/apps/details?id=com.alphae.rishi.towatch)
 
 ## The basic idea of the application : 
   Suppose you came across a cool movie trailer and you want to add it to your movie WatchLater list.
