@@ -551,20 +551,20 @@
                 android:orientation="vertical" />
 
             <!--<RelativeLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:minWidth="300dp"-->
-                <!--android:layout_marginBottom="2dp"-->
-                <!--android:layout_marginTop="2dp"-->
-                <!--android:layout_height="250dp">-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:minWidth="300dp"-->
+            <!--android:layout_marginBottom="2dp"-->
+            <!--android:layout_marginTop="2dp"-->
+            <!--android:layout_height="250dp">-->
 
-                <!--<com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"-->
-                    <!--android:id="@+id/adView"-->
-                    <!--android:layout_centerHorizontal="true"-->
-                    <!--android:layout_centerVertical="true"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--ads:adSize="MEDIUM_RECTANGLE"-->
-                    <!--ads:adUnitId="ca-app-pub-9914032848232792/8274618643" />-->
+            <!--<com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"-->
+            <!--android:id="@+id/adView"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--ads:adSize="MEDIUM_RECTANGLE"-->
+            <!--ads:adUnitId="ca-app-pub-9914032848232792/8274618643" />-->
 
             <!--</RelativeLayout>-->
 
@@ -643,6 +643,11 @@
                 android:layout_marginStart="8dp"
                 android:background="@color/colorPrimaryLight" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp" />
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
@@ -668,5 +673,28 @@
         android:visibility="gone"
         app:pressedTranslationZ="10dp"
         app:srcCompat="@drawable/ic_playlist_add_white_48dp" />
+
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/download_fab"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="@dimen/fab_margin"-->
+        <!--android:background="?attr/selectableItemBackground"-->
+        <!--app:layout_anchor="@id/app_bar_layout"-->
+        <!--app:layout_anchorGravity="bottom|start"-->
+        <!--app:pressedTranslationZ="10dp"-->
+        <!--app:srcCompat="@drawable/ic_file_download_white_48dp" />-->
+
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/download_fabSecond"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="start|bottom"-->
+        <!--android:layout_margin="@dimen/fab_margin"-->
+        <!--android:background="?attr/selectableItemBackground"-->
+        <!--android:visibility="gone"-->
+        <!--app:pressedTranslationZ="10dp"-->
+        <!--app:srcCompat="@drawable/ic_file_download_white_48dp" />-->
+
 
 </android.support.design.widget.CoordinatorLayout>

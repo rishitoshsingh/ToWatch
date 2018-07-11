@@ -4,15 +4,18 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.drawable.TransitionDrawable
+import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import com.alphae.rishi.towatch.Activities.MainActivity
+import com.alphae.rishi.towatch.Database.WatchDatabase
+import com.alphae.rishi.towatch.Database.WatchList
+import com.alphae.rishi.towatch.Database.WatchedList
 import com.alphae.rishi.towatch.R
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -21,6 +24,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_sign_up.*
 
 
@@ -36,6 +43,11 @@ class SignUpActivity : AppCompatActivity() {
     private lateinit var mSharedPreferencesEditor: SharedPreferences.Editor
 
     private val RC_SIGN_IN = 9001
+    private var watchList: MutableList<WatchList> = mutableListOf<WatchList>()
+    private var watchedList: MutableList<WatchedList> = mutableListOf<WatchedList>()
+    private lateinit var watchDatabase: WatchDatabase
+    private lateinit var firebaseDatabase:FirebaseDatabase
+
 
     public override fun onStart() {
         super.onStart()
@@ -93,6 +105,8 @@ class SignUpActivity : AppCompatActivity() {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
 
+        firebaseDatabase = FirebaseDatabase.getInstance()
+
         googleSignIn.setOnClickListener {
             val signInIntent: Intent = mGoogleSignInClient.signInIntent
             startActivityForResult(signInIntent, RC_SIGN_IN)
@@ -129,20 +143,79 @@ class SignUpActivity : AppCompatActivity() {
         mAuth?.signInWithCredential(credential)
                 ?.addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        val sharedPreferences: SharedPreferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
-                        val editor = sharedPreferences.edit()
-                        editor.putBoolean("firstTime",false)
-                        editor.commit()
-                        val intent = Intent(this,MainActivity::class.java)
-                        startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
-//                            finish()
+                        googleSignIn.isEnabled = false
+                        pullPlaylist()
                     } else {
                         Log.w("TAG", "signInWithCredential:failure", task.exception)
                         Toast.makeText(this, "Failed", Toast.LENGTH_LONG).show()
                     }
-
-                    // ...
                 }
     }
 
+    private fun pullPlaylist() {
+        watchDatabase = WatchDatabase.getInstance(this)!!
+        val firebasePlaylists = firebaseDatabase.getReference("playlist/" + mAuth?.currentUser?.uid)
+        firebasePlaylists.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for (postSnapshot in dataSnapshot.children) {
+                    val movie = postSnapshot.getValue(WatchList::class.java)
+                    watchList.add(movie!!)
+                }
+                InsertMovie().execute(watchList)
+            }
+            override fun onCancelled(error: DatabaseError) {
+                googleSignIn.isEnabled = true
+                Log.w("Firebase Tag", "Failed to read value.", error.toException())
+            }
+        })
+    }
+
+    private inner class InsertMovie : AsyncTask<List<WatchList>, Void, Void>() {
+        override fun doInBackground(vararg params: List<WatchList>?): Void? {
+            val movies = params[0]
+            if (movies != null) {
+                for (movie in movies)
+                    watchDatabase.watchDaoAccess().insertMovie(movie)
+            }
+            return null
+        }
+
+        override fun onPostExecute(result: Void?) {
+            val firebaseWatched = firebaseDatabase.getReference("watched/" + mAuth?.currentUser?.uid)
+            firebaseWatched.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    for (postSnapshot in dataSnapshot.children) {
+                        val movie = postSnapshot.getValue(WatchedList::class.java)
+                        watchedList.add(movie!!)
+                    }
+                    InsertWatchedMovie().execute(watchedList)
+                }
+                override fun onCancelled(error: DatabaseError) {
+                    googleSignIn.isEnabled = true
+                    Log.w("Firebase Tag", "Failed to read value.", error.toException())
+                }
+            })
+        }
+    }
+
+    private inner class InsertWatchedMovie : AsyncTask<List<WatchedList>, Void, Void>() {
+        override fun doInBackground(vararg params: List<WatchedList>?): Void? {
+            val movies = params[0]
+            if (movies != null) {
+                for (movie in movies)
+                    watchDatabase.watchedDaoAccess().insertMovie(movie)
+            }
+            return null
+        }
+
+        override fun onPostExecute(result: Void?) {
+            WatchDatabase.destroyInstance()
+            val sharedPreferences: SharedPreferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
+            val editor = sharedPreferences.edit()
+            editor.putBoolean("firstTime", false)
+            editor.commit()
+            val intent = Intent(this@SignUpActivity, MainActivity::class.java)
+            startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
+        }
+    }
 }

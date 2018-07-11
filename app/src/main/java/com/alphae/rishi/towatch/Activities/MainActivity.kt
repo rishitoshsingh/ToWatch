@@ -1,14 +1,15 @@
 package com.alphae.rishi.towatch.Activities
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.annotation.RequiresApi
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.Window
@@ -23,8 +24,10 @@ import com.alphae.rishi.towatch.Api.ServiceGenerator
 import com.alphae.rishi.towatch.BuildConfig
 import com.alphae.rishi.towatch.Fragments.BottomSheetFragment
 import com.alphae.rishi.towatch.Fragments.SearchFragment
+import com.alphae.rishi.towatch.POJOs.TmdbFind.Find
 import com.alphae.rishi.towatch.POJOs.YouTube.YouTubeVideo
 import com.alphae.rishi.towatch.R
+import com.alphae.rishi.towatch.TmdbApi.TmdbApiClient
 import com.alphae.rishi.towatch.Utils.CrossfadeDrawer
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
@@ -42,16 +45,23 @@ class MainActivity : AppCompatActivity() {
     private lateinit var searchMenuItem: MenuItem
     private lateinit var mSharedPreferences: SharedPreferences
     private lateinit var mInterstitialAd: InterstitialAd
+    private lateinit var client: TmdbApiClient
+
+    private var gotSearchIntent: Boolean = false
+    private var searchIntentQuery: String = ""
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        client = ServiceGenerator.createService(TmdbApiClient::class.java)
+
         val window: Window = window
         window.clearFlags(FLAG_TRANSLUCENT_STATUS)
         window.addFlags(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.statusBarColor = resources.getColor(R.color.colorPrimary)
+        window.navigationBarColor = resources.getColor(R.color.colorPrimary)
         val context = this
 
 //        MobileAds.initialize(this, "ca-app-pub-3940256099942544/1033173712")
@@ -74,6 +84,7 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, WelcomeActivity::class.java)
             startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
         }
+
         val drawer = object : CrossfadeDrawer(context, my_toolbar, context, savedInstanceState, 0) {
             override fun showBottomSheetFragment() {
                 val bottomSheetFragment = BottomSheetFragment()
@@ -88,37 +99,70 @@ class MainActivity : AppCompatActivity() {
         val extras = intent.extras
         if (extras != null) {
             try {
+                Log.d("Tried", "you")
                 val value1 = extras.getString(Intent.EXTRA_TEXT)
-                var videoId = value1.substringAfter("https://youtu.be/")
-                val ytClient = ServiceGenerator.createYtService(YouTubeClient::class.java)
-                val call = ytClient.getVideoTitle(videoId, BuildConfig.YoutubeApiKey)
-                call.enqueue(object : Callback<YouTubeVideo> {
-                    override fun onFailure(call: Call<YouTubeVideo>?, t: Throwable?) {
 
-                    }
+                if (value1 != null) {
+                    if (value1.contains("https")) {
+                        var videoId = value1.substringAfter("https://youtu.be/")
+                        val ytClient = ServiceGenerator.createYtService(YouTubeClient::class.java)
+                        val call = ytClient.getVideoTitle(videoId, BuildConfig.YoutubeApiKey)
+                        call.enqueue(object : Callback<YouTubeVideo> {
+                            override fun onFailure(call: Call<YouTubeVideo>?, t: Throwable?) {}
+                            override fun onResponse(call: Call<YouTubeVideo>?, response: Response<YouTubeVideo>?) {
+                                val videoTitle: String = response?.body()?.items!![0].snippet.title
+                                gotSearchIntent = true
+                                searchIntentQuery = modifyTitle(videoTitle)
+                            }
 
-                    override fun onResponse(call: Call<YouTubeVideo>?, response: Response<YouTubeVideo>?) {
-                        val videoTitle: String = response?.body()?.items!![0].snippet.title
-                        searchMenuItem.expandActionView()
-                        actionSearchView?.setQuery(modifyTitle(videoTitle), true)
-                    }
-
-                    private fun modifyTitle(title: String): String {
+                            private fun modifyTitle(title: String): String {
 //                    val temp1 = title.split("official",true,0)[0]
-                        var temp1 = title.replace("official", "*", true)
-                        temp1 = temp1.replace("trailer", "*", true)
-                        temp1 = temp1.replace("|", "*", true)
-                        temp1 = temp1.replace("#", "*", true)
-                        temp1 = temp1.replace("movie", "*", true)
-                        return temp1.split("*")[0].trim()
+                                var temp1 = title.replace("official", "*", true)
+                                temp1 = temp1.replace("trailer", "*", true)
+                                temp1 = temp1.replace("|", "*", true)
+                                temp1 = temp1.replace("#", "*", true)
+                                temp1 = temp1.replace("movie", "*", true)
+                                return temp1.split("*")[0].trim()
+                            }
+                        })
+                    } else {
+                        val call = callMovieFind(value1)
+                        call.enqueue(object : Callback<Find> {
+                            override fun onFailure(call: Call<Find>?, t: Throwable?) {}
+                            override fun onResponse(call: Call<Find>?, response: Response<Find>?) {
+                                val body = response?.body()
+                                if (body?.movieResults != null) {
+                                    val intent = Intent(this@MainActivity, MovieDetailsActivity::class.java)
+                                    intent.putExtra("movieId", body.movieResults[0].id)
+                                    intent.putExtra("posterPath", body.movieResults[0].posterPath)
+                                    startActivity(intent)
+                                }
+                            }
+                        })
                     }
-                })
+                }
             } catch (ex: Exception) {
+                Log.d("Youtube", ex.toString())
             }
         }
 
         viewPager.adapter = HomeAdapter(this, supportFragmentManager)
         tabLayout.setupWithViewPager(viewPager)
+        val version = sharedPreferences.getString("version", "new")
+        Log.d("version",version)
+        if (version == "new") {
+            Log.d("version",version)
+            val alertDialog = android.support.v7.app.AlertDialog.Builder(this@MainActivity).create()
+            alertDialog.setTitle("What's New")
+            alertDialog.setMessage(resources.getString(R.string.whats_new))
+            alertDialog.setButton(android.support.v7.app.AlertDialog.BUTTON_NEUTRAL, "OK", DialogInterface.OnClickListener { dialog, which -> dialog.dismiss() })
+            alertDialog.show()
+            val editor = sharedPreferences.edit()
+            editor.putString("version", "old")
+            editor.commit()
+        }
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -174,8 +218,21 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        if (gotSearchIntent) {
+            searchMenuItem.expandActionView()
+            actionSearchView?.setQuery(searchIntentQuery, true)
+        }
         return true
 
+    }
+
+    private fun callMovieFind(id: String): Call<Find> {
+        val call = client.getMovieFromId(
+                id,
+                "imdb_id",
+                BuildConfig.TmdbApiKey
+        )
+        return call
     }
 
 }

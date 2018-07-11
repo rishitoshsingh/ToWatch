@@ -6,23 +6,6 @@
     android:fitsSystemWindows="true"
     tools:context="com.alphae.rishi.towatch.Activities.DiscoverActivity">
 
-    <!--<android.support.design.widget.AppBarLayout-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:theme="@style/AppTheme.AppBarOverlay">-->
-
-    <!--<android.support.v7.widget.Toolbar-->
-    <!--android:id="@+id/toolbarDiscover"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="@dimen/app_default_height"-->
-    <!--android:background="?attr/colorPrimary"-->
-    <!--android:elevation="4dp"-->
-    <!--android:theme="@style/ThemeOverlay.AppCompat.Light"-->
-    <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Light"-->
-    <!--app:titleTextColor="@color/colorAccent" />-->
-
-    <!--</android.support.design.widget.AppBarLayout>-->
-
     <LinearLayout
         android:id="@+id/fragmentRootLayout"
         android:layout_width="match_parent"

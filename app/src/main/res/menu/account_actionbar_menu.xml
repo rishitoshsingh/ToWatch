@@ -3,9 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/sign_out"
-        android:icon="@drawable/ic_power_settings_new_white_48dp"
-        android:title="@string/sign_out"
+        android:id="@+id/cloud_save"
+        android:icon="@drawable/ic_cloud_upload_white_48dp"
+        android:title="@string/save_to_cloud"
         app:showAsAction="always"/>
+
+
 
 </menu>

@@ -50,6 +50,7 @@ class DiscoverActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener
 //        setSupportActionBar(toolbarDiscover)
         val window: Window = window
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
 
         client = ServiceGenerator.createService(TmdbApiClient::class.java)

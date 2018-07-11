@@ -56,7 +56,14 @@ abstract class ListAdapter(context: Context, moviesPassed: List<WatchList>) : Re
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         val movie = movies[position]
         val dateString = movie.movieReleaseDate.split("-")
-        val date = Date(dateString[0].toInt(), dateString[1].toInt(), dateString[2].toInt())
+        var date:Date = Date(1971,2,1)
+        try {
+            date = Date(dateString[0].toInt(), dateString[1].toInt(), dateString[2].toInt())
+        } catch (ex:Exception){
+            Log.d("EX",movie.movieName)
+            Log.d("EX",movie.movieReleaseDate)
+            Log.d("EX",movie.movieId.toString())
+        }
         val posterUri = Uri.parse(IMAGE_BASE_URL + movie.moviePoster)
         holder.movieTitleText.text = movie.movieName
         holder.movieReleaseDate.text = date.year.toString()

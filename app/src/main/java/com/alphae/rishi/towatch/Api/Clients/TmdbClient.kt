@@ -7,6 +7,7 @@ import com.alphae.rishi.towatch.POJOs.ExternalIds
 import com.alphae.rishi.towatch.POJOs.Tmdb.JsonA
 import com.alphae.rishi.towatch.POJOs.Tmdb.JsonB
 import com.alphae.rishi.towatch.POJOs.TmdbCollection.Collection
+import com.alphae.rishi.towatch.POJOs.TmdbFind.Find
 import com.alphae.rishi.towatch.POJOs.TmdbMovie.Details
 import com.alphae.rishi.towatch.POJOs.TmdbMovie.MovieImage
 import com.alphae.rishi.towatch.POJOs.TmdbMovie.VideoResults
@@ -107,4 +108,9 @@ interface TmdbApiClient {
     @GET("movie/{movie_id}/external_ids")
     fun getExternalIds(@Path("movie_id") movieId: Int,
                        @Query("api_key") apiKey: String): Call<ExternalIds>
+
+    @GET("find/{external_id}")
+    fun getMovieFromId(@Path("external_id") imdbId:String,
+                       @Query("external_source") externalId:String,
+                       @Query("api_key") apiKey: String): Call<Find>
 }

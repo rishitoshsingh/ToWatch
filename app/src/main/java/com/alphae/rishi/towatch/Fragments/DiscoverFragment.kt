@@ -22,6 +22,7 @@ import com.alphae.rishi.towatch.POJOs.Tmdb.JsonA
 import com.alphae.rishi.towatch.POJOs.Tmdb.Result
 import com.alphae.rishi.towatch.R
 import com.alphae.rishi.towatch.TmdbApi.TmdbApiClient
+import com.bumptech.glide.Glide
 import com.facebook.ads.AdError
 import com.facebook.ads.NativeAdsManager
 import kotlinx.android.synthetic.main.recycler_view.*
@@ -54,11 +55,11 @@ class DiscoverFragment : Fragment() {
     private var presentInWatched: Boolean = false
 
     private var genreId: String? = null
-    private var year:Int? = null
-    private var vote:Int? = null
-    private var language:String? = null
-    private var sortBy:String? = null
-    private var adult:Boolean = false
+    private var year: Int? = null
+    private var vote: Int? = null
+    private var language: String? = null
+    private var sortBy: String? = null
+    private var adult: Boolean = false
 
     private var lastAdPosition: Int = -1
     private val ADS_PER_ITEMS: Int = 9
@@ -72,13 +73,13 @@ class DiscoverFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        genreId = arguments?.getString("genreId",null)
+        genreId = arguments?.getString("genreId", null)
         year = arguments?.getInt("year")
-        if (year == 0){
+        if (year == 0) {
             year = null
         }
         vote = arguments?.getInt("vote")
-        if (vote == -1){
+        if (vote == -1) {
             vote = null
         }
         language = arguments?.getString("language")
@@ -244,9 +245,10 @@ class DiscoverFragment : Fragment() {
             }
 
             override fun onResponse(p0: Call<JsonA>?, p1: Response<JsonA>?) {
-
-                shimmer_container.stopShimmerAnimation()
-                shimmer_container.visibility = View.GONE
+                if (shimmer_container != null) {
+                    shimmer_container.stopShimmerAnimation()
+                    shimmer_container.visibility = View.GONE
+                }
 
                 val jsonA: JsonA? = p1?.body()!!
 

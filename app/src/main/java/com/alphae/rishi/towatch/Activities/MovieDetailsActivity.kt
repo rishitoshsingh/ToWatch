@@ -79,10 +79,16 @@ class MovieDetailsActivity : AppCompatActivity() {
     private var VideoResult: List<com.alphae.rishi.towatch.POJOs.TmdbMovie.Result>? = null
     private var currentVideo: Int = 0
 
+    private lateinit var collectionFragment: CollectionFragment
+
     private lateinit var externalIds: ExternalIds
 
     lateinit var mPalette: Palette
     private lateinit var nativeAd: NativeAd
+    private lateinit var recommendationFragment: RecommendationFragment
+
+    private lateinit var similarFragment: SimilarFragment
+
     @SuppressLint("RestrictedApi")
 
 
@@ -130,12 +136,15 @@ class MovieDetailsActivity : AppCompatActivity() {
         app_bar_layout.addOnOffsetChangedListener(object : AppBarStateChangeListener() {
             override fun onStateChanged(appBarLayout: AppBarLayout, state: State) {
                 if (state == State.COLLAPSED && !appBarCollapsed) {
+//                    download_fabSecond.show()
                     fabSecond.show()
                     appBarCollapsed = true
                 } else if (state == State.EXPANDED && appBarCollapsed) {
+//                    download_fabSecond.hide()
                     fabSecond.hide()
                     appBarCollapsed = false
                 } else {
+//                    download_fabSecond.hide()
                     fabSecond.hide()
                 }
             }
@@ -150,64 +159,70 @@ class MovieDetailsActivity : AppCompatActivity() {
         movieId = intent.getLongExtra("movieId", 0)
 
         posterUri = Uri.parse(POSTER_BASE_URL + intent.getStringExtra("posterPath"))
-        Glide.with(this)
-                .asBitmap()
-                .load(posterUri)
-                .listener(object : RequestListener<Bitmap> {
-                    override fun onResourceReady(resource: Bitmap?, model: Any?, target: Target<Bitmap>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                        posterProgressBar.visibility = View.GONE
-                        mPalette = Palette.from(resource!!).generate()
-                        try {
-                            collasping_toolbar_child.setBackgroundColor(mPalette.darkMutedSwatch?.rgb!!)
-                            collasping_toolbar_genre.setTextColor(mPalette.lightVibrantSwatch?.rgb!!)
-                            tmdb_rating.setTextColor(mPalette.lightVibrantSwatch?.rgb!!)
-                            imdb_rating.setTextColor(mPalette.lightVibrantSwatch?.rgb!!)
-                            tagline_card_view.setCardBackgroundColor(mPalette.darkVibrantSwatch?.rgb!!)
-                            overview_title.setTextColor(mPalette.darkVibrantSwatch?.rgb!!)
-                            movie_tagline.setTextColor(mPalette.vibrantSwatch?.rgb!!)
-                            previousVideoButton.backgroundTintList = ColorStateList.valueOf(mPalette.vibrantSwatch?.rgb!!)
-                            nextVideoButton.backgroundTintList = ColorStateList.valueOf(mPalette.vibrantSwatch?.rgb!!)
-                            fab.backgroundTintList = ColorStateList.valueOf(mPalette.vibrantSwatch?.rgb!!)
-                            fabSecond.backgroundTintList = ColorStateList.valueOf(mPalette.vibrantSwatch?.rgb!!)
-                            collasping_toolbar.contentScrim = ColorDrawable(mPalette.darkMutedSwatch?.rgb!!)
-                            collasping_toolbar.statusBarScrim = ColorDrawable(mPalette.darkMutedSwatch?.rgb!!)
-                        } catch (ex: Exception) {
+        try {
+            Glide.with(this)
+                    .asBitmap()
+                    .load(posterUri)
+                    .listener(object : RequestListener<Bitmap> {
+                        override fun onResourceReady(resource: Bitmap?, model: Any?, target: Target<Bitmap>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                            posterProgressBar.visibility = View.GONE
+                            mPalette = Palette.from(resource!!).generate()
+                            try {
+                                collasping_toolbar_child.setBackgroundColor(mPalette.darkMutedSwatch?.rgb!!)
+                                collasping_toolbar_genre.setTextColor(mPalette.lightVibrantSwatch?.rgb!!)
+                                tmdb_rating.setTextColor(mPalette.lightVibrantSwatch?.rgb!!)
+                                imdb_rating.setTextColor(mPalette.lightVibrantSwatch?.rgb!!)
+                                tagline_card_view.setCardBackgroundColor(mPalette.darkVibrantSwatch?.rgb!!)
+                                overview_title.setTextColor(mPalette.darkVibrantSwatch?.rgb!!)
+                                movie_tagline.setTextColor(mPalette.vibrantSwatch?.rgb!!)
+                                previousVideoButton.backgroundTintList = ColorStateList.valueOf(mPalette.vibrantSwatch?.rgb!!)
+                                nextVideoButton.backgroundTintList = ColorStateList.valueOf(mPalette.vibrantSwatch?.rgb!!)
+                                fab.backgroundTintList = ColorStateList.valueOf(mPalette.vibrantSwatch?.rgb!!)
+                                fabSecond.backgroundTintList = ColorStateList.valueOf(mPalette.vibrantSwatch?.rgb!!)
+//                            download_fab.backgroundTintList = ColorStateList.valueOf(mPalette.vibrantSwatch?.rgb!!)
+//                            download_fabSecond.backgroundTintList = ColorStateList.valueOf(mPalette.vibrantSwatch?.rgb!!)
+                                collasping_toolbar.contentScrim = ColorDrawable(mPalette.darkMutedSwatch?.rgb!!)
+                                collasping_toolbar.statusBarScrim = ColorDrawable(mPalette.darkMutedSwatch?.rgb!!)
+                            } catch (ex: Exception) {
 
+                            }
+                            val bundle: Bundle = Bundle()
+                            bundle.putLong("movieId", movieId)
+                            try {
+                                bundle.putInt("bgcolor", mPalette.darkMutedSwatch?.rgb!!)
+                                bundle.putInt("accentColor", mPalette.vibrantSwatch?.rgb!!)
+                            } catch (ex: Exception) {
+
+                            }
+                            recommendationFragment = RecommendationFragment()
+                            similarFragment = SimilarFragment()
+                            recommendationFragment.arguments = bundle
+                            similarFragment.arguments = bundle
+                            supportFragmentManager.beginTransaction()
+                                    .replace(R.id.similarMoviesFrame, similarFragment)
+                                    .disallowAddToBackStack()
+                                    .commit()
+                            supportFragmentManager.beginTransaction()
+                                    .replace(R.id.recommendedMoviesFrame, recommendationFragment)
+                                    .disallowAddToBackStack()
+                                    .commit()
+                            return false
                         }
-                        val bundle: Bundle = Bundle()
-                        bundle.putLong("movieId", movieId)
-                        try {
-                            bundle.putInt("bgcolor", mPalette.darkMutedSwatch?.rgb!!)
-                            bundle.putInt("accentColor", mPalette.vibrantSwatch?.rgb!!)
-                        } catch (ex: Exception) {
 
+                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean {
+                            posterProgressBar.visibility = View.GONE
+                            return false
                         }
-                        val recommendationFragment = RecommendationFragment()
-                        val similarFragment = SimilarFragment()
-                        recommendationFragment.arguments = bundle
-                        similarFragment.arguments = bundle
-                        supportFragmentManager.beginTransaction()
-                                .replace(R.id.similarMoviesFrame, similarFragment)
-                                .disallowAddToBackStack()
-                                .commit()
-                        supportFragmentManager.beginTransaction()
-                                .replace(R.id.recommendedMoviesFrame, recommendationFragment)
-                                .disallowAddToBackStack()
-                                .commit()
-                        return false
-                    }
-
-                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean {
-                        posterProgressBar.visibility = View.GONE
-                        return false
-                    }
-                })
-                .apply(RequestOptions()
-                        .centerCrop())
-                .into(movie_poster)
+                    })
+                    .apply(RequestOptions()
+                            .centerCrop())
+                    .into(movie_poster)
 
 
-
+        } catch (ex:Exception){
+            Log.d("Saved","Glide Crash")
+            this.onDestroy()
+        }
         client = ServiceGenerator.createService(TmdbApiClient::class.java)
 
 
@@ -278,22 +293,24 @@ class MovieDetailsActivity : AppCompatActivity() {
             }
         }
 
-
         getMovieDetails()
 
     }
 
     private fun playVideo(videoId: String) {
         if (youTubePlayer != null) {
-            youTubePlayer!!.cueVideo(videoId)
-            youTubePlayer!!.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT)
-            youTubePlayer!!.setOnFullscreenListener {
-                if (it){
-                    this@MovieDetailsActivity.onPause()
-                } else {
-                    this@MovieDetailsActivity.onResume()
-                }
+            try {
+                youTubePlayer!!.cueVideo(videoId)
+                youTubePlayer!!.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT)
+                youTubePlayer!!.setOnFullscreenListener {
+                    if (it) {
+                        this@MovieDetailsActivity.onPause()
+                    } else {
+                        this@MovieDetailsActivity.onResume()
+                    }
 
+                }
+            } catch (ex: Exception) {
             }
         }
     }
@@ -399,12 +416,16 @@ class MovieDetailsActivity : AppCompatActivity() {
                 if (movie.belongsToCollection != null) {
                     val bundle: Bundle = Bundle()
                     bundle.putLong("collectionId", movie.belongsToCollection.id)
-                    val collectionFragment: CollectionFragment = CollectionFragment()
+                    collectionFragment = CollectionFragment()
                     collectionFragment.arguments = bundle
-                    supportFragmentManager.beginTransaction()
-                            .replace(R.id.collectionFrameLayout, collectionFragment)
-                            .disallowAddToBackStack()
-                            .commit()
+                    try {
+                        supportFragmentManager.beginTransaction()
+                                .replace(R.id.collectionFrameLayout, collectionFragment)
+                                .disallowAddToBackStack()
+                                .commit()
+                    } catch (ex: Exception) {
+
+                    }
                     viewBelowFrame.visibility = View.VISIBLE
 
                 }
@@ -485,24 +506,27 @@ class MovieDetailsActivity : AppCompatActivity() {
         }
 
         backdropUri = Uri.parse(BACKDROP_BASE_URL + details.backdropPath)
+        try {
+            Glide.with(this)
+                    .load(backdropUri)
+                    .listener(object : RequestListener<Drawable> {
+                        override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                            backdropProgressBar.visibility = View.GONE
+                            return false
+                        }
 
-        Glide.with(this)
-                .load(backdropUri)
-                .listener(object : RequestListener<Drawable> {
-                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                        backdropProgressBar.visibility = View.GONE
-                        return false
-                    }
-
-                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                        backdropProgressBar.visibility = View.GONE
-                        return false
-                    }
-                })
-                .apply(RequestOptions()
-                        .centerCrop())
-                .into(backdrop)
-
+                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                            backdropProgressBar.visibility = View.GONE
+                            return false
+                        }
+                    })
+                    .apply(RequestOptions()
+                            .centerCrop())
+                    .into(backdrop)
+        }catch (ex:Exception){
+            Log.d("Saved","Glide Crash")
+            this.onDestroy()
+        }
         toolbar?.title = movie.title
         if (movie.title != movie.originalTitle) toolbar?.subtitle = movie.originalTitle
 
@@ -540,6 +564,28 @@ class MovieDetailsActivity : AppCompatActivity() {
                 }
             }
         }
+
+//        download_fab.setOnClickListener {
+//            val shareIntent: Intent = ShareCompat.IntentBuilder.from(this)
+//                    .setType("text/plain")
+//                    .setText(movie.imdbId)
+//                    .intent
+//            shareIntent.`package` = "com.alphae.rishi.yifyclient"
+//            if (shareIntent.resolveActivity(packageManager) != null) {
+//                startActivity(shareIntent)
+//            }
+//        }
+//
+//        download_fabSecond.setOnClickListener {
+//            val shareIntent: Intent = ShareCompat.IntentBuilder.from(this)
+//                    .setType("text/plain")
+//                    .setText(movie.imdbId)
+//                    .intent
+//            shareIntent.`package` = "com.alphae.rishi.yifyclient"
+//            if (shareIntent.resolveActivity(packageManager) != null) {
+//                startActivity(shareIntent)
+//            }
+//        }
 
     }
 
@@ -591,6 +637,22 @@ class MovieDetailsActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
+        try {
+            collectionFragment.onDestroy()
+        } catch (ex: Exception) {
+        }
+        try {
+            similarFragment.onDestroy()
+        } catch (ex: Exception) {
+        }
+        try {
+            recommendationFragment.onDestroy()
+        } catch (ex: Exception) {
+        }
+        try {
+            youTubePlayerFragment.onDestroy()
+        } catch (ex: Exception) {
+        }
         WatchDatabase.destroyInstance()
         super.onDestroy()
     }

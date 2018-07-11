@@ -77,6 +77,13 @@
     <string name="slide_4_desc">This product uses the TMDb API but is not endorsed or certified by TMDb.</string>
     <string name="next">Next</string>
     <string name="start">Start</string>
+    <string name="save_to_cloud">Save to Cloud</string>
+    <string name="whats_new">
+        "1.Create your movie Playlist.\n"
+        "2.Save your Playlist to cloud, if you want.\n"
+        "3.Watch Movie Trailers.\n"
+        "4.Bugs Fixed.\n"
+    </string>
 
 
 </resources>

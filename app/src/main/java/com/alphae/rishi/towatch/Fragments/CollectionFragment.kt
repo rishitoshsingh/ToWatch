@@ -1,5 +1,6 @@
 package com.alphae.rishi.towatch.Fragments
 
+import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -17,14 +18,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.target.Target
-import com.bumptech.glide.request.transition.Transition
 import com.alphae.rishi.towatch.Adapters.CollectionAdapter
 import com.alphae.rishi.towatch.Api.ServiceGenerator
 import com.alphae.rishi.towatch.BuildConfig
@@ -35,6 +28,14 @@ import com.alphae.rishi.towatch.POJOs.TmdbCollection.Collection
 import com.alphae.rishi.towatch.POJOs.TmdbCollection.Part
 import com.alphae.rishi.towatch.R
 import com.alphae.rishi.towatch.TmdbApi.TmdbApiClient
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.request.transition.Transition
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlinx.android.synthetic.main.collection_layout.*
 import retrofit2.Call
@@ -69,7 +70,6 @@ class CollectionFragment : Fragment() {
 
 
     private var collectionId: Long = 0
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -138,49 +138,59 @@ class CollectionFragment : Fragment() {
                 val collection: Collection? = p1?.body()!!
                 val posterUri = Uri.parse(IMAGE_BASE_URL + collection?.posterPath)
                 val bannerUri = Uri.parse(IMAGE_BASE_URL + collection?.backdropPath)
-                Glide.with(this@CollectionFragment)
-                        .load(posterUri)
-                        .listener(object : RequestListener<Drawable> {
-                            override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                                collectionPosterProgressBar.visibility = View.GONE
-                                return false
-                            }
+                try {
 
-                            override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                                collectionPosterProgressBar.visibility = View.GONE
-                                return false
-                            }
-                        })
-                        .apply(RequestOptions()
-                                .error(R.drawable.poster_placeholder)
-                                .centerCrop())
-                        .into(collectionPoster)
-                Glide.with(this@CollectionFragment)
-                        .asBitmap()
-                        .load(bannerUri)
-                        .apply(RequestOptions().transforms(BlurTransformation(25)))
-                        .into(object : SimpleTarget<Bitmap>() {
-                            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                                    collectionRoot.background = BitmapDrawable(resource)
+                    Glide.with(this@CollectionFragment)
+                            .load(posterUri)
+                            .listener(object : RequestListener<Drawable> {
+                                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                                    collectionPosterProgressBar.visibility = View.GONE
+                                    return false
                                 }
-                                val palette = Palette.from(resource).generate()
-                                try {
-                                    mView.findViewById<TextView>(R.id.collectionName).setTextColor(palette.vibrantSwatch?.rgb!!)
-                                    mView.findViewById<TextView>(R.id.collectionOverview).setTextColor(palette.darkMutedSwatch?.rgb!!)
-                                } catch (ex: Exception) {
 
+                                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                                    collectionPosterProgressBar.visibility = View.GONE
+                                    return false
                                 }
-                            }
-                        })
+                            })
+                            .apply(RequestOptions()
+                                    .error(R.drawable.poster_placeholder)
+                                    .centerCrop())
+                            .into(collectionPoster)
+                    Glide.with(this@CollectionFragment)
+                            .asBitmap()
+                            .load(bannerUri)
+                            .apply(RequestOptions().transforms(BlurTransformation(25)))
+                            .into(object : SimpleTarget<Bitmap>() {
+                                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                                        collectionRoot.background = BitmapDrawable(resource)
+                                    }
+                                    val palette = Palette.from(resource).generate()
+                                    try {
+                                        mView.findViewById<TextView>(R.id.collectionName).setTextColor(palette.vibrantSwatch?.rgb!!)
+                                        mView.findViewById<TextView>(R.id.collectionOverview).setTextColor(palette.darkMutedSwatch?.rgb!!)
+                                    } catch (ex: Exception) {
 
-                collectionName.text = collection?.name
-                collectionOverview.text = collection?.overview
-                collectionMovies.clear()
-                for (item in collection!!.parts) collectionMovies.add(item)
-                viewAdapter.notifyDataSetChanged()
-                isLoading = false
+                                    }
+                                }
+                            })
+                }catch (ex:Exception){
+                    Log.d("Saved","Glide Crash")
+                    getActivity()?.getSupportFragmentManager()?.beginTransaction()?.remove(this@CollectionFragment)?.commit()
+                }
+                try {
 
+                    collectionName.text = collection?.name
+                    collectionOverview.text = collection?.overview
+                    collectionMovies.clear()
+                    for (item in collection!!.parts) collectionMovies.add(item)
+                    viewAdapter.notifyDataSetChanged()
+                    isLoading = false
+
+                } catch (ex:Exception){
+
+                }
             }
         })
     }
@@ -195,6 +205,7 @@ class CollectionFragment : Fragment() {
 
 
     override fun onDestroy() {
+//        Glide.with(mActivity!!).pauseAllRequests()
         WatchDatabase.destroyInstance()
         super.onDestroy()
     }

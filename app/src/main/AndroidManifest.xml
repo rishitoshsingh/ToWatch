@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.alphae.rishi.towatch.Activities.MainActivity"
+            android:name=".Activities.MainActivity"
             android:theme="@style/CustomTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,22 +32,22 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.alphae.rishi.towatch.Activities.MovieDetailsActivity"
-            android:parentActivityName="com.alphae.rishi.towatch.Activities.MainActivity">
+            android:name=".Activities.MovieDetailsActivity"
+            android:parentActivityName=".Activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.alphae.rishi.towatch.Activities.MainActivity" />
         </activity>
         <activity
-            android:name="com.alphae.rishi.towatch.Activities.AccountActivity"
-            android:parentActivityName="com.alphae.rishi.towatch.Activities.MainActivity">
+            android:name=".Activities.AccountActivity"
+            android:parentActivityName=".Activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.alphae.rishi.towatch.Activities.MainActivity" />
         </activity>
-        <activity android:name="com.alphae.rishi.towatch.firebase.SignUpActivity" />
-        <activity android:name="com.alphae.rishi.towatch.Activities.DiscoverActivity" />
-        <activity android:name="com.alphae.rishi.towatch.Activities.WelcomeActivity"></activity>
+        <activity android:name=".firebase.SignUpActivity" />
+        <activity android:name=".Activities.DiscoverActivity" />
+        <activity android:name=".Activities.WelcomeActivity" />
     </application>
 
 </manifest>
