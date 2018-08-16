@@ -55,7 +55,7 @@ abstract class CrossfadeDrawer(context: Context, toolbar: Toolbar, activity: Act
     var item2 = PrimaryDrawerItem().withIdentifier(2).withName(R.string.discover).withSelectable(false).withIcon(R.drawable.baseline_weekend_white_48dp).withIconTintingEnabled(true)
     var item3 = PrimaryDrawerItem().withIdentifier(3).withName(R.string.your_list).withSelectable(false).withIcon(R.drawable.ic_list_white_48dp).withIconTintingEnabled(true)
     var item4 = PrimaryDrawerItem().withIdentifier(4).withName(R.string.preferences).withSelectable(false).withIcon(R.drawable.ic_settings_white_48dp).withIconTintingEnabled(true)
-    var item5 = PrimaryDrawerItem().withIdentifier(5).withName(R.string.more_apps).withSelectable(false).withIcon(R.drawable.ic_work_white_48dp).withIconTintingEnabled(true)
+//    var item5 = PrimaryDrawerItem().withIdentifier(5).withName(R.string.more_apps).withSelectable(false).withIcon(R.drawable.ic_work_white_48dp).withIconTintingEnabled(true)
 
     fun getCrossfadeDrawer() {
 
@@ -118,7 +118,7 @@ abstract class CrossfadeDrawer(context: Context, toolbar: Toolbar, activity: Act
                 .withGenerateMiniDrawer(true)
                 .withTranslucentStatusBar(false)
                 .withActionBarDrawerToggle(false)
-                .addDrawerItems(item1, item2, item3, item4, item5)
+                .addDrawerItems(item1, item2, item3, item4)
 //the listener which is called when an item inside the drawer or miniDrawer is clicked
                 .withOnDrawerItemClickListener { view, position, drawerItem ->
                     drawerItem.identifier

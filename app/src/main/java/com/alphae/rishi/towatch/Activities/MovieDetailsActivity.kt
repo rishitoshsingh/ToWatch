@@ -2,7 +2,9 @@ package com.alphae.rishi.towatch.Activities
 
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
@@ -13,6 +15,7 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.Snackbar
+import android.support.v4.app.ShareCompat
 import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.graphics.Palette
@@ -46,6 +49,8 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.facebook.ads.*
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
 import com.google.android.youtube.player.YouTubeInitializationResult
 import com.google.android.youtube.player.YouTubePlayer
 import com.google.android.youtube.player.YouTubePlayerFragment
@@ -58,7 +63,7 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
-
+import com.google.android.gms.ads.InterstitialAd
 
 class MovieDetailsActivity : AppCompatActivity() {
 
@@ -88,6 +93,7 @@ class MovieDetailsActivity : AppCompatActivity() {
     private lateinit var recommendationFragment: RecommendationFragment
 
     private lateinit var similarFragment: SimilarFragment
+    private lateinit var mInterstitialAd: InterstitialAd
 
     @SuppressLint("RestrictedApi")
 
@@ -95,8 +101,20 @@ class MovieDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_details)
-
-
+         mInterstitialAd = InterstitialAd(this)
+        mInterstitialAd.adUnitId = BuildConfig.AdmobInterstitial
+        mInterstitialAd.loadAd(AdRequest.Builder().build())
+        mInterstitialAd.adListener = object : AdListener(){
+            override fun onAdLoaded() {
+                val sharedPreferences: SharedPreferences = getSharedPreferences("Notification", Context.MODE_PRIVATE)
+                if (sharedPreferences.getBoolean("Clicked", false)) {
+                    mInterstitialAd.show()
+                    val sharedPreferenceEditor: SharedPreferences.Editor = sharedPreferences.edit()
+                    sharedPreferenceEditor.putBoolean("Clicked",false)
+                    sharedPreferenceEditor.commit()
+                }
+            }
+        }
 
         setSupportActionBar(toolbar)
         mToolbar = supportActionBar
@@ -179,8 +197,8 @@ class MovieDetailsActivity : AppCompatActivity() {
                                 nextVideoButton.backgroundTintList = ColorStateList.valueOf(mPalette.vibrantSwatch?.rgb!!)
                                 fab.backgroundTintList = ColorStateList.valueOf(mPalette.vibrantSwatch?.rgb!!)
                                 fabSecond.backgroundTintList = ColorStateList.valueOf(mPalette.vibrantSwatch?.rgb!!)
-//                            download_fab.backgroundTintList = ColorStateList.valueOf(mPalette.vibrantSwatch?.rgb!!)
-//                            download_fabSecond.backgroundTintList = ColorStateList.valueOf(mPalette.vibrantSwatch?.rgb!!)
+//                                download_fab.backgroundTintList = ColorStateList.valueOf(mPalette.vibrantSwatch?.rgb!!)
+//                                download_fabSecond.backgroundTintList = ColorStateList.valueOf(mPalette.vibrantSwatch?.rgb!!)
                                 collasping_toolbar.contentScrim = ColorDrawable(mPalette.darkMutedSwatch?.rgb!!)
                                 collasping_toolbar.statusBarScrim = ColorDrawable(mPalette.darkMutedSwatch?.rgb!!)
                             } catch (ex: Exception) {
@@ -219,13 +237,11 @@ class MovieDetailsActivity : AppCompatActivity() {
                     .into(movie_poster)
 
 
-        } catch (ex:Exception){
-            Log.d("Saved","Glide Crash")
+        } catch (ex: Exception) {
+            Log.d("Saved", "Glide Crash")
             this.onDestroy()
         }
         client = ServiceGenerator.createService(TmdbApiClient::class.java)
-
-
 
         previousVideoButton.setOnClickListener {
             if (currentVideo == 0) currentVideo = VideoResult?.size!! - 1 else currentVideo--
@@ -434,6 +450,7 @@ class MovieDetailsActivity : AppCompatActivity() {
                 getMovieVideos()
                 getExternalIds()
                 updateMoviesDetails(movie)
+
             }
 
             override fun onFailure(call: Call<Details>?, t: Throwable?) {
@@ -523,8 +540,8 @@ class MovieDetailsActivity : AppCompatActivity() {
                     .apply(RequestOptions()
                             .centerCrop())
                     .into(backdrop)
-        }catch (ex:Exception){
-            Log.d("Saved","Glide Crash")
+        } catch (ex: Exception) {
+            Log.d("Saved", "Glide Crash")
             this.onDestroy()
         }
         toolbar?.title = movie.title

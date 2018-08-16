@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
         val context = this
 
 //        MobileAds.initialize(this, "ca-app-pub-3940256099942544/1033173712")
-        MobileAds.initialize(this, BuildConfig.AdmobInterstitial)
+        MobileAds.initialize(this, BuildConfig.AdMobId)
         mInterstitialAd = InterstitialAd(this)
         mInterstitialAd.adUnitId = BuildConfig.AdmobInterstitial
         mInterstitialAd.loadAd(AdRequest.Builder().build())
@@ -101,10 +101,11 @@ class MainActivity : AppCompatActivity() {
             try {
                 Log.d("Tried", "you")
                 val value1 = extras.getString(Intent.EXTRA_TEXT)
-
+                Log.d("value1",value1)
                 if (value1 != null) {
                     if (value1.contains("https")) {
                         var videoId = value1.substringAfter("https://youtu.be/")
+                        Log.d("videoId",videoId)
                         val ytClient = ServiceGenerator.createYtService(YouTubeClient::class.java)
                         val call = ytClient.getVideoTitle(videoId, BuildConfig.YoutubeApiKey)
                         call.enqueue(object : Callback<YouTubeVideo> {
@@ -113,6 +114,8 @@ class MainActivity : AppCompatActivity() {
                                 val videoTitle: String = response?.body()?.items!![0].snippet.title
                                 gotSearchIntent = true
                                 searchIntentQuery = modifyTitle(videoTitle)
+                                searchMenuItem.expandActionView()
+                                actionSearchView?.setQuery(searchIntentQuery, true)
                             }
 
                             private fun modifyTitle(title: String): String {
@@ -120,6 +123,7 @@ class MainActivity : AppCompatActivity() {
                                 var temp1 = title.replace("official", "*", true)
                                 temp1 = temp1.replace("trailer", "*", true)
                                 temp1 = temp1.replace("|", "*", true)
+                                temp1 = temp1.replace("(", "*", true)
                                 temp1 = temp1.replace("#", "*", true)
                                 temp1 = temp1.replace("movie", "*", true)
                                 return temp1.split("*")[0].trim()

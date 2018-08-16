@@ -1,3 +1,5 @@
+apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
+
 //noinspection GradleCompatible
 apply plugin: 'com.android.application'
 
@@ -9,15 +11,22 @@ apply plugin: 'kotlin-kapt'
 
 apply plugin: 'com.google.gms.google-services'
 
+apply plugin: 'io.fabric'
+
 android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.alphae.rishi.towatch"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 6
-        versionName "1.1.1"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        versionCode 10
+        versionName "1.1.196"
+        multiDexEnabled true
+        manifestPlaceholders = [
+                onesignal_app_id               : '6ff5963f-ea3e-446b-8538-62ec0030aa2c',
+                // Project number pulled from dashboard, local value is ignored.
+                onesignal_google_project_number: '154054471279'
+        ]
     }
     buildTypes {
         release {
@@ -31,13 +40,22 @@ android {
         it.buildConfigField 'String', "YoutubeApiKey", ToWatch_YouTube
         it.buildConfigField 'String', "WebClientId", Web_Client_Id
         it.buildConfigField 'String', "WebClientSecret", Web_Client_Secret
+        it.buildConfigField 'String', "AdMobId", ToWatch_AdMob_AppId
         it.buildConfigField 'String', "AdmobBanner", ToWatch_AdMob_Banner
         it.buildConfigField 'String', "AdmobInterstitial", ToWatch_AdMob_Interstitial
         it.buildConfigField 'String', "FanNative", ToWatch_FAN_Native
         it.buildConfigField 'String', "FanNativeDetails", ToWatch_FAN_Native_Second
     }
     configurations.all {
-        resolutionStrategy.force 'com.google.code.findbugs:jsr305:1.3.9'
+//        resolutionStrategy.force 'com.google.code.findbugs:jsr305:1.3.9'
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            def requested = details.requested
+            if (requested.group == 'com.android.support') {
+                if (!requested.name.startsWith("multidex")) {
+                    details.useVersion '27.1.1'
+                }
+            }
+        }
     }
 }
 
@@ -45,7 +63,9 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+//    implementation 'com.android.support.constraint:constraint-layout:1.1.1'
+
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.android.support:support-v4:27.1.1'
@@ -54,16 +74,24 @@ dependencies {
     implementation 'com.android.support:palette-v7:27.1.1'
 
 //    implementation 'com.google.firebase:firebase-core:11.8.0'
-//    implementation 'com.google.gms:google-services:4.0.1'
-    implementation 'com.google.firebase:firebase-auth:16.0.1'
-    implementation 'com.google.firebase:firebase-core:16.0.1'
-    implementation 'com.google.firebase:firebase-database:16.0.1'
-    implementation 'com.google.android.gms:play-services-auth:15.0.1'
+    implementation 'com.google.gms:google-services:4.0.1'
+    implementation 'com.google.firebase:firebase-auth:12.0.1'
+    implementation 'com.google.firebase:firebase-core:12.0.1'
+    implementation 'com.google.firebase:firebase-database:12.0.1'
+    implementation 'com.google.android.gms:play-services-auth:12.0.1'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.3'
+//    implementation 'com.google.firebase:firebase-auth:12.0.1'
+//    implementation 'com.google.firebase:firebase-core:12.0.1'
+//    implementation 'com.google.firebase:firebase-database:12.0.1'
+//    implementation 'com.google.android.gms:play-services-auth:12.0.1'
 
-    implementation 'com.google.android.gms:play-services-ads:15.0.1'
+    implementation 'com.google.android.gms:play-services-ads:12.0.1'
+//    implementation 'com.google.android.gms:play-services-ads:12.0.1'
+
 //    implementation('com.mopub:mopub-sdk-native-static:4.12.0@aar') { transitive = true }
 
-    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+//    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
 
     implementation 'com.github.bumptech.glide:glide:4.7.1'
@@ -72,14 +100,12 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
 
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test:rules:1.0.2'
-    testImplementation 'junit:junit:4.12'
 
 
-    kapt 'android.arch.persistence.room:compiler:1.1.1-rc1'
-    implementation 'android.arch.persistence.room:runtime:1.1.1-rc1'
+    kapt 'android.arch.persistence.room:compiler:1.1.1'
+    implementation 'android.arch.persistence.room:runtime:1.1.1'
+//    kapt 'android.arch.persistence.room:compiler:1.1.1-rc1'
+//    implementation 'android.arch.persistence.room:runtime:1.1.1-rc1'
     implementation 'com.facebook.shimmer:shimmer:0.1.0@aar'
     implementation files('libs/YouTubeAndroidPlayerApi.jar')
     implementation 'jp.wasabeef:blurry:2.1.1'
@@ -92,4 +118,16 @@ dependencies {
         transitive = true
     }
     implementation 'com.android.support:support-annotations:27.1.1'
+
+    implementation('com.onesignal:OneSignal:[3.9.1, 3.99.99]') {
+        transitive = true
+//        exclude group: 'com.google.firebase', module: 'firebase-messaging'
+        exclude group: 'com.google.android.gms', module: 'play-services-location'
+//        exclude group: 'com.android.support', module: 'exifinterface'
+    }
+
+//    implementation 'com.google.firebase:firebase-messaging:17.1.0'
+//    implementation 'com.google.android.gms:play-services-location:15.0.1'
+//    implementation 'com.android.support:exifinterface:27.1.1'
+//    implementation 'com.android.support:customtabs:27.1.1'
 }
