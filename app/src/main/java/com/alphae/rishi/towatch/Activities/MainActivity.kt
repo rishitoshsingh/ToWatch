@@ -44,13 +44,16 @@ class MainActivity : AppCompatActivity() {
     private var actionSearchView: android.support.v7.widget.SearchView? = null
     private lateinit var searchMenuItem: MenuItem
     private lateinit var mSharedPreferences: SharedPreferences
-    private lateinit var mInterstitialAd: InterstitialAd
+    private var mInterstitialAd: InterstitialAd? = null
+    private var mMainInterstitialAd: InterstitialAd? = null
     private lateinit var client: TmdbApiClient
 
     private var gotSearchIntent: Boolean = false
     private var searchIntentQuery: String = ""
 
     @RequiresApi(Build.VERSION_CODES.M)
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -67,8 +70,16 @@ class MainActivity : AppCompatActivity() {
 //        MobileAds.initialize(this, "ca-app-pub-3940256099942544/1033173712")
         MobileAds.initialize(this, BuildConfig.AdMobId)
         mInterstitialAd = InterstitialAd(this)
-        mInterstitialAd.adUnitId = BuildConfig.AdmobInterstitial
-        mInterstitialAd.loadAd(AdRequest.Builder().build())
+        mInterstitialAd?.adUnitId = BuildConfig.AdmobInterstitial
+        mInterstitialAd?.loadAd(AdRequest.Builder().build())
+        mMainInterstitialAd = InterstitialAd(this)
+        mMainInterstitialAd?.adUnitId = BuildConfig.AdmobInterstitial
+        mMainInterstitialAd?.loadAd(AdRequest.Builder().build())
+        mMainInterstitialAd?.adListener = object : AdListener() {
+            override fun onAdLoaded() {
+                if (mMainInterstitialAd != null) mMainInterstitialAd?.show()
+            }
+        }
 
         val sharedPreferences: SharedPreferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
         if (!sharedPreferences.contains("firstTime")) {
@@ -101,11 +112,11 @@ class MainActivity : AppCompatActivity() {
             try {
                 Log.d("Tried", "you")
                 val value1 = extras.getString(Intent.EXTRA_TEXT)
-                Log.d("value1",value1)
+                Log.d("value1", value1)
                 if (value1 != null) {
                     if (value1.contains("https")) {
                         var videoId = value1.substringAfter("https://youtu.be/")
-                        Log.d("videoId",videoId)
+                        Log.d("videoId", videoId)
                         val ytClient = ServiceGenerator.createYtService(YouTubeClient::class.java)
                         val call = ytClient.getVideoTitle(videoId, BuildConfig.YoutubeApiKey)
                         call.enqueue(object : Callback<YouTubeVideo> {
@@ -153,9 +164,9 @@ class MainActivity : AppCompatActivity() {
         viewPager.adapter = HomeAdapter(this, supportFragmentManager)
         tabLayout.setupWithViewPager(viewPager)
         val version = sharedPreferences.getString("version", "new")
-        Log.d("version",version)
+        Log.d("version", version)
         if (version == "new") {
-            Log.d("version",version)
+            Log.d("version", version)
             val alertDialog = android.support.v7.app.AlertDialog.Builder(this@MainActivity).create()
             alertDialog.setTitle("What's New")
             alertDialog.setMessage(resources.getString(R.string.whats_new))
@@ -167,6 +178,12 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mInterstitialAd = null
+        mMainInterstitialAd = null
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -193,12 +210,12 @@ class MainActivity : AppCompatActivity() {
                 val editor = sharedPreferences.edit()
                 editor.putInt("KeyEvents", 2)
                 editor.commit()
-                mInterstitialAd.adListener = object : AdListener() {
+                mInterstitialAd?.adListener = object : AdListener() {
                     override fun onAdClosed() {
-                        mInterstitialAd.loadAd(AdRequest.Builder().build())
+                        mInterstitialAd?.loadAd(AdRequest.Builder().build())
                     }
                 }
-                if (mInterstitialAd.isLoaded) mInterstitialAd.show()
+                if (mInterstitialAd != null && mInterstitialAd?.isLoaded!!) mInterstitialAd?.show()
                 return true
             }
         })

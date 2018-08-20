@@ -19,8 +19,8 @@ android {
         applicationId "com.alphae.rishi.towatch"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 10
-        versionName "1.1.196"
+        versionCode 11
+        versionName "1.2.1"
         multiDexEnabled true
         manifestPlaceholders = [
                 onesignal_app_id               : '6ff5963f-ea3e-446b-8538-62ec0030aa2c',
@@ -73,17 +73,12 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:27.1.1'
     implementation 'com.android.support:palette-v7:27.1.1'
 
-//    implementation 'com.google.firebase:firebase-core:11.8.0'
     implementation 'com.google.gms:google-services:4.0.1'
     implementation 'com.google.firebase:firebase-auth:12.0.1'
     implementation 'com.google.firebase:firebase-core:12.0.1'
     implementation 'com.google.firebase:firebase-database:12.0.1'
     implementation 'com.google.android.gms:play-services-auth:12.0.1'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.3'
-//    implementation 'com.google.firebase:firebase-auth:12.0.1'
-//    implementation 'com.google.firebase:firebase-core:12.0.1'
-//    implementation 'com.google.firebase:firebase-database:12.0.1'
-//    implementation 'com.google.android.gms:play-services-auth:12.0.1'
 
     implementation 'com.google.android.gms:play-services-ads:12.0.1'
 //    implementation 'com.google.android.gms:play-services-ads:12.0.1'
@@ -126,8 +121,4 @@ dependencies {
 //        exclude group: 'com.android.support', module: 'exifinterface'
     }
 
-//    implementation 'com.google.firebase:firebase-messaging:17.1.0'
-//    implementation 'com.google.android.gms:play-services-location:15.0.1'
-//    implementation 'com.android.support:exifinterface:27.1.1'
-//    implementation 'com.android.support:customtabs:27.1.1'
 }
