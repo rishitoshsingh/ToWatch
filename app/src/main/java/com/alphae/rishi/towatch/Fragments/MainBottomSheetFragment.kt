@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import com.alphae.rishi.towatch.Api.ServiceGenerator
 import com.alphae.rishi.towatch.BuildConfig
 import com.alphae.rishi.towatch.POJOs.Configrations.Country
@@ -96,46 +97,52 @@ class BottomSheetFragment : BottomSheetDialogFragment(), AdapterView.OnItemSelec
 
         defaultButton.setOnClickListener {
             val sharedPreferenceEditor: SharedPreferences.Editor = mSharedPreferences.edit()
-            sharedPreferenceEditor.putString("region","US")
-            sharedPreferenceEditor.putString("language","en-US")
+            sharedPreferenceEditor.putString("region", "US")
+            sharedPreferenceEditor.putString("language", "en-US")
             sharedPreferenceEditor.commit()
             this.dismiss()
         }
 
         saveButton.setOnClickListener {
 
-            val languageSelected = languageSpinner.selectedItem.toString()
-            var languageQuery: String = ""
+            try {
+                val languageSelected = languageSpinner.selectedItem.toString()
+                var languageQuery: String = ""
 
-            for (translation in translations) {
-                val codes = translation.split("-")
-                val locale: Locale = Locale(codes[0], codes[1])
-                val spinnerItem = locale.displayLanguage + " (" + locale.displayCountry + ")"
-                if (languageSelected == spinnerItem) {
-                    languageQuery = translation
+                for (translation in translations) {
+                    val codes = translation.split("-")
+                    val locale: Locale = Locale(codes[0], codes[1])
+                    val spinnerItem = locale.displayLanguage + " (" + locale.displayCountry + ")"
+                    if (languageSelected == spinnerItem) {
+                        languageQuery = translation
+                    }
                 }
+
+                val regionSelected = regionSpinner.selectedItem.toString()
+                var regionQuery: String = ""
+                for (country in countries) {
+                    if (country.englishName == regionSelected) {
+                        regionQuery = country.iso31661
+                    }
+                }
+
+                val sharedPreferenceEditor: SharedPreferences.Editor = mSharedPreferences.edit()
+                sharedPreferenceEditor.putString("region", regionQuery)
+                sharedPreferenceEditor.putString("language", languageQuery)
+                sharedPreferenceEditor.commit()
+                this.dismiss()
+
+            } catch (ex: Exception) {
+                Toast.makeText(activity, "Please wait to load options", Toast.LENGTH_SHORT).show()
             }
 
-            val regionSelected = regionSpinner.selectedItem.toString()
-            var regionQuery: String = ""
-            for (country in countries) {
-                if (country.englishName == regionSelected) {
-                    regionQuery = country.iso31661
-                }
-            }
-
-            val sharedPreferenceEditor: SharedPreferences.Editor = mSharedPreferences.edit()
-            sharedPreferenceEditor.putString("region", regionQuery)
-            sharedPreferenceEditor.putString("language", languageQuery)
-            sharedPreferenceEditor.commit()
-            this.dismiss()
         }
     }
 
     private fun addTranslations() {
         val code = mSharedPreferences.getString("language", "en-US")
         var position: Int = 0
-        var selectedPosition:Int = 0
+        var selectedPosition: Int = 0
         for (translation in translations) {
             if (code == translation) {
                 selectedPosition = position
@@ -155,7 +162,7 @@ class BottomSheetFragment : BottomSheetDialogFragment(), AdapterView.OnItemSelec
     private fun addCountries() {
         val code = mSharedPreferences.getString("region", "US")
         var position: Int = 0
-        var selectedPosition:Int = 0
+        var selectedPosition: Int = 0
         for (country in countries) {
             if (code == country.iso31661) {
                 selectedPosition = position

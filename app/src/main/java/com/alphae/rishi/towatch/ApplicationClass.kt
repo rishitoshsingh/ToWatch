@@ -80,11 +80,12 @@ class ApplicationClass : Application() {
 
                 val sharedPreferences: SharedPreferences = getSharedPreferences("Notification", Context.MODE_PRIVATE)
                 val sharedPreferenceEditor: SharedPreferences.Editor = sharedPreferences.edit()
-                sharedPreferenceEditor.putBoolean("Clicked",true)
+                sharedPreferenceEditor.putBoolean("Clicked", true)
                 sharedPreferenceEditor.commit()
 
                 val intent: Intent = Intent(baseContext, MainActivity::class.java)
                         .setType("text/plain")
+                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                         .putExtra(Intent.EXTRA_TEXT, movieIdKey)
                 startActivity(intent)
 
