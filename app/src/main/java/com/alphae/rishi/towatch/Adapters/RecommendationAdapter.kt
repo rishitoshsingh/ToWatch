@@ -21,6 +21,9 @@ import com.bumptech.glide.request.target.Target
 import com.alphae.rishi.towatch.Activities.MovieDetailsActivity
 import com.alphae.rishi.towatch.BuildConfig
 import com.alphae.rishi.towatch.R
+import com.facebook.ads.Ad
+import com.facebook.ads.AdError
+import com.facebook.ads.InterstitialAdListener
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.InterstitialAd
@@ -34,13 +37,11 @@ abstract class RecommendationAdapter(context: Context, moviesPassed: ArrayList<c
     private val mContext = context
     var movies: ArrayList<com.alphae.rishi.towatch.POJOs.TmdbRecommendations.Result> = moviesPassed
 
-    private lateinit var mInterstitialAd: InterstitialAd
+    private lateinit var mInterstitialAd: com.facebook.ads.InterstitialAd
 
     init {
-        mInterstitialAd = InterstitialAd(mContext)
-//        mInterstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712"
-        mInterstitialAd.adUnitId = BuildConfig.AdmobInterstitial
-        mInterstitialAd.loadAd(AdRequest.Builder().build())
+        mInterstitialAd = com.facebook.ads.InterstitialAd(mContext,BuildConfig.FanInterstitial)
+        mInterstitialAd.loadAd()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -87,19 +88,34 @@ abstract class RecommendationAdapter(context: Context, moviesPassed: ArrayList<c
             val userClicks = sharedPreferences.getInt("KeyEvents", 2)
             var showAd: Boolean = userClicks == 2
 
-            mInterstitialAd.adListener = object : AdListener() {
-                override fun onAdClosed() {
-                    mInterstitialAd.loadAd(AdRequest.Builder().build())
+            mInterstitialAd.setAdListener(object : InterstitialAdListener {
+                override fun onInterstitialDisplayed(p0: Ad?) {}
+                override fun onAdClicked(p0: Ad?) {}
+                override fun onInterstitialDismissed(p0: Ad?) {
+                    mInterstitialAd.loadAd()
                     transition(holder.adapterPosition,holder)
                 }
-            }
+                override fun onError(p0: Ad?, p1: AdError?) {
+                    mInterstitialAd.loadAd()
+                    transition(holder.adapterPosition,holder)
+                }
+                override fun onAdLoaded(p0: Ad?) {}
+                override fun onLoggingImpression(p0: Ad?) {}
+            })
+
+//            mInterstitialAd.adListener = object : AdListener() {
+//                override fun onAdClosed() {
+//                    mInterstitialAd.loadAd(AdRequest.Builder().build())
+//                    transition(holder.adapterPosition,holder)
+//                }
+//            }
 
             if (userClicks != 2) {
                 val shaPrefEditor = sharedPreferences.edit()
                 shaPrefEditor.putInt("KeyEvents", userClicks + 1)
                 shaPrefEditor.commit()
             }
-            if (mInterstitialAd.isLoaded and showAd) {
+            if (mInterstitialAd.isAdLoaded and showAd) {
                 mInterstitialAd.show()
                 val prefEditor = sharedPreferences.edit()
                 prefEditor.putInt("KeyEvents", 0)

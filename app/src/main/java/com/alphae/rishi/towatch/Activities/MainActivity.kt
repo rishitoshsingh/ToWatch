@@ -29,9 +29,9 @@ import com.alphae.rishi.towatch.POJOs.YouTube.YouTubeVideo
 import com.alphae.rishi.towatch.R
 import com.alphae.rishi.towatch.TmdbApi.TmdbApiClient
 import com.alphae.rishi.towatch.Utils.CrossfadeDrawer
-import com.google.android.gms.ads.AdListener
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.InterstitialAd
+import com.facebook.ads.Ad
+import com.facebook.ads.AdError
+import com.facebook.ads.InterstitialAdListener
 import com.google.android.gms.ads.MobileAds
 import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
@@ -44,8 +44,8 @@ class MainActivity : AppCompatActivity() {
     private var actionSearchView: android.support.v7.widget.SearchView? = null
     private lateinit var searchMenuItem: MenuItem
     private lateinit var mSharedPreferences: SharedPreferences
-    private var mInterstitialAd: InterstitialAd? = null
-    private var mMainInterstitialAd: InterstitialAd? = null
+    private var mInterstitialAd: com.facebook.ads.InterstitialAd? = null
+    private var mMainInterstitialAd: com.facebook.ads.InterstitialAd? = null
     private lateinit var client: TmdbApiClient
 
     private var gotSearchIntent: Boolean = false
@@ -69,18 +69,24 @@ class MainActivity : AppCompatActivity() {
 
 //        MobileAds.initialize(this, "ca-app-pub-3940256099942544/1033173712")
         MobileAds.initialize(this, BuildConfig.AdMobId)
-        mInterstitialAd = InterstitialAd(this)
-        mInterstitialAd?.adUnitId = BuildConfig.AdmobInterstitial
-        mInterstitialAd?.loadAd(AdRequest.Builder().build())
-        mMainInterstitialAd = InterstitialAd(this)
-        mMainInterstitialAd?.adUnitId = BuildConfig.AdmobInterstitial
-        mMainInterstitialAd?.loadAd(AdRequest.Builder().build())
-        mMainInterstitialAd?.adListener = object : AdListener() {
-            override fun onAdLoaded() {
-                if (mMainInterstitialAd != null) mMainInterstitialAd?.show()
+        mInterstitialAd = com.facebook.ads.InterstitialAd(this, BuildConfig.FanInterstitial)
+        mInterstitialAd?.loadAd()
+        mMainInterstitialAd = com.facebook.ads.InterstitialAd(this, BuildConfig.FanInterstitial)
+        mMainInterstitialAd?.setAdListener(object : InterstitialAdListener {
+            override fun onInterstitialDisplayed(p0: Ad?) {}
+            override fun onAdClicked(p0: Ad?) {}
+            override fun onInterstitialDismissed(p0: Ad?) {}
+            override fun onError(p0: Ad?, p1: AdError?) {}
+            override fun onAdLoaded(p0: Ad?) {
+                val sharedPreferences: SharedPreferences = getSharedPreferences("Notification", Context.MODE_PRIVATE)
+                if (mMainInterstitialAd != null && !sharedPreferences.getBoolean("Clicked", false)) {
+                    mMainInterstitialAd?.show()
+                }
             }
-        }
 
+            override fun onLoggingImpression(p0: Ad?) {}
+        })
+        mMainInterstitialAd?.loadAd()
         val sharedPreferences: SharedPreferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
         if (!sharedPreferences.contains("firstTime")) {
             Toast.makeText(this, "Welcome toWatch", Toast.LENGTH_LONG).show()
@@ -182,8 +188,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        mInterstitialAd = null
-        mMainInterstitialAd = null
+        if (mInterstitialAd != null) {
+            mInterstitialAd!!.destroy()
+        }
+        if (mMainInterstitialAd != null) {
+            mMainInterstitialAd!!.destroy()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -210,12 +220,18 @@ class MainActivity : AppCompatActivity() {
                 val editor = sharedPreferences.edit()
                 editor.putInt("KeyEvents", 2)
                 editor.commit()
-                mInterstitialAd?.adListener = object : AdListener() {
-                    override fun onAdClosed() {
-                        mInterstitialAd?.loadAd(AdRequest.Builder().build())
+                mInterstitialAd?.setAdListener(object : InterstitialAdListener {
+                    override fun onInterstitialDisplayed(p0: Ad?) {
+                        mInterstitialAd?.loadAd()
                     }
-                }
-                if (mInterstitialAd != null && mInterstitialAd?.isLoaded!!) mInterstitialAd?.show()
+
+                    override fun onAdClicked(p0: Ad?) {}
+                    override fun onInterstitialDismissed(p0: Ad?) {}
+                    override fun onError(p0: Ad?, p1: AdError?) {}
+                    override fun onAdLoaded(p0: Ad?) {}
+                    override fun onLoggingImpression(p0: Ad?) {}
+                })
+                if (mInterstitialAd != null && mInterstitialAd?.isAdLoaded!!) mInterstitialAd?.show()
                 return true
             }
         })

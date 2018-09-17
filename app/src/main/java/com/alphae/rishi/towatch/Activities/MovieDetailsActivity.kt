@@ -15,7 +15,6 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.Snackbar
-import android.support.v4.app.ShareCompat
 import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.graphics.Palette
@@ -50,7 +49,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.facebook.ads.*
 import com.google.android.gms.ads.AdListener
-import com.google.android.gms.ads.AdRequest
 import com.google.android.youtube.player.YouTubeInitializationResult
 import com.google.android.youtube.player.YouTubePlayer
 import com.google.android.youtube.player.YouTubePlayerFragment
@@ -63,7 +61,6 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
-import com.google.android.gms.ads.InterstitialAd
 
 class MovieDetailsActivity : AppCompatActivity() {
 
@@ -93,7 +90,7 @@ class MovieDetailsActivity : AppCompatActivity() {
     private lateinit var recommendationFragment: RecommendationFragment
 
     private lateinit var similarFragment: SimilarFragment
-    private lateinit var mInterstitialAd: InterstitialAd
+    private lateinit var mInterstitialAd: com.facebook.ads.InterstitialAd
 
     @SuppressLint("RestrictedApi")
 
@@ -101,20 +98,24 @@ class MovieDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_details)
-         mInterstitialAd = InterstitialAd(this)
-        mInterstitialAd.adUnitId = BuildConfig.AdmobInterstitial
-        mInterstitialAd.loadAd(AdRequest.Builder().build())
-        mInterstitialAd.adListener = object : AdListener(){
-            override fun onAdLoaded() {
+        mInterstitialAd = InterstitialAd(this, BuildConfig.FanInterstitial)
+        mInterstitialAd.setAdListener(object : InterstitialAdListener {
+            override fun onInterstitialDisplayed(p0: Ad?) {}
+            override fun onAdClicked(p0: Ad?) {}
+            override fun onInterstitialDismissed(p0: Ad?) {}
+            override fun onError(p0: Ad?, p1: AdError?) {}
+            override fun onAdLoaded(p0: Ad?) {
                 val sharedPreferences: SharedPreferences = getSharedPreferences("Notification", Context.MODE_PRIVATE)
                 if (sharedPreferences.getBoolean("Clicked", false)) {
                     mInterstitialAd.show()
                     val sharedPreferenceEditor: SharedPreferences.Editor = sharedPreferences.edit()
-                    sharedPreferenceEditor.putBoolean("Clicked",false)
+                    sharedPreferenceEditor.putBoolean("Clicked", false)
                     sharedPreferenceEditor.commit()
                 }
             }
-        }
+            override fun onLoggingImpression(p0: Ad?) {}
+        })
+        mInterstitialAd.loadAd()
 
         setSupportActionBar(toolbar)
         mToolbar = supportActionBar
