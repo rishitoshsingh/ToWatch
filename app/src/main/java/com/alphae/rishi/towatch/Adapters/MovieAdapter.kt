@@ -40,13 +40,6 @@ abstract class MovieAdapter(context: Context, moviesPassed: ArrayList<kotlin.Any
     val MOVIE = 0
     val NATIVE_AD = 1
 
-    private lateinit var mInterstitialAd: com.facebook.ads.InterstitialAd
-
-    init {
-        mInterstitialAd = com.facebook.ads.InterstitialAd(mContext,BuildConfig.FanInterstitial)
-        mInterstitialAd.loadAd()
-    }
-
     constructor(context: Context, moviesPassed: ArrayList<kotlin.Any>, small: Boolean) : this(context, moviesPassed) {
         smallPoster = small
     }
@@ -123,45 +116,21 @@ abstract class MovieAdapter(context: Context, moviesPassed: ArrayList<kotlin.Any
                 val userClicks = sharedPreferences.getInt("KeyEvents", 2)
                 var showAd: Boolean = userClicks == 2
 
-                mInterstitialAd.setAdListener(object : InterstitialAdListener {
-                    override fun onInterstitialDisplayed(p0: Ad?) {}
-                    override fun onAdClicked(p0: Ad?) {}
-                    override fun onInterstitialDismissed(p0: Ad?) {
-                        mInterstitialAd.loadAd()
-                        transition(holder.adapterPosition,holder)
-                    }
-                    override fun onError(p0: Ad?, p1: AdError?) {
-                        mInterstitialAd.loadAd()
-                        transition(holder.adapterPosition,holder)
-                    }
-                    override fun onAdLoaded(p0: Ad?) {}
-                    override fun onLoggingImpression(p0: Ad?) {}
-                })
-
-//                mInterstitialAd.adListener = object : AdListener() {
-//                    override fun onAdClosed() {
-//                        mInterstitialAd.loadAd(AdRequest.Builder().build())
-//                        transition(holder.adapterPosition, holder)
-//                    }
-//                }
                 if (userClicks != 2) {
                     val shaPrefEditor = sharedPreferences.edit()
                     shaPrefEditor.putInt("KeyEvents", userClicks + 1)
                     shaPrefEditor.commit()
+                    transition(holder.adapterPosition, holder)
                 }
-                if (mInterstitialAd.isAdLoaded and showAd) {
-                    mInterstitialAd.show()
+
+                if (showAd){
+                    val interstitialPreferences = mContext.getSharedPreferences("TwoClicked", Context.MODE_PRIVATE)
+                    val editor = interstitialPreferences.edit()
+                    editor.putBoolean("TwoClicked",true)
+                    editor.commit()
                     val prefEditor = sharedPreferences.edit()
                     prefEditor.putInt("KeyEvents", 0)
                     prefEditor.commit()
-                    Log.d("Interstitial", "Interstitial shown")
-                } else {
-                    if (showAd) {
-                        val prefEditor = sharedPreferences.edit()
-                        prefEditor.putInt("KeyEvents", 2)
-                        prefEditor.commit()
-                    }
-                    Log.d("Interstitial", "The interstitial wasn't loaded yet.")
                     transition(holder.adapterPosition, holder)
                 }
             }

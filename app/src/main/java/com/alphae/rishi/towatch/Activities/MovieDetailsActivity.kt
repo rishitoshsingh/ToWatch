@@ -91,6 +91,8 @@ class MovieDetailsActivity : AppCompatActivity() {
 
     private lateinit var similarFragment: SimilarFragment
     private lateinit var mInterstitialAd: com.facebook.ads.InterstitialAd
+    private lateinit var mTwoClickedInterstitialAd: com.facebook.ads.InterstitialAd
+
 
     @SuppressLint("RestrictedApi")
 
@@ -116,6 +118,27 @@ class MovieDetailsActivity : AppCompatActivity() {
             override fun onLoggingImpression(p0: Ad?) {}
         })
         mInterstitialAd.loadAd()
+
+        mTwoClickedInterstitialAd = InterstitialAd(this, BuildConfig.FanInterstitial)
+        mTwoClickedInterstitialAd.setAdListener(object : InterstitialAdListener {
+            override fun onInterstitialDisplayed(p0: Ad?) {}
+            override fun onAdClicked(p0: Ad?) {}
+            override fun onInterstitialDismissed(p0: Ad?) {}
+            override fun onError(p0: Ad?, p1: AdError?) {}
+            override fun onAdLoaded(p0: Ad?) {
+                val interstitialPreferences = getSharedPreferences("TwoClicked", Context.MODE_PRIVATE)
+                if (interstitialPreferences.getBoolean("TwoClicked", true)) {
+                    mTwoClickedInterstitialAd.show()
+                    val sharedPreferenceEditor: SharedPreferences.Editor = interstitialPreferences.edit()
+                    sharedPreferenceEditor.putBoolean("TwoClicked", false)
+                    sharedPreferenceEditor.commit()
+                }
+            }
+            override fun onLoggingImpression(p0: Ad?) {}
+        })
+        mTwoClickedInterstitialAd.loadAd()
+
+
 
         setSupportActionBar(toolbar)
         mToolbar = supportActionBar

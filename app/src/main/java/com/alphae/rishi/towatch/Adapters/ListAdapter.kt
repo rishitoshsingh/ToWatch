@@ -38,13 +38,6 @@ abstract class ListAdapter(context: Context, moviesPassed: List<WatchList>) : Re
     private val mContext = context
     var movies: List<WatchList> = moviesPassed
 
-    private lateinit var mInterstitialAd: com.facebook.ads.InterstitialAd
-
-    init {
-        mInterstitialAd = com.facebook.ads.InterstitialAd(mContext,BuildConfig.FanInterstitial)
-        mInterstitialAd.loadAd()
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.movie_list_grid, parent, false)
         return MovieViewHolder(itemView)
@@ -95,46 +88,24 @@ abstract class ListAdapter(context: Context, moviesPassed: List<WatchList>) : Re
             val userClicks = sharedPreferences.getInt("KeyEvents", 2)
             var showAd: Boolean = userClicks == 2
 
-            mInterstitialAd.setAdListener(object : InterstitialAdListener {
-                override fun onInterstitialDisplayed(p0: Ad?) {}
-                override fun onAdClicked(p0: Ad?) {}
-                override fun onInterstitialDismissed(p0: Ad?) {
-                    mInterstitialAd.loadAd()
-                    transition(holder.adapterPosition,holder)
-                }
-                override fun onError(p0: Ad?, p1: AdError?) {
-                    mInterstitialAd.loadAd()
-                    transition(holder.adapterPosition,holder)
-                }
-                override fun onAdLoaded(p0: Ad?) {}
-                override fun onLoggingImpression(p0: Ad?) {}
-            })
-//            mInterstitialAd.adListener = object : AdListener() {
-//                override fun onAdClosed() {
-//                    mInterstitialAd.loadAd(AdRequest.Builder().build())
-//                    transition(holder.adapterPosition, holder)
-//                }
-//            }
             if (userClicks != 2) {
                 val shaPrefEditor = sharedPreferences.edit()
                 shaPrefEditor.putInt("KeyEvents", userClicks + 1)
                 shaPrefEditor.commit()
+                transition(holder.adapterPosition, holder)
             }
-            if (mInterstitialAd.isAdLoaded and showAd) {
-                mInterstitialAd.show()
+
+            if (showAd){
+                val interstitialPreferences = mContext.getSharedPreferences("TwoClicked", Context.MODE_PRIVATE)
+                val editor = interstitialPreferences.edit()
+                editor.putBoolean("TwoClicked",true)
+                editor.commit()
                 val prefEditor = sharedPreferences.edit()
                 prefEditor.putInt("KeyEvents", 0)
                 prefEditor.commit()
-                Log.d("Interstitial", "Interstitial shown")
-            } else {
-                if (showAd) {
-                    val prefEditor = sharedPreferences.edit()
-                    prefEditor.putInt("KeyEvents", 2)
-                    prefEditor.commit()
-                }
-                Log.d("Interstitial", "The interstitial wasn't loaded yet.")
                 transition(holder.adapterPosition, holder)
             }
+
         }
         holder.threeDotMenu.setOnClickListener {
             val popup = PopupMenu(mContext, holder.threeDotMenu)
