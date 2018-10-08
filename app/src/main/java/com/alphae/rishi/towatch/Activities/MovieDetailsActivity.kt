@@ -695,6 +695,7 @@ class MovieDetailsActivity : AppCompatActivity() {
         } catch (ex: Exception) {
         }
         WatchDatabase.destroyInstance()
+        youTubePlayer?.release()
         super.onDestroy()
     }
 

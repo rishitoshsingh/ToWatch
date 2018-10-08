@@ -205,7 +205,7 @@ class MainActivity : AppCompatActivity() {
         val searchItem = menu?.findItem(R.id.app_bar_search)
         searchMenuItem = searchItem!!
         actionSearchView = searchItem.actionView as android.support.v7.widget.SearchView
-        val searchEditText = actionSearchView!!.findViewById<EditText>(android.support.v7.appcompat.R.id.search_src_text) as (EditText)
+        val searchEditText = actionSearchView!!.findViewById(android.support.v7.appcompat.R.id.search_src_text) as (EditText)
         searchEditText.setTextColor(getResources().getColor(R.color.accent))
         val searchClose = actionSearchView!!.findViewById(android.support.v7.appcompat.R.id.search_close_btn) as ImageView
         searchClose.setColorFilter(resources.getColor(R.color.accent))

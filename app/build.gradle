@@ -122,4 +122,6 @@ dependencies {
 //        exclude group: 'com.android.support', module: 'exifinterface'
     }
 
+    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:8.0.1'
+
 }
