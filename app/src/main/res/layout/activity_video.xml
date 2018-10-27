@@ -7,14 +7,11 @@
     android:orientation="vertical"
     tools:context="com.alphae.rishi.towatch.Activities.VideoActivity">
 
-    <android.support.v4.widget.NestedScrollView
-        android:id="@+id/root_nested_scroll_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
         <LinearLayout
+            android:id="@+id/player_title_button"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <com.pierfrancescosoffritti.androidyoutubeplayer.player.YouTubePlayerView
@@ -39,35 +36,44 @@
                 android:textColor="@color/white"
                 android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/video_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <android.support.v4.widget.NestedScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/video_description"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:padding="8dp"
-                    android:textAlignment="center"
-                    android:textColor="@color/white"
-                    android:textSize="16sp" />
-            </android.support.v4.widget.NestedScrollView>
 
         </LinearLayout>
 
+    <TextView
+        android:id="@+id/v_t"
+        android:layout_below="@id/player_title_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="marquee"
+        android:paddingEnd="8dp"
+        android:paddingStart="8dp"
+        android:singleLine="true"
+        android:textAlignment="center"
+        android:textColor="@color/accent"
+        android:textSize="32sp" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_below="@id/v_t"
+        android:layout_above="@id/fan_banner_container"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/video_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:padding="8dp"
+            android:scrollbars="vertical"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
     </android.support.v4.widget.NestedScrollView>
 
     <LinearLayout
         android:id="@+id/fan_banner_container"
         android:layout_width="match_parent"
-        android:layout_below="@id/root_nested_scroll_view"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:orientation="vertical" />
 

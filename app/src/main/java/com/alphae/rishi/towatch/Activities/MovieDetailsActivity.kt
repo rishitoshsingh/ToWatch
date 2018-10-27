@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
+import android.os.Handler
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.Snackbar
 import android.support.v7.app.ActionBar
@@ -31,6 +32,7 @@ import com.alphae.rishi.towatch.BuildConfig
 import com.alphae.rishi.towatch.Database.WatchDatabase
 import com.alphae.rishi.towatch.Database.WatchList
 import com.alphae.rishi.towatch.Database.WatchedList
+import com.alphae.rishi.towatch.Dialogs.LoadingAdDialog
 import com.alphae.rishi.towatch.Fragments.CollectionFragment
 import com.alphae.rishi.towatch.Fragments.RecommendationFragment
 import com.alphae.rishi.towatch.Fragments.SimilarFragment
@@ -48,7 +50,6 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.facebook.ads.*
-import com.google.android.gms.ads.AdListener
 import com.google.android.youtube.player.YouTubeInitializationResult
 import com.google.android.youtube.player.YouTubePlayer
 import com.google.android.youtube.player.YouTubePlayerFragment
@@ -93,6 +94,7 @@ class MovieDetailsActivity : AppCompatActivity() {
     private lateinit var mInterstitialAd: com.facebook.ads.InterstitialAd
     private lateinit var mTwoClickedInterstitialAd: com.facebook.ads.InterstitialAd
 
+    private var loadingDialogFragment: LoadingAdDialog? = null
 
     @SuppressLint("RestrictedApi")
 
@@ -100,6 +102,7 @@ class MovieDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_details)
+        loadingDialogFragment = LoadingAdDialog()
         mInterstitialAd = InterstitialAd(this, BuildConfig.FanInterstitial)
         mInterstitialAd.setAdListener(object : InterstitialAdListener {
             override fun onInterstitialDisplayed(p0: Ad?) {}
@@ -109,12 +112,15 @@ class MovieDetailsActivity : AppCompatActivity() {
             override fun onAdLoaded(p0: Ad?) {
                 val sharedPreferences: SharedPreferences = getSharedPreferences("Notification", Context.MODE_PRIVATE)
                 if (sharedPreferences.getBoolean("Clicked", false)) {
-                    mInterstitialAd.show()
+
+                    showAdWithDialog(mInterstitialAd)
+
                     val sharedPreferenceEditor: SharedPreferences.Editor = sharedPreferences.edit()
                     sharedPreferenceEditor.putBoolean("Clicked", false)
                     sharedPreferenceEditor.commit()
                 }
             }
+
             override fun onLoggingImpression(p0: Ad?) {}
         })
         mInterstitialAd.loadAd()
@@ -127,13 +133,16 @@ class MovieDetailsActivity : AppCompatActivity() {
             override fun onError(p0: Ad?, p1: AdError?) {}
             override fun onAdLoaded(p0: Ad?) {
                 val interstitialPreferences = getSharedPreferences("TwoClicked", Context.MODE_PRIVATE)
-                if (interstitialPreferences.getBoolean("TwoClicked", true)) {
-                    mTwoClickedInterstitialAd.show()
+                if (interstitialPreferences.getBoolean("TwoClicked", false)) {
+
+                    showAdWithDialog(mTwoClickedInterstitialAd)
+
                     val sharedPreferenceEditor: SharedPreferences.Editor = interstitialPreferences.edit()
                     sharedPreferenceEditor.putBoolean("TwoClicked", false)
                     sharedPreferenceEditor.commit()
                 }
             }
+
             override fun onLoggingImpression(p0: Ad?) {}
         })
         mTwoClickedInterstitialAd.loadAd()
@@ -848,5 +857,14 @@ class MovieDetailsActivity : AppCompatActivity() {
 
     }
 
+    private fun showAdWithDialog(ad: InterstitialAd) {
+        try {
+            val ft: android.support.v4.app.FragmentTransaction = supportFragmentManager.beginTransaction()
+            loadingDialogFragment?.isCancelable = false
+            loadingDialogFragment?.show(ft, "dialog")
+            Handler().postDelayed({ loadingDialogFragment?.dismiss(); ad.show(); }, 2000)
+
+        } catch (ex: Exception) { }
+    }
 
 }

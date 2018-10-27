@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.preference.PreferenceManager
 import android.support.annotation.RequiresApi
 import android.support.v7.app.AppCompatActivity
@@ -22,6 +23,7 @@ import com.alphae.rishi.towatch.Adapters.HomeAdapter
 import com.alphae.rishi.towatch.Api.Clients.YouTubeClient
 import com.alphae.rishi.towatch.Api.ServiceGenerator
 import com.alphae.rishi.towatch.BuildConfig
+import com.alphae.rishi.towatch.Dialogs.LoadingAdDialog
 import com.alphae.rishi.towatch.Fragments.BottomSheetFragment
 import com.alphae.rishi.towatch.Fragments.SearchFragment
 import com.alphae.rishi.towatch.POJOs.TmdbFind.Find
@@ -31,6 +33,7 @@ import com.alphae.rishi.towatch.TmdbApi.TmdbApiClient
 import com.alphae.rishi.towatch.Utils.CrossfadeDrawer
 import com.facebook.ads.Ad
 import com.facebook.ads.AdError
+import com.facebook.ads.InterstitialAd
 import com.facebook.ads.InterstitialAdListener
 import com.google.android.gms.ads.MobileAds
 import kotlinx.android.synthetic.main.activity_main.*
@@ -51,6 +54,8 @@ class MainActivity : AppCompatActivity() {
     private var gotSearchIntent: Boolean = false
     private var searchIntentQuery: String = ""
 
+    private var loadingDialogFragment:LoadingAdDialog? = null
+
     @RequiresApi(Build.VERSION_CODES.M)
 
 
@@ -59,6 +64,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         client = ServiceGenerator.createService(TmdbApiClient::class.java)
+        loadingDialogFragment = LoadingAdDialog()
 
         val window: Window = window
         window.clearFlags(FLAG_TRANSLUCENT_STATUS)
@@ -68,25 +74,6 @@ class MainActivity : AppCompatActivity() {
         val context = this
 
 //        MobileAds.initialize(this, "ca-app-pub-3940256099942544/1033173712")
-        MobileAds.initialize(this, BuildConfig.AdMobId)
-        mInterstitialAd = com.facebook.ads.InterstitialAd(this, BuildConfig.FanInterstitial)
-        mInterstitialAd?.loadAd()
-        mMainInterstitialAd = com.facebook.ads.InterstitialAd(this, BuildConfig.FanInterstitial)
-        mMainInterstitialAd?.setAdListener(object : InterstitialAdListener {
-            override fun onInterstitialDisplayed(p0: Ad?) {}
-            override fun onAdClicked(p0: Ad?) {}
-            override fun onInterstitialDismissed(p0: Ad?) {}
-            override fun onError(p0: Ad?, p1: AdError?) {}
-            override fun onAdLoaded(p0: Ad?) {
-                val sharedPreferences: SharedPreferences = getSharedPreferences("Notification", Context.MODE_PRIVATE)
-                if (mMainInterstitialAd != null && !sharedPreferences.getBoolean("Clicked", false)) {
-                    mMainInterstitialAd?.show()
-                }
-            }
-
-            override fun onLoggingImpression(p0: Ad?) {}
-        })
-        mMainInterstitialAd?.loadAd()
         val sharedPreferences: SharedPreferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
         if (!sharedPreferences.contains("firstTime")) {
             Toast.makeText(this, "Welcome toWatch", Toast.LENGTH_LONG).show()
@@ -101,6 +88,27 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, WelcomeActivity::class.java)
             startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
         }
+
+        MobileAds.initialize(this, BuildConfig.AdMobId)
+        mInterstitialAd = com.facebook.ads.InterstitialAd(this, BuildConfig.FanInterstitial)
+        mInterstitialAd?.loadAd()
+        mMainInterstitialAd = com.facebook.ads.InterstitialAd(this, BuildConfig.FanInterstitial)
+        mMainInterstitialAd?.setAdListener(object : InterstitialAdListener {
+            override fun onInterstitialDisplayed(p0: Ad?) {}
+            override fun onAdClicked(p0: Ad?) {}
+            override fun onInterstitialDismissed(p0: Ad?) {}
+            override fun onError(p0: Ad?, p1: AdError?) {}
+            override fun onAdLoaded(p0: Ad?) {
+                val sharedPreferences: SharedPreferences = getSharedPreferences("Notification", Context.MODE_PRIVATE)
+                if (mMainInterstitialAd != null && !sharedPreferences.getBoolean("Clicked", false)) {
+                    showAdWithDialog(mMainInterstitialAd)
+                }
+            }
+
+            override fun onLoggingImpression(p0: Ad?) {}
+        })
+        mMainInterstitialAd?.loadAd()
+
 
         val drawer = object : CrossfadeDrawer(context, my_toolbar, context, savedInstanceState, 0) {
             override fun showBottomSheetFragment() {
@@ -231,7 +239,11 @@ class MainActivity : AppCompatActivity() {
                     override fun onAdLoaded(p0: Ad?) {}
                     override fun onLoggingImpression(p0: Ad?) {}
                 })
-                if (mInterstitialAd != null && mInterstitialAd?.isAdLoaded!!) mInterstitialAd?.show()
+                if (mInterstitialAd != null && mInterstitialAd?.isAdLoaded!!) {
+
+                    showAdWithDialog(mInterstitialAd)
+
+                }
                 return true
             }
         })
@@ -271,5 +283,20 @@ class MainActivity : AppCompatActivity() {
         )
         return call
     }
+
+    private fun showAdWithDialog(ad: InterstitialAd?) {
+        try {
+            val ft: android.support.v4.app.FragmentTransaction = supportFragmentManager.beginTransaction()
+            loadingDialogFragment?.isCancelable = false
+            loadingDialogFragment?.show(ft, "dialog")
+            Handler().postDelayed({
+                if (loadingDialogFragment != null)
+                    loadingDialogFragment?.dismiss()
+                ad?.show()
+            }, 2000)
+
+        } catch (ex: Exception) { }
+    }
+
 
 }

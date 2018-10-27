@@ -62,4 +62,19 @@
         <item name="material_drawer_selected_text">@color/md_blue_A700</item>
         <item name="material_drawer_header_selection_text">@color/material_drawer_header_selection_text</item>
     </style>
+
+    <style name="MedalTallyDialogStyle" parent="android:Theme.Dialog">
+        <!--<item name="android:background">@android:color/transparent</item>-->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <!--<item name="android:background">@drawable/view_background</item>-->
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowMinWidthMajor">90%</item>
+        <item name="android:windowMinWidthMinor">90%</item>
+
+        <!--<item name="button"-->
+        <item name="android:buttonTint">@color/colorAccent</item>
+
+    </style>
+
 </resources>

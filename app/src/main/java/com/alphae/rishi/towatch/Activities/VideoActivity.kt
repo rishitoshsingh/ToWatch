@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.WindowManager
+import android.widget.TextView
 import android.widget.Toast
 import com.alphae.rishi.towatch.Api.Clients.YouTubeClient
 import com.alphae.rishi.towatch.Api.ServiceGenerator
@@ -73,13 +74,15 @@ class VideoActivity : AppCompatActivity() {
                 val videoTitle: String = response?.body()?.items!![0].snippet.title
                 val videoDescription: String = response.body()?.items!![0].snippet.description
                 video_description.text = videoDescription
-                video_title.text = videoTitle
+                val titleView = findViewById<TextView>(R.id.v_t)
+                titleView.text = videoTitle
+                Toast.makeText(this@VideoActivity,videoTitle,Toast.LENGTH_LONG).show()
             }
         })
     }
 
     private fun loadAdView() {
-        mAdView = AdView(this, "YOUR_PLACEMENT_ID", AdSize.BANNER_HEIGHT_50)
+        mAdView = AdView(this, "236732677123588_313240356139486", AdSize.BANNER_HEIGHT_50)
         fan_banner_container.addView(mAdView)
         mAdView.loadAd()
     }
