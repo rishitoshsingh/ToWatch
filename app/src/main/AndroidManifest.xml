@@ -53,7 +53,11 @@
         <activity android:name=".firebase.SignUpActivity" />
         <activity android:name=".Activities.DiscoverActivity" />
         <activity android:name=".Activities.WelcomeActivity" />
-        <activity android:name=".Activities.VideoActivity"></activity>
+        <activity android:name=".Activities.VideoActivity" />
+        <activity
+            android:name=".Activities.WebActivity"
+            android:label="@string/title_activity_web"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

@@ -86,6 +86,7 @@
     </string>
     <string name="more_info">More Info</string>
     <string name="loading_ad">Loading Ad</string>
+    <string name="title_activity_web">WebActivity</string>
 
 
 </resources>

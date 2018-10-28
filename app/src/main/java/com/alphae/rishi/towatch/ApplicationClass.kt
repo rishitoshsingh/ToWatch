@@ -8,6 +8,7 @@ import android.support.multidex.MultiDex
 import android.util.Log
 import com.alphae.rishi.towatch.Activities.MainActivity
 import com.alphae.rishi.towatch.Activities.VideoActivity
+import com.alphae.rishi.towatch.Activities.WebActivity
 import com.onesignal.OSNotification
 import com.onesignal.OSNotificationOpenResult
 import com.onesignal.OneSignal
@@ -119,10 +120,10 @@ class ApplicationClass : Application() {
     private fun playVideo(videoId: String?,movieId: String?) {
         if (videoId != null) {
             Log.i("OneSignalExample", "customkey set with value: $videoId")
-            val sharedPreferences: SharedPreferences = getSharedPreferences("Notification", Context.MODE_PRIVATE)
-            val sharedPreferenceEditor: SharedPreferences.Editor = sharedPreferences.edit()
-            sharedPreferenceEditor.putBoolean("Clicked", true)
-            sharedPreferenceEditor.commit()
+//            val sharedPreferences: SharedPreferences = getSharedPreferences("Notification", Context.MODE_PRIVATE)
+//            val sharedPreferenceEditor: SharedPreferences.Editor = sharedPreferences.edit()
+//            sharedPreferenceEditor.putBoolean("Clicked", true)
+//            sharedPreferenceEditor.commit()
 
             val intent: Intent = Intent(baseContext, VideoActivity::class.java)
                     .setType("text/plain")
@@ -133,6 +134,21 @@ class ApplicationClass : Application() {
         }
     }
 
-    private fun openWebView(pageUrl: String?) {}
+    private fun openWebView(pageUrl: String?) {
+        if (pageUrl != null) {
+            Log.i("OneSignalExample", "customkey set with value: $pageUrl")
+//            val sharedPreferences: SharedPreferences = getSharedPreferences("Notification", Context.MODE_PRIVATE)
+//            val sharedPreferenceEditor: SharedPreferences.Editor = sharedPreferences.edit()
+//            sharedPreferenceEditor.putBoolean("Clicked", true)
+//            sharedPreferenceEditor.commit()
+
+            val intent: Intent = Intent(baseContext, WebActivity::class.java)
+                    .setType("text/plain")
+                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    .putExtra(Intent.EXTRA_TEXT, pageUrl)
+            startActivity(intent)
+        }
+
+    }
 
 }
