@@ -4,11 +4,16 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Handler
 import android.support.multidex.MultiDex
 import android.util.Log
 import com.alphae.rishi.towatch.Activities.MainActivity
 import com.alphae.rishi.towatch.Activities.VideoActivity
 import com.alphae.rishi.towatch.Activities.WebActivity
+import com.facebook.ads.Ad
+import com.facebook.ads.AdError
+import com.facebook.ads.InterstitialAd
+import com.facebook.ads.InterstitialAdListener
 import com.onesignal.OSNotification
 import com.onesignal.OSNotificationOpenResult
 import com.onesignal.OneSignal
@@ -124,7 +129,7 @@ class ApplicationClass : Application() {
 //            val sharedPreferenceEditor: SharedPreferences.Editor = sharedPreferences.edit()
 //            sharedPreferenceEditor.putBoolean("Clicked", true)
 //            sharedPreferenceEditor.commit()
-
+            showAd()
             val intent: Intent = Intent(baseContext, VideoActivity::class.java)
                     .setType("text/plain")
                     .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -141,7 +146,7 @@ class ApplicationClass : Application() {
 //            val sharedPreferenceEditor: SharedPreferences.Editor = sharedPreferences.edit()
 //            sharedPreferenceEditor.putBoolean("Clicked", true)
 //            sharedPreferenceEditor.commit()
-
+            showAd()
             val intent: Intent = Intent(baseContext, WebActivity::class.java)
                     .setType("text/plain")
                     .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -149,6 +154,19 @@ class ApplicationClass : Application() {
             startActivity(intent)
         }
 
+    }
+
+    private fun showAd(){
+        val interstitialAd = InterstitialAd(this, "236732677123588_324776198319235")
+        interstitialAd.setAdListener(object : InterstitialAdListener {
+            override fun onInterstitialDisplayed(p0: Ad?) {}
+            override fun onAdClicked(p0: Ad?) {}
+            override fun onInterstitialDismissed(p0: Ad?) {}
+            override fun onError(p0: Ad?, p1: AdError?) {}
+            override fun onLoggingImpression(p0: Ad?) {}
+            override fun onAdLoaded(p0: Ad?) {interstitialAd.show()}
+        })
+        interstitialAd.loadAd()
     }
 
 }

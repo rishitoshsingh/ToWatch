@@ -4,46 +4,47 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
+    android:fitsSystemWindows="true"
     android:orientation="vertical"
     tools:context="com.alphae.rishi.towatch.Activities.VideoActivity">
 
 
-        <LinearLayout
-            android:id="@+id/player_title_button"
+    <LinearLayout
+        android:id="@+id/player_title_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.pierfrancescosoffritti.androidyoutubeplayer.player.YouTubePlayerView
+            android:id="@+id/youtube_player_view_new"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/more_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <com.pierfrancescosoffritti.androidyoutubeplayer.player.YouTubePlayerView
-                android:id="@+id/youtube_player_view_new"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <Button
-                android:id="@+id/more_info"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="16dp"
-                android:text="@string/more_info"
-                android:textAllCaps="false"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/pill_button"
-                android:ellipsize="end"
-                android:padding="8dp"
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/pill_button"
+            android:ellipsize="end"
+            android:padding="8dp"
+            android:text="@string/more_info"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
 
 
-        </LinearLayout>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/v_t"
-        android:layout_below="@id/player_title_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/player_title_button"
         android:ellipsize="marquee"
         android:paddingEnd="8dp"
         android:paddingStart="8dp"
@@ -54,9 +55,9 @@
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_below="@id/v_t"
+        android:layout_height="wrap_content"
         android:layout_above="@id/fan_banner_container"
-        android:layout_height="wrap_content">
+        android:layout_below="@id/v_t">
 
         <TextView
             android:id="@+id/video_description"

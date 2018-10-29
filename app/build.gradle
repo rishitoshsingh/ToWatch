@@ -19,8 +19,8 @@ android {
         applicationId "com.alphae.rishi.towatch"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 13
-        versionName "1.2.3"
+        versionCode 15
+        versionName "2.0.0"
         multiDexEnabled true
         manifestPlaceholders = [
                 onesignal_app_id               : '6ff5963f-ea3e-446b-8538-62ec0030aa2c',
