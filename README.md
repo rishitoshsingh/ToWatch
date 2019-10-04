@@ -2,7 +2,7 @@
 
 ## The basic idea of the application : 
   Suppose you came across a cool movie trailer and you want to add it to your movie WatchLater list.
-  Just share the video in this application and.....
+  Just share the video in this application and get the information of the movie.
 
 From this app you can also search for movies, TV Shows
 
