@@ -26,7 +26,7 @@ tmdb api 3 : https://developers.themoviedb.org/3
 
 ## Past Build(s)
 
-![alt text](screenshots/pastBuild1.png "1") ![alt text](screenshots/pastBuild2.png "2") ![alt text](screenshots/pastBuild3.png "3") ![alt text](screenshots/pastBuild4.png "4")
+![alt text](screenshots/pastBuild3.png "3") ![alt text](screenshots/pastBuild4.png "4")
 ![alt text](screenshots/pastBuild5.png "5") ![alt text](screenshots/pastBuild6.png "6") ![alt text](screenshots/pastBuild7.png "7")
 
 ## Current Status 
