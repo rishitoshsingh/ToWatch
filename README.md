@@ -35,4 +35,4 @@ For more info press 'g' + 'b'
 ![alt text](screenshots/currentStatus1.png "1") ![alt text](screenshots/currentStatus2.png "2") ![alt text](screenshots/currentStatus3.png "3")
 ![alt text](screenshots/currentStatus4.png "4") ![alt text](screenshots/currentStatus5.png "5") 
 
-
+Show your support by downloading from playstore.
