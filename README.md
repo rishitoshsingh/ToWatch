@@ -1,6 +1,6 @@
 # ToWatch
 
-UPDATE: This project is no longer maintained.
+UPDATE: This project is no longer maintained. Hope to update it soon.
 
 ## Project is Live
 
